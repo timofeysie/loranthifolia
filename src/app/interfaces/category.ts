@@ -12,22 +12,10 @@ import { Injectable } from '@angular/core';
 *         "value" : "Hawthorne effect"
 *       }
 * 
-*     This JSON can create this category:
-* 
-*     name: cognitive_bias;
-*     name_type: uri
-*     name_value: http://www.wikidata.org/entity/Q18570
-*     xml_lang: en;
-*     label_type: literal;
-*     label_value: Hawthorne effect;
 */
 export interface Category {
-    name: string;
-    name_type: string;
-    name_value: string;
-    xml_lang: string;
-    label_type: string;
-    label_value: string;
+  cognitive_bias: any;
+  cognitive_biasLabel: any;
 }
 
 @Injectable()

@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, RouteReuseStrategy, Routes } from '@angular/router';
 
@@ -10,6 +11,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
 import { IonicStorageModule } from '@ionic/storage';
+import { MyDataService } from './services/api/my-data.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -18,12 +20,14 @@ import { IonicStorageModule } from '@ionic/storage';
     BrowserModule, 
     IonicModule.forRoot(), 
     AppRoutingModule,
+    HttpModule,
     IonicStorageModule.forRoot()
   ],
   providers: [
     StatusBar,
     SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    MyDataService
   ],
   bootstrap: [AppComponent]
 })

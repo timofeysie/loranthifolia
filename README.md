@@ -1,5 +1,6 @@
+# WikiData List with Ionic 4 alpha 7 
 
-
+## So far
 
 Using [this tut](https://mhartington.io/post/ionic-4-alpha-test/) as a starting point for an Ionic 4 alpha 7 app.
 ```
@@ -12,4 +13,7 @@ Adding a service to use the rxjx bahaviour subject like in [this tut](https://ww
 ionic generate service services/api/data_service
 ```
 
-Filled in the interface like [this](https://hackernoon.com/creating-interfaces-for-angular-services-1bb41fbbe47c).
+Filled in the interface like [this](https://hackernoon.com/creating-interfaces-for-angular-services-1bb41fbbe47c)
+
+The [WikiData SDK](https://github.com/maxlath/wikidata-sdk)
+

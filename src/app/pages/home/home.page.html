@@ -1,12 +1,15 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Ionic Blank
+      List of Cognitive Bias
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-  The world is your oyster.
-  <p>If you get lost, the <a target="_blank" href="https://ionicframework.com/docs">docs</a> will be your guide.</p>
+  	<ion-list no-lines *ngFor="let item of list">
+		<ion-item slot="item-start">
+			{{ item.cognitive_biasLabel.value }}
+		</ion-item> 
+  	</ion-list>
 </ion-content>
