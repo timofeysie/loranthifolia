@@ -11,7 +11,7 @@ export class HomePage {
   constructor(private myDataService: MyDataService) {
     this.myDataService.load();
     this.myDataService.myData.subscribe((data) => {
-      console.log('hi there',data);
+      console.log('list',data);
       this.list = data;
     });
   }

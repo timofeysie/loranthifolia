@@ -20,7 +20,7 @@ export class MyDataService {
   load(): void {
     const authorQid = 'Q1127759'
     const sparql = `
-        SELECT ?cognitive_bias ?cognitive_biasLabel WHERE {
+        SELECT ?cognitive_bias ?cognitive_biasLabel ?cognitive_biasDescription WHERE {
             SERVICE wikibase:label { 
                 bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". 
             }

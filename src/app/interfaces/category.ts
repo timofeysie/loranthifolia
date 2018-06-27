@@ -16,6 +16,7 @@ import { Injectable } from '@angular/core';
 export interface Category {
   cognitive_bias: any;
   cognitive_biasLabel: any;
+  cognitive_biasDescription: any;
 }
 
 @Injectable()
