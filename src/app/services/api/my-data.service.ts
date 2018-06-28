@@ -52,13 +52,14 @@ export class MyDataService {
     const baseUrl = 'http://en.wikipedia.org/w/api.php';
     let sectionUrl = baseUrl+'?'+action+'&'+section+'&'+prop+'&'+page;
     this.http.get(sectionUrl).map((res: any) => {
-      const content = res.json().parse['parse']['text']['*'];
-      let html = this.createElementFromHTML(content);
-      let title = this.parseTitle(html);
-      const rows = html.getElementsByClassName("wikitable")[0].getElementsByTagName('tr');
+      const parse = res.json();
+      const content = parse['parse']['text']['*'];
+      let one = this.createElementFromHTML(content);
+      let title = this.parseTitle(one);
+      const rows = one.getElementsByClassName("wikitable")[0].getElementsByTagName('tr');
       for (let i = 1; i < rows.length;i++) {
-        console.log(rows[i].getElementsByTagName('td')[0].innerText);
-        console.log('rows',rows[i].getElementsByTagName('td')[1].innerText);
+        console.log(i+' - '+rows[i].getElementsByTagName('td')[0].innerText);
+        //console.log('rows',rows[i].getElementsByTagName('td')[1].innerText);
       }
       //return res.json();
       }).subscribe (
@@ -83,7 +84,7 @@ export class MyDataService {
    * Change this to div.childNodes to support multiple top-level nodes
    * @param htmlString 
    */
-  createElementFromHTML(htmlString): HTMLDivElement {
+  createElementFromHTML(htmlString) {
     var div = document.createElement('div');
     let page = '<div>'+htmlString+'</div>';
     div.innerHTML = page.trim();
