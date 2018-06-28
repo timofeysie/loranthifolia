@@ -1,6 +1,8 @@
-# WikiData List with Ionic 4 alpha 7 
+# A WikiData List app with Ionic 4 alpha 7 
 
-## So far
+Using the latest alpha for Ionic 4, this project is to create a simple demo app to compare with a React Native app.  The app will parse WikiData and Wikipedia for a list of content and provide a master detail view of the results.
+
+## The Story So Far
 
 Using [this tut](https://mhartington.io/post/ionic-4-alpha-test/) as a starting point for an Ionic 4 alpha 7 app.
 ```
@@ -8,12 +10,13 @@ npm install -g ionic@rc
 ionic start myApp blank --type=angular
 ```
 
-Adding a service to use the rxjx bahaviour subject like in [this tut](https://www.joshmorony.com/using-behaviorsubject-to-handle-asynchronous-loading-in-ionic/)
+Added a service to use the rxjx behavior subject like in [this tut](https://www.joshmorony.com/using-behaviorsubject-to-handle-asynchronous-loading-in-ionic/)
 ```
 ionic generate service services/api/data_service
 ```
 
 Filled in the interface like [this](https://hackernoon.com/creating-interfaces-for-angular-services-1bb41fbbe47c) with the properties we want from an expected result.
+
 In stalled the [WikiData SDK](https://github.com/maxlath/wikidata-sdk) to create the url for a SPARQL query.
 
 Here is the current query to get a list of cognitive bias.
@@ -27,7 +30,7 @@ WHERE
 ```
 
 However, this is always limited to 90.  There must be over 200 on the Wikipedia page.
-WikiData is preferred, but since it is imcomplete, we will also have to use Wikipdedias MediaWiki API.
+WikiData is preferred, but since it is incomplete, we will also have to use Wikipdedia's MediaWiki API.
 
 If we wanted to get the missing descriptions for our incomplete list of bias, we could do WikiMedia query like this:
 ```http://en.wikipedia.org/w/api.php?action=query&rvprop=content&prop=text&format=json&titles=magical%20thinking```
@@ -100,35 +103,55 @@ This will return the description.  What about the actual list?
 What will section 1 look like?
 ```
 <div class=\"mw-parser-output\">
-   <h2><span id=\"Decision-making.2C_belief.2C_and_behavioral_biases\"></span><span class=\"mw-headline\" id=\"Decision-making,_belief,_and_behavioral_biases\">Decision-making, belief, and behavioral biases</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/w/index.php?title=List_of_cognitive_biases&amp;action=edit&amp;section=1\" title=\"Edit section: Decision-making, belief, and behavioral biases\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h2>
-   \n
-   <p>Many of these biases affect belief formation, business and economic decisions, and human behavior in general.</p>
-   \n
-   <table class=\"wikitable\">
-      \n
-      <tr>
-         \n
-         <th scope=\"col\" style=\"width:25%;\">Name</th>
-         \n
-         <th scope=\"col\" style=\"width:75%;\">Description</th>
-         \n
-      </tr>
-      \n
-      <tr>
-         \n
-         <td><a href=\"/wiki/Ambiguity_effect\" title=\"Ambiguity effect\">Ambiguity effect</a></td>
-         \n
-         <td>The tendency to avoid options for which missing information makes the probability seem \"unknown\".<sup id=\"cite_ref-1\" class=\"reference\"><a href=\"#cite_note-1\">[1]</a></sup></td>
-         \n
+   <h2><span id=\"Decision-making.2C_belief.2C_and_behavioral_biases\"></span><span class=\"mw-headline\" id=\"Decision-making,_belief,_and_behavioral_biases\">Decision-making, belief, and behavioral biases</span><span class=\"mw-editsection\"><span class=\"mw-editsection-bracket\">[</span><a href=\"/w/index.php?title=List_of_cognitive_biases&amp;action=edit&amp;section=1\" title=\"Edit section: Decision-making, belief, and behavioral biases\">edit</a><span class=\"mw-editsection-bracket\">]</span></span></h2>\n
+   <p>Many of these biases affect belief formation, business and economic decisions, and human behavior in general.</p>   \n
+   <table class=\"wikitable\">\n
+      <tr> \n
+         <th scope=\"col\" style=\"width:25%;\">Name</th>\n
+         <th scope=\"col\" style=\"width:75%;\">Description</th>         \n
+      </tr>      \n
+      <tr>         \n
+         <td><a href=\"/wiki/Ambiguity_effect\" title=\"Ambiguity effect\">Ambiguity effect</a></td> \n
+         <td>The tendency to avoid options for which missing information makes the probability seem \"unknown\".<sup id=\"cite_ref-1\" class=\"reference\"><a href=\"#cite_note-1\">[1]</a></sup></td>    \n
       </tr>
       ...
-       <tr>
-            \n
-            <td>Unit bias</td>
-            \n
-            <td>The tendency to want to finish a given unit of a task or an item. Strong effects on the consumption of food in particular.<sup id=\"cite_ref-72\" class=\"reference\"><a href=\"#cite_note-72\">[72]</a></sup></td>
-            \n
+       <tr>            \n
+            <td>Unit bias</td>            \n
+            <td>The tendency to want to finish a given unit of a task or an item. Strong effects on the consumption of food in particular.<sup id=\"cite_ref-72\" class=\"reference\"><a href=\"#cite_note-72\">[72]</a></sup></td>            \n
         </tr>
 ```
 
 So now we are back in the 2000s parsing html for content.  Maybe it would be a better idea just to update WikiData with the content from Wikipedia?  Otherwise we will have to merge two lists, as well as filling in missing descriptions.
+
+Section 2: Social biases
+Section 3: Memory errors and biases
+Section 4: Common theoretical causes of some cognitive biases
+
+Now, how do we know programmatically the fact that the list is from section 1-3, and does not include section 4?
+
+We will have to go with the hard coded category for now until more is understood about WikiData and Wikipedia APIs.
+
+Now, there is only one wikitable class per section.  So we only need to create a DOM node out of that <table class=\"wikitable\"> tag, and then get the text of all it's children.  Each row contains a name and a description it two <td> tags.  We can then create objects that collect the category and merge all three lists. 
+
+While trying to do this the html result was actually recommending format=json for application use.  That will return the html content segment as the * content like this:
+```
+{
+  "parse": {
+    "title": "List of cognitive biases",
+    "pageid": 510791,
+    "text": {
+      "*": "<div class=\"mw-parser-output\"><h2><span id=\"Decision-making.2C_belief.2C_and_behavioral_biases\">
+```
+
+To get the list, we create an element object out of the string kind of like this if it were all on one line:
+```
+document.createElement('div').innerHTML = res.json().parse['parse']['text']['*'];
+```
+
+Then get the table rows like this:
+```
+const rows = html.getElementsByClassName("wikitable")[0].getElementsByTagName('tr');
+```
+
+Next we will have to merge all three lists, merge that with the WikiData list, and create some navigation to go to a detail page to show everything about each item.  We can also create the slide actions to implement the spaced repetition learning features.  But one thing at a time.  It might also be time to create the React Native version of the app and think about extracting out the parsing utilities so they can be used in both projects.
+

@@ -5,6 +5,7 @@ import { Category } from '../../interfaces/category';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import * as wdk from 'wikidata-sdk';
 import 'rxjs/add/operator/map';
+import { forEach } from '@angular/router/src/utils/collection';
 
 @Injectable({
   providedIn: 'root'
@@ -36,13 +37,71 @@ export class MyDataService {
             this.myData.next(data.results.bindings);
           },
           (err: any) => console.error("loadAllPackages: ERROR"),
-          () => console.log("loadAllPackages: always")
+          () => {
+            console.log("loadAllPackages: always")
+          }
       );
+  }  
+  
+  /** WIP */
+  loadWikiMedia(sectionNum): void {
+    let action = 'action=parse';
+    let section = 'section='+sectionNum;
+    let prop = 'prop=text&format=json';
+    let page = 'page=List_of_cognitive_biases';
+    const baseUrl = 'http://en.wikipedia.org/w/api.php';
+    let sectionUrl = baseUrl+'?'+action+'&'+section+'&'+prop+'&'+page;
+    this.http.get(sectionUrl).map((res: any) => {
+      const content = res.json().parse['parse']['text']['*'];
+      let html = this.createElementFromHTML(content);
+      let title = this.parseTitle(html);
+      const rows = html.getElementsByClassName("wikitable")[0].getElementsByTagName('tr');
+      for (let i = 1; i < rows.length;i++) {
+        console.log(rows[i].getElementsByTagName('td')[0].innerText);
+        console.log('rows',rows[i].getElementsByTagName('td')[1].innerText);
+      }
+      //return res.json();
+      }).subscribe (
+        (data: any) => {
+          //console.log('DATA',data);
+          //this.myData.next(data.results.bindings);
+        },
+        (err: any) => console.error("loadAllPackages: ERROR"),
+        () => {
+          console.log("loadAllPackages: always")
+        }
+    );
   }
 
   updateData(data): void {
       this.storage.set('myData', data);
       this.myData.next(data);
+  }
+
+  /**
+   * Convert the result content to an html node for easy access to the content.
+   * Change this to div.childNodes to support multiple top-level nodes
+   * @param htmlString 
+   */
+  createElementFromHTML(htmlString): HTMLDivElement {
+    var div = document.createElement('div');
+    let page = '<div>'+htmlString+'</div>';
+    div.innerHTML = page.trim();
+    return div; 
+  }
+
+  /**
+   * Remove the [edit] portion of the title.
+   * @param HTMLDivElement 
+   */
+  parseTitle(html: HTMLDivElement) {
+    let title =  html.getElementsByTagName('h2')[0].innerText;
+    let bracket = title.indexOf('[');
+    if (bracket > 0) {
+      title = title.substr(0,bracket);
+    }
+    console.log('title',title);
+    return title;
   }
 
 }

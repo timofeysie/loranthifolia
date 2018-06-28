@@ -10,8 +10,10 @@ export class HomePage {
   list: any;
   constructor(private myDataService: MyDataService) {
     this.myDataService.load();
+    this.myDataService.loadWikiMedia('1');
+    this.myDataService.loadWikiMedia('2');
+    this.myDataService.loadWikiMedia('3');
     this.myDataService.myData.subscribe((data) => {
-      console.log('list',data);
       this.list = data;
     });
   }
