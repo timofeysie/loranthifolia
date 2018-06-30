@@ -1,9 +1,33 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>{{itemName}}</ion-title>
+    <button ion-button 
+      icon-only 
+      tappable
+      slot="left"
+      routerLink="/home"
+      class="back_button">
+        <ion-icon name="arrow-back"
+          class="back_arrow"></ion-icon>
+    </button>
+    <ion-title slot="center">{{itemName}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-
+    <ion-card>
+        <ion-card-header>
+          <b>Wikipedia Description</b>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-list *ngFor="let desc of descriptions">
+              <p>{{desc}}</p>
+              <br />
+            </ion-list>
+        </ion-card-content>
+      </ion-card>
+      <ion-card *ngIf="wikiMediaCategory">
+          <ion-card-content>
+          Category: {{wikiMediaCategory}}
+          </ion-card-content>
+        </ion-card>
 </ion-content>

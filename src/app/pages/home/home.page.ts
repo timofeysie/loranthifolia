@@ -15,7 +15,6 @@ export class HomePage {
     this.myDataService.loadWikiMedia('3');
     this.myDataService.myData.subscribe((data) => {
       this.list = data;
-      console.log(data);
     });
   }
 }

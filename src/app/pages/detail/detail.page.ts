@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { MyDataService } from '../../services/api/my-data.service';
 
 @Component({
   selector: 'detail',
@@ -8,12 +9,20 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class DetailPage implements OnInit {
   itemName: string;
+  descriptions:any = [];
+  wikiMediaCategory: string;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute,
+    private myDataService: MyDataService) { }
 
   ionViewWillEnter(){
     this.itemName = this.route.snapshot.paramMap.get('id');
-    console.log('itemName',this.itemName);
+    this.wikiMediaCategory = this.myDataService.getWikiMediaDescription(this.itemName);
+    this.myDataService.loadSingleWikiMediaPage(this.itemName).then((result) => {
+      this.descriptions = result;
+    }).catch((err) => {
+      console.log('will we get an error if the promise is not rejected or resolved');
+     });
   }
 
   ngOnInit() {

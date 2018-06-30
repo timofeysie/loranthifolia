@@ -13,9 +13,10 @@ import { forEach } from '@angular/router/src/utils/collection';
 export class MyDataService {
 
   public myData: BehaviorSubject<Category[]> = new BehaviorSubject<Category[]>([]);
- 
+  wikiMediaEntries: Map <string,string>;
+
   constructor(private storage: Storage, private http: Http) {
-    
+    this.wikiMediaEntries = new Map();
   }
 
   load(): void {
@@ -58,8 +59,9 @@ export class MyDataService {
       let title = this.parseTitle(one);
       const rows = one.getElementsByClassName("wikitable")[0].getElementsByTagName('tr');
       for (let i = 1; i < rows.length;i++) {
-        console.log(i+' - '+rows[i].getElementsByTagName('td')[0].innerText);
-        //console.log('rows',rows[i].getElementsByTagName('td')[1].innerText);
+        let name = rows[i].getElementsByTagName('td')[0].innerText;
+        let description = rows[i].getElementsByTagName('td')[1].innerText;
+        this.wikiMediaEntries.set(name,title);
       }
       //return res.json();
       }).subscribe (
@@ -72,6 +74,35 @@ export class MyDataService {
           console.log("loadAllPackages: always")
         }
     );
+  }
+
+  /**
+   * WIP.
+   * TODO: Catch and reject errors here.  Not sure if we want to use a promise here however.
+   * @param pageName 
+   */
+  loadSingleWikiMediaPage(pageName) {
+    return new Promise((resolve, reject) => {
+      let action = "action=parse";
+      let section = "section=0";
+      let prop = 'prop=text&format=json';
+      let subject = pageName.replace(/\s+/g, '_').toLowerCase();
+      let page = 'page='+subject;
+      const baseUrl = 'http://en.wikipedia.org/w/api.php';
+      let sectionUrl = baseUrl+'?'+action+'&'+section+'&'+prop+'&'+page;
+      this.http.get(sectionUrl)
+        .toPromise().then((res: any) => {
+          const parse = res.json();
+          const content = parse['parse']['text']['*'];
+          let one = this.createElementFromHTML(content);
+          const desc:any = one.getElementsByClassName('mw-parser-output')[0].children;
+          let descriptions: string [] = [];
+          for (let i = 0; i < desc.length;i++) {
+            descriptions.push(desc[i].innerText);
+          }
+          resolve(descriptions);
+        });
+    });
   }
 
   updateData(data): void {
@@ -101,8 +132,11 @@ export class MyDataService {
     if (bracket > 0) {
       title = title.substr(0,bracket);
     }
-    console.log('title',title);
     return title;
+  }
+
+  getWikiMediaDescription(name: string) {
+    return this.wikiMediaEntries.get(name);
   }
 
 }
