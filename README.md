@@ -2,7 +2,60 @@
 
 Using the latest alpha for Ionic 4, this project is to create a simple demo app to compare with a React Native app.  The app will parse WikiData and Wikipedia for a list of content and provide a master detail view of the results.
 
-## The Story So Far
+## Implementing Angular routing
+
+To go from a list of items to a detail page about the item we will use the standard master/detail pattern supported by the Angular router.
+
+We already have Routes and the RouterModule imported in our app.module.ts file.  I would imagine a blank starter would not have this included, but whatever.  We can now set up our paths in that file as shown in the [Josh Morony](https://www.joshmorony.com/implementing-a-master-detail-pattern-in-ionic-4-with-angular-routing/).
+
+In the past for previous version of Ionic, we used the simple push/pop style of routing.
+At that time, the Angular team was finding agreement on a router difficult, and they went through about three routers early on in the Angular 2 development phase.  Now that things have settled down, Ionic has finally made the right choice and supported the Angular router.  I wish they had done this years ago, but Ionic is a company with their own timeline.
+
+To start we will need a detail page to route to.  Using the [Ionic CLI generate command](https://ionicframework.com/docs/cli/generate/):
+```
+$ ionic generate page pages/detail
+> ng generate page pages/detail
+CREATE src/app/pages/detail/detail.module.ts (543 bytes)
+CREATE src/app/pages/detail/detail.page.scss (0 bytes)
+CREATE src/app/pages/detail/detail.page.html (133 bytes)
+CREATE src/app/pages/detail/detail.page.spec.ts (691 bytes)
+CREATE src/app/pages/detail/detail.page.ts (261 bytes)
+UPDATE src/app/app-routing.module.ts (541 bytes)
+[OK] Generated page!
+```
+
+The routing module will now contain this code:
+```
+const routes: Routes = [
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', loadChildren: './pages/home/home.module#HomePageModule' },
+  { path: 'detail', loadChildren: './pages/detail/detail.module#DetailPageModule' },
+];
+```
+
+We just have to add the /:id part to the detail path in order to send thru the item needed to show the details for.  This would then make the Routes detail entry look like this:
+```
+{ path: 'detail/:id, loadChildren ... etc }
+```
+
+Next, we can change the item to a link with the following code:
+```
+routerLink="/detail/{{ item.cognitive_biasLabel.value }}" 
+```
+
+Now the items will link to an about page.  To get the id from the url, we do something like this:
+```
+  constructor(private route: ActivatedRoute) { }
+  ionViewWillEnter(){
+    let itemId = this.route.snapshot.paramMap.get('id');
+  }
+```
+
+Since this is the name of the bias, we can use that for the heading of page.
+Next, we need a service to get single item, and a back button.
+
+
+## Starting the app and parsing WikiData and WikiMedia
 
 Using [this tut](https://mhartington.io/post/ionic-4-alpha-test/) as a starting point for an Ionic 4 alpha 7 app.
 ```
@@ -98,7 +151,19 @@ The above will still not give us a complete list.  What is the WikiMedia query t
 This returns a redirect message which asks that the caller use the page link redirected to.  The page value actually needs to have underscores now apparently.  This link:
 ```http://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&page=List_of_cognitive_biases```
 
-This will return the description.  What about the actual list?
+This will return the description.  
+
+A note on WikiMedia calls made from the Ionic app, you might get a message like this in the console:
+```
+my-data.service.ts:70 loadAllPackages: ERROR
+(anonymous) @ my-data.service.ts:70
+...
+home:1 Cross-Origin Read Blocking (CORB) blocked cross-origin response https://en.wikipedia.org/w/api.php?action=parse&section=2&prop=text&format=json&page=List_of_cognitive_biases with MIME type application/json. See https://www.chromestatus.com/feature/5629709824032768 for more details.
+```
+
+I have the Chrome CORS plugin installed that will allow me to get around this for development purposes.  It should run OK on a device because there is no origin for device apps.  We may have a problem with the https calls later, especially when we want to publish to the app stores, but not to worry about that now.  Turning on the CORS plugin makes the calls work.  On a side note, I had to turn this off to create the repo on GitHub, which would not allow me to choose a name for this repo while the plugin was on!
+
+NOW What about the actual list?
 
 What will section 1 look like?
 ```
@@ -121,15 +186,13 @@ What will section 1 look like?
         </tr>
 ```
 
-So now we are back in the 2000s parsing html for content.  Maybe it would be a better idea just to update WikiData with the content from Wikipedia?  Otherwise we will have to merge two lists, as well as filling in missing descriptions.
+So now we are back in the 2000s parsing html for content.  Maybe it would be a better idea just to update WikiData with the content from Wikipedia?  Otherwise we will have to merge two lists, as well as filling in missing descriptions.  The other categories are:
 
 Section 2: Social biases
 Section 3: Memory errors and biases
 Section 4: Common theoretical causes of some cognitive biases
 
-Now, how do we know programmatically the fact that the list is from section 1-3, and does not include section 4?
-
-We will have to go with the hard coded category for now until more is understood about WikiData and Wikipedia APIs.
+How do we know programmatically the fact that the list is from section 1-3, and does not include section 4 (that category is not part of the list any more)?  There must be a way to query the page to get the sections for the list itself.  We will have to go with the hard coded category for now until more is understood about WikiData and Wikipedia APIs.
 
 Now, there is only one wikitable class per section.  So we only need to create a DOM node out of that <table class=\"wikitable\"> tag, and then get the text of all it's children.  Each row contains a name and a description it two <td> tags.  We can then create objects that collect the category and merge all three lists. 
 
