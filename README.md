@@ -2,6 +2,67 @@
 
 Using the latest alpha for Ionic 4, this project is to create a simple demo app to compare with a React Native app.  The app will parse WikiData and Wikipedia for a list of content and provide a master detail view of the results.
 
+## To do
+
+When the app is offline, errors should be handled.
+This is what shows up currently in the console:
+```
+GET https://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=psychological_pricing 0 ()
+core.js:1521 ERROR Error: Uncaught (in promise): Response with status: 0  for URL: null
+    at resolvePromise (zone.js:814)
+    at resolvePromise (zone.js:771)
+```
+
+If the user refreshes the app somehow, they should be sent back to the list page.
+Really we need to be saving the previous data in local storage for offline use.  Probably the easiest way to do this is to make this app a PWA and use a service worker to do that.  But this might complicate the basic nature of a demo of the same functionality in both Ionic and React Native.
+
+
+## Fixing the tests
+
+Having automatically generated tests in Ionic as been a long time coming.  I have had to do much reading along with trial and error to set up tests for Ionic projects only to have them all broken after each major release.  In the past, without an official set up method, it took the efforts of some brave individuals to publish their methods.
+
+Anyhow, now, the CLI will generate tests for us.  I never ran the tests out of the box, but after one week of development, they are all broken.
+
+```
+$ npm test
+App@0.0.1 test /Users/tim/ionic4/myApp
+> ng test
+10% building modules 1/1 modules 0 active(node:80786) DeprecationWarning: Tapable.plugin is deprecated. Use new API on `.hooks` instead
+01 07 2018 11:02:38.805:WARN [karma]: No captured browser, open http://localhost:9876
+...
+Chrome 67.0.3396 (Mac OS X 10.10.5): Executed 2 of 5 SUCCESS (0 secs / 0.28 secs)
+Chrome 67.0.3396 (Mac OS X 10.10.5) DetailPage should create FAILED
+	Error: StaticInjectorError(DynamicTestModule)[DetailPage -> ActivatedRoute]: 
+	  StaticInjectorError(Platform: core)[DetailPage -> ActivatedRoute]: 
+	    NullInjectorError: No provider for ActivatedRoute!
+	    at NullInjector.get (webpack:///./node_modules/@angular/core/fesm5/core.js?:1208:19)
+	    ...
+	Expected undefined to be truthy.
+	    at UserContext.eval (webpack:///./src/app/pages/detail/detail.page.spec.ts?:22:27)
+	    ...
+Chrome 67.0.3396 (Mac OS X 10.10.5) DetailPage should create FAILED
+```
+
+Time to fix this and maybe even get back to the old eXtreme programming which these days is called BDD.
+
+StaticInjectorError has a lot of action on Google.  Hints for putting this in the app.module imports array ```RouterModule.forRoot([])``` don't help.
+"You have to at least provide a base route for your application" says Narm on Feb 28.
+
+We are also getting an error for http:
+```
+Chrome 67.0.3396 (Mac OS X 10.10.5) HomePage should create FAILED
+	Error: StaticInjectorError(DynamicTestModule)[Http]: 
+	  StaticInjectorError(Platform: core)[Http]: 
+	    NullInjectorError: No provider for Http!
+```
+
+Adding imports for HttpModule and HttpClientModule in all the modules doesn't help either.
+
+After running out of issues on a Google search, a reply to [this tut](https://www.joshmorony.com/converting-ionic-3-push-pop-navigation-to-angular-routing-in-ionic-4/) was made so that other things could be worked on besides hitting heads against a brick wall, or similar experiences after testing with Ionic in the past.
+
+Time now for the React Native version of this app!
+
+
 ## Implementing Angular routing
 
 To go from a list of items to a detail page about the item we will use the standard master/detail pattern supported by the Angular router.
