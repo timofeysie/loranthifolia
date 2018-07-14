@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Storage } from '@ionic/storage';
+//import { Storage } from '@ionic/storage';
 import { Category } from '../../interfaces/category';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
+import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import * as wdk from 'wikidata-sdk';
 import 'rxjs/add/operator/map';
 import { forEach } from '@angular/router/src/utils/collection';
@@ -15,7 +17,10 @@ export class MyDataService {
   public myData: BehaviorSubject<Category[]> = new BehaviorSubject<Category[]>([]);
   wikiMediaEntries: Map <string,string>;
 
-  constructor(private storage: Storage, private http: Http) {
+  /**
+   * private storage: Storage, 
+   */
+  constructor(private http: Http) {
     this.wikiMediaEntries = new Map();
   }
 
@@ -44,36 +49,79 @@ export class MyDataService {
       );
   }  
   
-  /** WIP */
-  loadWikiMedia(sectionNum): void {
-    let action = 'action=parse';
-    let section = 'section='+sectionNum;
-    let prop = 'prop=text&format=json';
-    let page = 'page=List_of_cognitive_biases';
-    const baseUrl = 'http://en.wikipedia.org/w/api.php';
-    let sectionUrl = baseUrl+'?'+action+'&'+section+'&'+prop+'&'+page;
-    this.http.get(sectionUrl).map((res: any) => {
-      const parse = res.json();
-      const content = parse['parse']['text']['*'];
-      let one = this.createElementFromHTML(content);
-      let title = this.parseTitle(one);
-      const rows = one.getElementsByClassName("wikitable")[0].getElementsByTagName('tr');
-      for (let i = 1; i < rows.length;i++) {
-        let name = rows[i].getElementsByTagName('td')[0].innerText;
-        let description = rows[i].getElementsByTagName('td')[1].innerText;
-        this.wikiMediaEntries.set(name,title);
+  /** WIP
+   * 
+   * After the res.json() call, we get:
+   {
+    parse: {
+      pageid:510791
+      text: {
+        *:"<div class="mw-parser-output">
+          <h2>
+            <span class="mw-headline" id="Social_biases">Social biases</span>
+            <span class="mw-editsection">
+              <span class="mw-editsection-bracket">[</span>
+              <a href="/w/index.php?title=List_of_cognitive_biases&amp;action=edit&amp;section=1" 
+                title="Edit section: Social biases">edit</a>
+              <span class="mw-editsection-bracket">]</span>
+            </span>
+          </h2>↵
+          <p>Most of these biases are labeled as 
+            <a href="/wiki/Attribution_bias" title="Attribution bias">attributional biases</a>.↵
+          </p>↵
+          <table class="wikitable">↵↵
+          <tbody>
+            <tr>↵
+              <th scope="col" style="width:25%;">Name↵</th>↵
+              <th scope="col" style="width:75%;">Description↵</th>
+            </tr>↵
+            <tr>↵
+              <td><a href="/wiki/Actor-observer_bias" class="mw-redirect" title="Actor-observer bias">Actor-observer bias</a>↵</td>↵
+              <td>The tendency for explanations of other individuals' behaviors to overemphasize the influence of their personality and underemphasize the influence of their situation (see also <a href="/wiki/Fundamental_attribution_error" title="Fundamental attribution error">Fundamental attribution error</a>), and for explanations of one's own behaviors to do the opposite (that is, to overemphasize the influence of our situation and underemphasize the influence of our own personality).↵</td></tr>↵<tr>↵<td><a href="/wiki/Authority_bias" title="Authority bias">Authority bias</a>↵</td>↵<td>The tendency to attribute greater accuracy to the opinion of an authority figure (unrelated to its content) and be more influenced by that opinion.<sup id="cite_ref-1" class="reference"><a href="#cite_note-1">&#91;1&#93;</a></sup>↵</td></tr>↵<tr>↵<td><a href="/wiki/Defensive_attribution_hypothesis" title="Defensive attribution hypothesis">Defensive attribution hypothesis</a>↵</td>↵<td>Attributing more blame to a harm-doer as the outcome becomes more severe or as personal or situational <a href="/wiki/Similarity_(psychology)#Social_psychological_approaches" title="Similarity (psychology)">similarity</a> to the victim increases.↵</td></tr>↵<tr>↵<td><a href="/wiki/Egocentric_bias" title="Egocentric bias">Egocentric bias</a>↵</td>↵<td>Occurs when people claim more responsibility for themselves for the results of a joint action than an outside observer would credit them with.↵</td>
+            </tr>↵
+            <tr>↵
+              <td><a href="/wiki/Extrinsic_incentives_bias" title="Extrinsic incentives bias">Extrinsic incentives bias</a>↵</td>↵
+              <td>An exception to the <i>fundamental attribution error</i>, when people view others as having (situational) extrinsic motivations and (dispositional) intrinsic motivations for oneself↵</td>
+            </tr>↵
+        ↵</div>"
       }
-      //return res.json();
-      }).subscribe (
-        (data: any) => {
-          //console.log('DATA',data);
-          //this.myData.next(data.results.bindings);
-        },
-        (err: any) => console.error("loadAllPackages: ERROR"),
-        () => {
-          console.log("loadAllPackages: always")
+      title:"List of cognitive biases"
+    }
+  }
+   */
+  loadWikiMedia(sectionNum) {
+    console.log('called');
+      let action = 'action=parse';
+      let section = 'section='+sectionNum;
+      let prop = 'prop=text&format=json';
+      let page = 'page=List_of_cognitive_biases';
+      const baseUrl = 'http://en.wikipedia.org/w/api.php';
+      let sectionUrl = baseUrl+'?'+action+'&'+section+'&'+prop+'&'+page;
+      this.http.get( sectionUrl).map((res: any) => {
+        const parse = res.json();
+        console.log(sectionNum+' parse',parse);
+        const content = parse['parse']['text']['*'];
+        console.log('content',content);
+        let one = this.createElementFromHTML(content);
+        let title = this.parseTitle(one);
+        const rows = one.getElementsByClassName("wikitable")[0].getElementsByTagName('tr');
+        for (let i = 1; i < rows.length;i++) {
+          let name = rows[i].getElementsByTagName('td')[0].innerText;
+          let description = rows[i].getElementsByTagName('td')[1].innerText;
+          this.wikiMediaEntries.set(name,title);
         }
-    );
+        console.log(sectionNum+'wikiMediaEntries',this.wikiMediaEntries);
+        return this.wikiMediaEntries
+    }).subscribe (
+      (data: any) => {
+        console.log(sectionNum+'wikiMediaEntries.data',data)
+        this.myData.next(data.results.bindings);
+      },
+      (err: any) => console.error("loadAllPackages: ERROR"),
+      () => {
+        console.log("loadAllPackages: always")
+      }
+  );
   }
 
   /**
@@ -106,7 +154,7 @@ export class MyDataService {
   }
 
   updateData(data): void {
-      this.storage.set('myData', data);
+      //this.storage.set('myData', data);
       this.myData.next(data);
   }
 

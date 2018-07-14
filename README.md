@@ -2,6 +2,16 @@
 
 Using the latest alpha for Ionic 4, this project is to create a simple demo app to compare with a React Native app.  The app will parse WikiData and Wikipedia for a list of content and provide a master detail view of the results.
 
+
+## Table of Contents
+
+### [To do](To-do)
+### [Fixing the tests](fixing-the-tests)
+### [Implementing Angular routing](Implementing-Angular-routing)
+### [Starting the app and parsing WikiData and WikiMedia](Starting-the-app-and-parsing-WikiData-and-WikiMedia)
+
+
+
 ## To do
 
 When the app is offline, errors should be handled.
@@ -131,9 +141,12 @@ ionic generate service services/api/data_service
 
 Filled in the interface like [this](https://hackernoon.com/creating-interfaces-for-angular-services-1bb41fbbe47c) with the properties we want from an expected result.
 
-In stalled the [WikiData SDK](https://github.com/maxlath/wikidata-sdk) to create the url for a SPARQL query.
+Installed the [WikiData SDK](https://github.com/maxlath/wikidata-sdk):
+```
+npm install wikidata-sdk --save
+```
 
-Here is the current query to get a list of cognitive bias.
+Created a url for a SPARQL query.  Here is the current query to get a list of cognitive bias.
 ```
 SELECT ?item ?itemLabel 
 WHERE 
