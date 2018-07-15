@@ -11,6 +11,100 @@ Using the latest alpha for Ionic 4, this project is to create a simple demo app 
 ### [Starting the app and parsing WikiData and WikiMedia](Starting-the-app-and-parsing-WikiData-and-WikiMedia)
 
 
+## Testing on Android
+
+With problems on-going in the [React Native version of this app](), trying out Android here so that we can actually use the app on a device.  The React Native version has to have the server running on local wifi for it to work.  Once this connection is lost, the app stops working.  There may be a way around this, but haven't found it yet.
+
+So, starting with ```$ ionic cordova platform add android``` at 10:35, it's not 10:50 and the terminal is still churning away:
+```
+Saving android@~6.2.3 into config.xml file ...
+> ionic cordova resources android --force
+✔ Collecting resource configuration and source images - done!
+✔ Filtering out image resources that do not need regeneration - done!
+✔ Uploading source images to prepare for transformations: 2 / 2 complete - done!
+⠏ Generating platform resources: 14 / 18 complete 
+```
+
+That hasn't changed for five minutes.  This may not work with the current alpha version.  Considering updating to the latest alpha.  The project was started with apla 7, but as of four days ago we could use 8...
+
+Then I remembered my nvm woes and used Node version 8.  The plaform was added quickly without issue after that.  
+
+Upon testing the curator lib however, other issues emerged:
+```
+Failed to compile.
+./node_modules/cheerio/node_modules/htmlparser2/lib/WritableStream.js
+Module not found: Error: Can't resolve 'stream' in '/Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/node_modules/cheerio/node_modules/htmlparser2/lib'
+```
+
+Googling ```cheerio Can't resolve 'stream' in htmlparser2/lib'```.
+Adding ```stackoverflow``` at the start due to too many GitHub issues discussions in the results.
+
+[This first answer](https://stackoverflow.com/questions/18119201/parse-broken-html-code-using-nodejs-cheerio) talks about the issue:
+*cheerio is built around htmlparser2, which is supposed to be "forgiving". If it doesn't parse your page, and I know this is against conventional wisdom, I would parse using regular expressions. This is assuming the page structure won't change much, and it's only that one page you are trying to parse.*
+
+Due to the number and variety of preambles and markup within the html response body, this is a more time consuming and brittle approach for us.  However, the answer is from 2013.  Sooo, have to keep looking here.  But that's the ONLY StackOverflow answer.  Things are not looking so good ofr Ionic now either.
+
+Since it [could be an npm issue](https://github.com/ionic-team/ionic-cli/issues/813), trying ```npm i stream --save```
+
+After that the error is:
+```
+inherits_browser.js:5 Uncaught TypeError: Cannot read property 'prototype' of undefined
+    at inherits (inherits_browser.js:5)
+    at Object../node_modules/cheerio/node_modules/parse5/lib/parser/parser_stream.js (parser_stream.js:27)
+```
+
+```npm i parse5 --save```:
+```
+Uncaught TypeError: Cannot read property 'prototype' of undefined
+    at inherits (inherits_browser.js:5)
+    at Object../node_modules/cheerio/node_modules/parse5/lib/parser/parser_stream.js (parser_stream.js:27)
+```
+In both cases, if you do not try and use the ```curator.parseSingleWikiMediaPage(result)``` function, the app works as normal.  To do a little more testing, weill build for an Android device now.  With hybrid apps, you never actually know that an app will work until it works on devices.  That's one point for React Native that forces you to use devices to develope apps.
+
+Trying the build for android then causes the following error:
+```
+(node:15160) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+```
+
+Install gradle via brew, then we get our next problem:
+```
+WARNING: The specified Android SDK Build Tools version (26.0.1) is ignored, as it is below the minimum supported version (26.0.2) for Android Gradle Plugin 3.0.0.
+Android SDK Build Tools 26.0.2 will be used.
+To suppress this warning, remove "buildToolsVersion '26.0.1'" from your build.gradle file, as each version of the Android Gradle Plugin now has a default version of the build tools.
+Checking the license for package Android SDK Build-Tools 26.0.2 in /Users/tim/Library/Android/sdk/licenses
+Warning: License for package Android SDK Build-Tools 26.0.2 not accepted.
+FAILURE: Build failed with an exception.
+* What went wrong:
+A problem occurred configuring project ':CordovaLib'.
+> You have not accepted the license agreements of the following SDK components:
+  [Android SDK Build-Tools 26.0.2].
+  Before building your project, you need to accept the license agreements and complete the installation of the missing components using the Android Studio SDK Manager.
+  Alternatively, to learn how to transfer the license agreements from one workstation to another, go to http://d.android.com/r/studio-ui/export-licenses.html
+* Try:
+Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output.
+* Get more help at https://help.gradle.org
+BUILD FAILED in 4m 27s
+```
+
+Been here before.  What project was that solved for?  A quick Google might be faster that digging through old notes.  This [duplicate answer](https://stackoverflow.com/questions/39760172/you-have-not-accepted-the-license-agreements-of-the-following-sdk-components) recommends the following way to accept licenses:
+```
+~/Library/Android/sdk/tools/bin/sdkmanager --licenses
+```
+
+There were at least five that needed to be accepted.  Then running the build again: ```ionic cordova build android```.
+
+However, after installing on a device, we get a white screen.  Not optimal.  The app works using ```ionic serve```.  There is this in the console:
+```
+ERROR TypeError: Cannot read property 'bindings' of undefined
+    at SafeSubscriber._next (my-data.service.ts:119)
+    at SafeSubscriber.push../node_modules/rxjs/_esm5/internal/Subscriber.js.SafeSubscriber.__tryOrUnsub (Subscriber.js:195)
+    at SafeSubscriber.push../node_modules/rxjs/_esm5/internal/Subscriber.js.SafeSubscriber.next (Subscriber.js:133)
+```
+
+However, that's not a show stopper.  It's possible we need to white list https calls in the manifest.  Wont know until we get the device hooked up to remote debugging in Chrome.  Actually, the cable I have is bent.  It works for charging but the developer mode is certainly enabled and USB debugging is definitely turned on.
+
+Have to buy a new one on th'morrow since it's Sunday night.
+
 
 ## To do
 

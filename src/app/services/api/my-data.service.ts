@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import * as wdk from 'wikidata-sdk';
 import 'rxjs/add/operator/map';
 import { forEach } from '@angular/router/src/utils/collection';
+import * as curator from 'art-curator';
 
 @Injectable({
   providedIn: 'root'
@@ -141,6 +142,7 @@ export class MyDataService {
       this.http.get(sectionUrl)
         .toPromise().then((res: any) => {
           const parse = res.json();
+          //console.log('curator',curator.parseSingleWikiMediaPage(parse));
           const content = parse['parse']['text']['*'];
           let one = this.createElementFromHTML(content);
           const desc:any = one.getElementsByClassName('mw-parser-output')[0].children;
