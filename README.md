@@ -5,10 +5,155 @@ Using the latest alpha for Ionic 4, this project is to create a simple demo app 
 
 ## Table of Contents
 
-### [To do](To-do)
+### Using Capacitor [Using Capacitor](Using-Capacitor) 
+### Testing on Android [Testing on Android](Testing-on-Android)
 ### [Fixing the tests](fixing-the-tests)
 ### [Implementing Angular routing](Implementing-Angular-routing)
 ### [Starting the app and parsing WikiData and WikiMedia](Starting-the-app-and-parsing-WikiData-and-WikiMedia)
+
+
+
+## Using Capacitor
+
+Giving this a try:
+```
+npm install --save @capacitor/core @capacitor/cli
+...
++ @capacitor/cli@1.0.0-beta.1
++ @capacitor/core@1.0.0-beta.1
+```
+
+So it is in beta after all.  This will install the default native platforms.
+```
+npx cap init
+npx cap add android
+ionic build
+```
+
+Next, running ```npx cap open```, we are given these options:
+```
+? Please choose a platform to open: (Use arrow keys)
+❯ android 
+  electron 
+  ios 
+  web 
+```
+
+Choosing android and all we get is this:
+```
+[info] Opening Android project at /Users/tim/angular/ionic/i4/myVanillaApp/android
+$
+```
+
+Not the opening of the app in a similator as would be expected.  Just a ready prompt.  Then, suddenly, Android Studio pops up.  Trying to run the project there shows the familiar error in the wizard: ```Error: Gradle project sync failed.  Please fix your project and try again.```
+
+The reason this is familiar is because I struggled with this at work with building the Android version of an Ionic 3 app.  It was some kind of Android platform/Gradle version mismatch.
+
+If 'run anyway' is chosen, we get the 'Gradle project sync failed' message.  Actually, haven't used Android Studio on this laptop for quite a while.  And I'm in the car again so it's not going to get fixed now.
+
+There is this message:
+```
+Error:Unknown host 'dl.google.com: nodename nor servname provided, or not known'. You may need to adjust the proxy settings in Gradle.
+<a href="toggle.offline.mode">Enable Gradle 'offline mode' and sync project</a><br><a href="https://docs.gradle.org/current/userguide/userguide_single.html#sec:accessing_the_web_via_a_proxy">Learn about configuring HTTP proxies in Gradle</a>
+```
+
+Will have to look at [that link](https://docs.gradle.org/current/userguide/userguide_single.html#sec:accessing_the_web_via_a_proxy) later.  Time to catch up on reading the latest Web Design Weekly (on the phone that is)!
+
+We should check the current installation.  Required is:
+```
+Android SDK Tools 26.0.1 or greater.
+Android SDK Platforms for API 21.
+```
+
+This machine goes as high as marshmallow (Android 6.0) a.k.a. API level 23.  28 is available now.
+As of 27, the name and the API level are the same.  The Android test device is a Galaxy S8 which is on Android 8.0.0.  So we should get up to 8 which is 26.
+
+Installed is Android Studio 2.2.3.  A new Android Studio 3.1.3 is available.  Install and restart.
+See how Gradle likes that.  The notes for Android say:
+*Currently to use an Android Emulator you must use a system image of at least Android version 7.0 on API 24.*
+
+We should be OK with that now.  I'm missing Ionic's ability to create the apk file for us already.  We will have to use Android Studio to build that now.
+
+
+After the upgrade, the IDE reported an error:
+```
+/var/folders/jn/xzs5tlvd2wb3dccpknvkxczh0000gn/T/PackageOperation04/patch.jar (No such file or directory)
+```
+
+Another error that showed up:
+*Unregistered VCS root detected.  THe directory /myVanillaApp is under Git, but is not registered in the Settings.*  How about a little [convention over configuration](https://en.wikipedia.org/wiki/Convention_over_configuration) guys!
+
+Another error hidden at the bottom of the screen says *Failed to find target with hash string 'android-27' in: /Users/tim/Library/Android/sdk*
+*Install missing platform(s) and sync project*
+
+Clicking on that installed the following:
+```
+
+To install:
+- Android SDK Platform 27 (platforms;android-27)
+Preparing "Install Android SDK Platform 27 (revision: 3)".
+Downloading https://dl.google.com/android/repository/platform-27_r03.zip
+"Install Android SDK Platform 27 (revision: 3)" ready.
+Installing Android SDK Platform 27 in /Users/tim/Library/Android/sdk/platforms/android-27
+"Install Android SDK Platform 27 (revision: 3)" complete.
+"Install Android SDK Platform 27 (revision: 3)" finished.
+```
+
+After upgrading, checking for updates and installing everything that should have been needed, I'm thinking that Android Studio must have missed that stuff.
+
+Still there is a tiny message at the bottom of the IDE that still says *Gradle sync failed: Failed to find Build Tools revision 27.03.*  That is on the list there of what was just installed.  Maybe a re-start is needed?
+
+I remember the old days of using Eclipse to build Android projects.  Don't miss that at all.  One of the great thing about becoming a front end developer was the escape from bloated IDEs like that.  Here we are back in the bloat again.  It took over a minute for Android Studio to start.
+
+The suspense is on.  *Gradle sync started*.  Holding the breath. *Gradle sync started (a minute ago)*.  Then the bad news: *Gradle sync failed: Failed to find Build Tools revision 27.03.*
+
+Had to install that exact build tool.  Then run the build again.  Gradle build running... calculating task graph.  This took about a minute.  Finally the build finishes.  Choosing build/build apk(s) appears to do nothing.  Reading a StackOverflow question about this says *It will then create that folder and you will find your APK file there. When Gradle builds your project, it puts all APKs in build/apk directory.*
+
+android/app/build/outputs/apk/debug directory.  No more platforms directory.  Anyhow, the good news is, the built apk runs on the device!  No more white screen of death!.  Time to go back to the Ionic 4 app and add capacitor to that and see if we can build it that way.
+
+Had to give the app a better name when Capacitor creates the android project.  Chose loranthifolia and com.curchod.loranthifolia for the package name.
+
+And the app runs!  No more white screen.  The errors in the console:
+```
+polyfills.js:5291 Mixed Content: The page at 'https://4146a373-d535-43f0-a02b-c0c2044b9612capacitorapp.net/detail/magical%20thinking' was loaded over HTTPS, but requested an insecure XMLHttpRequest endpoint 'http://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=magical_thinking'. This request has been blocked; the content must be served over HTTPS.
+capacitor-runtime.js:70 ERROR Error: Uncaught (in promise): Response with status: 0  for URL: null
+    at resolvePromise (polyfills.js:3136)
+    at resolvePromise (polyfills.js:3093)
+    at polyfills.js:3195
+```
+
+I thought that was a http call?  Http works in the browser.  Is that the only change needed for the details page to work?
+
+Isn't this the same error we got when starting the app and figuring out now to make our WikiData API calls.  Here were our notes the: *you might get a message like this in the console*
+```
+my-data.service.ts:70 loadAllPackages: ERROR
+(anonymous) @ my-data.service.ts:70
+...
+home:1 Cross-Origin Read Blocking (CORB) blocked cross-origin response https://en.wikipedia.org/w/api.php?action=parse&section=2&prop=text&format=json&page=List_of_cognitive_biases with MIME type application/json. See https://www.chromestatus.com/feature/5629709824032768 for more details.
+```
+
+We fixed that on our dev server with the Chrome CORS plugin.   That is not an option on a device.  We could ask Wikipedia to allow all hosts.  No, you're right, just kidding.  
+
+Would a proxy work? We could set up a proxy in ionic.config.js.  We could also run a NodeJS server to handle the API calls, use the curator lib to parse the results and just return those to the app.  But it would be great not to have to maintain a server for this project, especially if it turns out to be useful and goes in the app stores.
+
+What other options are there?  The mixed content error would happen if you go to an https link in a browser and the page you see contains an image invoked via <img src="http://external.com/resource.jpg"> in the HTML.  Since the error message also mentions Capacitor, [this GitHub issue](https://github.com/ionic-team/capacitor/issues/630) might be helpful:
+*Capacitor uses https to serve the files and you are trying to get the data from a http url, that throws a mixed content error (to see it open this url in chrome and pick the Capacitor app chrome://inspect/#devices)  To enable mixed content you can add "allowMixedContent": true in your capacitor.config.json file.*
+
+Since the WikiData calls are successful, this might be all we need.  However, it doesn't seem to work.  Even using ```ionic serve``` with the CORS plugin on, we are getting this message: ```Origin 'null' is therefore not allowed access.```.  Actually, the plugin looked like it was on, but when opening the plugin options, it showed off.  When on the details page content loads.  So now, what else can we try before busting out a NodeJS backend?
+
+You can pass the "withcredentials"parameter as true in your request string.  Like this:
+```
+ var headers = new Headers();
+    headers.append('Access-Control-Allow-Origin' , '*');
+    headers.append('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT');
+    headers.append('Accept','application/json');
+    headers.append('content-type','application/json');
+    let options = new RequestOptions({ headers:headers,withCredentials: true});
+return this.http.get(this.url, postParams, options). etc...
+}
+```
+
+Try that out later.
 
 
 ## Testing on Android
@@ -27,7 +172,7 @@ Saving android@~6.2.3 into config.xml file ...
 
 That hasn't changed for five minutes.  This may not work with the current alpha version.  Considering updating to the latest alpha.  The project was started with apla 7, but as of four days ago we could use 8...
 
-Then I remembered my nvm woes and used Node version 8.  The plaform was added quickly without issue after that.  
+Then I remembered my nvm woes and used Node version 8.  The platform was added quickly without issue after that.  
 
 Upon testing the curator lib however, other issues emerged:
 ```
@@ -105,20 +250,87 @@ However, that's not a show stopper.  It's possible we need to white list https c
 
 Have to buy a new one on th'morrow since it's Sunday night.
 
-
-## To do
-
-When the app is offline, errors should be handled.
-This is what shows up currently in the console:
+After borrowing the cable from the car a day later, these are the errors that show up in the remote debugging console:
 ```
-GET https://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=psychological_pricing 0 ()
-core.js:1521 ERROR Error: Uncaught (in promise): Response with status: 0  for URL: null
-    at resolvePromise (zone.js:814)
-    at resolvePromise (zone.js:771)
+runtime.js:1 Failed to load resource: net::ERR_FILE_NOT_FOUND
+styles.js:1 Failed to load resource: net::ERR_FILE_NOT_FOUND
+polyfills.js:1 Failed to load resource: net::ERR_FILE_NOT_FOUND
+cordova.js:1 Failed to load resource: net::ERR_FILE_NOT_FOUND
+main.js:1 Failed to load resource: net::ERR_FILE_NOT_FOUND
+vendor.js:1 Failed to load resource: net::ERR_FILE_NOT_FOUND
+/assets/icon/favicon.png:1 Failed to load resource: net::ERR_FILE_NOT_FOUND
 ```
 
-If the user refreshes the app somehow, they should be sent back to the list page.
-Really we need to be saving the previous data in local storage for offline use.  Probably the easiest way to do this is to make this app a PWA and use a service worker to do that.  But this might complicate the basic nature of a demo of the same functionality in both Ionic and React Native.
+Starting off by getting the latest alpha release:
+```
+sudo npm i -g ionic@rc
+```
+
+```sudo``` is required on a mac when using the global flag.  And since hybrid development includes Apple distribution, a mac is required for full hybrid word, just fyi.  The result is:
+```
++ ionic@4.0.0-rc.11
+added 32 packages from 49 contributors and updated 9 packages in 24.417s
+```
+
+RC 11 now.  Let's see if that solves the issue on the device with ```ionic cordova build android``` and after a few minutes the it has built the following apk in ```loranthifolia/platforms/android/app/build/outputs/apk/debug/app-debug.apk```.
+
+Transferring the file to the device with the usual Android File Transfer mac desktop app.  Have to allow this on the device before the file system will show up.  Throw the apk file into the downloads directory.  Open the directory with the Samsung MyFiles app.  Have to allow installation of unknown apps by checking the ```Allow from this source``` toggle.  Then install and see the new message: ```Blocked by Play Protect```.  Have to choose ```Install Anyway```.   Then open the app and we still have a blank screen.  Back to the Chrome remote device debugging console to re-check the errors (accessed via the 'more tools' menu.  Choose the device and the 'Ionic App
+Inspect file:///android_asset/www/index.html` option.  Errors are the same.
+
+There is [an issue](https://github.com/ionic-team/ionic-cli/issues/3019) on the Ionic GitHub which mentions the ```net::ERR_FILE_NOT_FOUND``` errors.
+
+*make sure you have the latest Web View beta installed:*
+```
+ionic cordova plugin add cordova-plugin-ionic-webview@beta
+```
+
+The person opening the issue mentions that this *resolved for me the issue with the blank screen*.  I'm offline right now (in the car) so will have to try that at the next hot spot.
+
+So, that didn't help.  We still got the white screen.  Since we never tested an Ionic 4 app on a device yet, it's time to create a vanilla project and try to deploy that.  We are also at the stage where we will do that with React, and import the curator lib to see if then the new version without Cheerio will work.
+
+```
+npm install -g ionic@rc
+...
+ionic@4.0.0-rc.11 
+```
+
+At release candidate 11 now.  We must be close to a beta release!
+
+```
+ionic start myVanillaApp blank --type=angular
+```
+
+On serve, the following happens:
+```
+[ng] This usually happens because your environment has changed since running `npm install`.
+[ng] Run `npm rebuild node-sass` to download the binding for your current environment.
+```
+
+After that command, things work.  Next, add android:
+```
+ionic cordova platform add android
+```
+
+It seems to be stuck at ```Generating platform resources``` again. What did we do to resolve that last time?  Used nvm?
+
+Probably we should be using [Capacitor](https://capacitor.ionicframework.com/) now, no?  Where is that project at?  Is it in beta yet?  If so, definitely.  But first, lets go with a good old Cordova build.
+```
+ionic cordova build android
+```
+
+Despite killing the platform add before, the build reports success.  So, on with the show.  Will we get the white screen of death?
+
+Well, it didn't work.  White screen.  So, how about giving Capacitor a try now?  Oh no, the unfamiliar waters!  Actually I've used it before a while ago.
+
+On the getting started page it says:
+```
+make sure you update CocoaPods using pod repo update before starting a new project, if you plan on building for iOS using a Mac.
+```
+
+Since we already created a project, do we need to create a project again with Capacitor this time?  Or do we listen to this: ```Capacitor was designed to drop-in to any existing modern JS web app.```?
+
+Will give that a try next.
+
 
 
 ## Fixing the tests
