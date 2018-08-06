@@ -3,19 +3,110 @@
 Using the latest alpha for Ionic 4, this project is to create a simple demo app to compare with a React Native app.  The app will parse WikiData and Wikipedia for a list of content and provide a master detail view of the results.
 
 
+## Work flow
+
+To run the app in development, use ```ionic serve```.
+
+To test on a device, with [Capacitor](https://capacitor.ionicframework.com/), the workflow is:
+```
+ionic build
+npx cap copy
+npx cap open
+```
+
+This will ask you what kind of project you want to work with, for example, Android.  You could also choose iOS, Electron, or a PWA.  This will open the appropriate IDE such as Android Studio or Xcode after returning you to the prompt.  You can then build and deploy the project from there.
+
+To add a plugin and update dependencies:
+```
+npm install totally-cool-plugin-baby
+npx cap update
+```
+
+#
+
 ## Table of Contents
 
-### Using Capacitor [Using Capacitor](Using-Capacitor) 
-### Testing on Android [Testing on Android](Testing-on-Android)
+### [Using Capacitor](Using-Capacitor) 
+### [Blocked Requests](Blocked-Requests)
+### [Testing on Android](Testing-on-Android)
 ### [Fixing the tests](fixing-the-tests)
 ### [Implementing Angular routing](Implementing-Angular-routing)
 ### [Starting the app and parsing WikiData and WikiMedia](Starting-the-app-and-parsing-WikiData-and-WikiMedia)
 
+#
+
+## Ionic 4 Beta and using the Conchifolia server
+
+Since the [Ionic 4 beta announcement](https://blog.ionicframework.com/announcing-ionic-4-beta/) we have wanted to get back to this project and bring it up to the same level that the Conchifolia NodeJS server/Angular 6 client is at.  Namely this is using the server to get the WikiMedia lists that are blocked by CORS restrictions on Android (the *No Access-Control-Allow-Origin header* problem), and merge them with the Wiki Data list.  Then we will be in a good spot to introduce local storage to then add item state and settings to the app.
+
+Following the [new installation docs](https://beta.ionicframework.com/docs/installation/cli)
+```
+$ sudo npm install -g ionic@latest
+Password:
+npm WARN deprecated socks@1.1.10: If using 2.x branch, please upgrade to at least 2.1.6 to avoid a serious bug with socket data flow and an import issue introduced in 2.1.0
+/Users/tim/.nvm/versions/node/v9.11.2/bin/ionic -> /Users/tim/.nvm/versions/node/v9.11.2/lib/node_modules/ionic/bin/ionic
++ ionic@4.0.3
+```
+
+Then, running ```ionic serve```, we get this frequent error:
+```
+[ng] ERROR in ./src/app/pages/detail/detail.page.scss
+[ng] Module build failed: Error: Missing binding /Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/node_modules/node-sass/vendor/darwin-x64-59/binding.node
+[ng] Node Sass could not find a binding for your current environment: OS X 64-bit with Node.js 9.x
+[ng] Found bindings for the following environments:
+[ng]   - OS X 64-bit with Node.js 6.x
+[ng]   - OS X 64-bit with Node.js 8.x
+[ng] This usually happens because your environment has changed since running `npm install`.
+[ng] Run `npm rebuild node-sass --force` to build the binding for your current environment.
+```
+
+That's pretty normal.  So after running that command, we are all good and the app serves showing the state we left it before creating the pure Angular site.  It's a list of the WikiData API call results.  Going to a detail page causes a *No 'Access-Control-Allow-Origin' header* error.
+
+This error seems like it might be able to be fixed in the client (using openSSL for example), but the usual way is to get the server to allow the host access.  Since we control the server now [with this project](https://github.com/timofeysie/conchifolia), we can allow any host doing something like this:
+```
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin'
+```
+
+But, the error is just shorter now:
+```
+Failed to load http://radiant-springs-38893.herokuapp.com/api/detail/Social%20perception: Request header field Access-Control-Allow-Origin is not allowed by Access-Control-Allow-Headers in preflight response.
+```
+
+Oh, I think we need to put that in the response on the actual call, not in the ```use``` function.  We have done that before on the Serene Brushlands project, so we can just copy and paste it from there:
+```
+app.get('/get-artwork/:id', function (req, res) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	res.setHeader('Content-Type', 'application/json');
+```
+
+But taking the CORS out of the use section and putting it in the API response header causes the longer error again:
+```
+Failed to load http://radiant-springs-38893.herokuapp.com/api/detail/Social%20perception: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'http://localhost:8100' is therefore not allowed 
+```
+
+We can always turn on the CORS plugin in Chrome to avoid this, so it's time to see if this still happens on the device.
+
+On the device the error is the same, except for localhost, it's:
+```
+Origin 'https://8db0f5df-b5ea-44b5-8cf6-a13d5af3ecc2capacitorapp.net' is therefore not allowed access.
+```
+
+That's Capacitor's deal, but the result is the same - no details.
+
+Anyhow, after reading more questions and answers about CORS, it became clear that it's the preflight request that needs to be handled on the server, not the headers for the API request.  So doing something [like this](https://gist.github.com/nilcolor/816580) in the detail API call sounds like a good idea.  But both of these options:
+```
+headers["Access-Control-Allow-Origin"] = req.headers.origin;
+headers["Access-Control-Allow-Origin"] = "*";
+```
+
+Produce the same error.
 
 
 ## Using Capacitor
 
-Giving this a try:
+After the problems with the build from the blocked requests section, we are giving this a try:
 ```
 npm install --save @capacitor/core @capacitor/cli
 ...
@@ -109,11 +200,18 @@ The suspense is on.  *Gradle sync started*.  Holding the breath. *Gradle sync st
 
 Had to install that exact build tool.  Then run the build again.  Gradle build running... calculating task graph.  This took about a minute.  Finally the build finishes.  Choosing build/build apk(s) appears to do nothing.  Reading a StackOverflow question about this says *It will then create that folder and you will find your APK file there. When Gradle builds your project, it puts all APKs in build/apk directory.*
 
+Another popup declares: *To take advantage of all the latest features (such as Instant Run), improvements and security fixes, we strongly recommend that you update the Android Gradle plugin to version 3.1.3 and Gradle to version 4.4.*.  Now that Gradle is actually syncing, would rather not mess with that now.
+
 android/app/build/outputs/apk/debug directory.  No more platforms directory.  Anyhow, the good news is, the built apk runs on the device!  No more white screen of death!.  Time to go back to the Ionic 4 app and add capacitor to that and see if we can build it that way.
 
 Had to give the app a better name when Capacitor creates the android project.  Chose loranthifolia and com.curchod.loranthifolia for the package name.
 
-And the app runs!  No more white screen.  The errors in the console:
+And the app runs!  No more white screen.  
+
+
+## Blocked Requests
+
+After getting Capacitor working, the app loads on the Android device, but there errors in the console when going to the details page:
 ```
 polyfills.js:5291 Mixed Content: The page at 'https://4146a373-d535-43f0-a02b-c0c2044b9612capacitorapp.net/detail/magical%20thinking' was loaded over HTTPS, but requested an insecure XMLHttpRequest endpoint 'http://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=magical_thinking'. This request has been blocked; the content must be served over HTTPS.
 capacitor-runtime.js:70 ERROR Error: Uncaught (in promise): Response with status: 0  for URL: null
@@ -153,12 +251,103 @@ return this.http.get(this.url, postParams, options). etc...
 }
 ```
 
-Try that out later.
+When using those headers, the error message changes to:
+```
+magical%20thinking:1 Failed to load http://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=magical_thinking: Response for preflight is invalid (redirect)
+```
+
+The url is correct if you paste that in a browser address.  Tried using content-type values of ```application/x-www-form-urlencoded```, ```multipart/form-data``` and ```text/plain``` to no avail.
+
+The error indicates that the ssl preflight is getting a redirect response. 
+
+Also at this point I discovered that I should have used ```npx cap copy``` as part of the build workforlow.  I had added a version number to the title bar to confirm changes.  With so many steps in the build and deploy process during development, it's a good idea to have a visible change each time so that when you try something and move on, you can say you have tried that with (more) confidence.  For some reason running cap copy opened the vanilla project that was used to test Capacitor out when run from the loranthifolia directory, so you can have to keep your eyes open all the time here.
+
+With capacitor (using Ionic), the workflow again is:
+```
+ionic build
+npx cap copy
+npx cap open
+```
+
+It would be nice to have a script run all three of those.
+To add a plugin and update dependencies:
+```
+npm install really-cool-plugin
+npx cap update
+```
+
+Now that we have that down again, the error is still the same.  On the home page which shows the list, we get some info about the way Capacitor is working, then choosing an item we get the error: 
+```
+capacitor-runtime.js:340 native App.addListener (#517533)
+capacitor-runtime.js:70 Angular is running in the development mode. Call enableProdMode() to enable the production mode.
+capacitor-runtime.js:70 Ionic Native: deviceready event fired after 314 ms
+capacitor-runtime.js:70 loadAllPackages: always
+polyfills.js:5291 Mixed Content: The page at 'https://20055794-3ddc-4f5b-89df-c2dace9dd576capacitorapp.net/detail/magical%20thinking' was loaded over HTTPS, but requested an insecure XMLHttpRequest endpoint 'http://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=magical_thinking'. This content should also be served over HTTPS.
+scheduleTask @ polyfills.js:5291
+push../node_modules/zone.js/dist/zone.js.ZoneDelegate.scheduleTask @ polyfills.js:2729
+onScheduleTask @ polyfills.js:2619
+...
+(anonymous) @ polyfills.js:3046
+webpackJsonpCallback @ runtime.js:24
+(anonymous) @ 5.js:1
+detail/magical%20thinking:1 Failed to load http://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=magical_thinking: Response for preflight is invalid (redirect)
+capacitor-runtime.js:70 ERROR Error: Uncaught (in promise): Response with status: 0  for URL: null
+    at resolvePromise (polyfills.js:3136)
+ ...
+capacitorConsole @ capacitor-runtime.js:70
+defaultErrorLogger @ vendor.js:30777
+push../node_modules/@angular/core/fesm5/core.js.ErrorHandler.handleError @ vendor.js:30823
+next @ vendor.js:33405
+schedulerFn @ vendor.js:32641
+push../node_modules/rxjs/_esm5/internal/Subscriber.js.SafeSubscriber.__tryOrUnsub @ vendor.js:72477
+...
+(anonymous) @ polyfills.js:3046
+webpackJsonpCallback @ runtime.js:24
+(anonymous) @ 5.js:1
+```
+
+The Google search page has these kind of errors on it also:
+```
+Failed to load https://ogs.google.com/u/0/_/notifications/count: The value of the 'Access-Control-Allow-Origin' header in the response must not be the wildcard '*' when the request's credentials mode is 'include'. Origin 'https://www.google.com.au' is therefore not allowed access.
+```
+
+The Capacitor error is:
+```
+Failed to load https://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=law_of_the_instrument: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'https://1390c343-38d9-4943-88b9-3b925970d1b7capacitorapp.net' is therefore not allowed access.
+```
+
+What makes us think we can get around this is the fact that the React Native app details page was working (before the Cheerio/DOM parsing fiasco).  It might be worth getting that up on its feet since the vanilla project test was successful.
+
+But first, let do some more stack overflowing:
+*bermick commented on Jan 6 You have to set up the correct CORS options: https://www.npmjs.com/package/cors, mainly 'origin' and 'credentials'*
+
+The docs there show these examples:
+```
+var corsOptions = {
+  origin: 'http://example.com',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+...
+credentials: Configures the Access-Control-Allow-Credentials CORS header. Set to true to pass the header, otherwise it is omitted.
+```
+
+Using ionic serve and turning off the CORS plugin in Chrome, and also changing http to https
+Failed to load https://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=magical_thinking: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'http://localhost:8100' is therefore not allowed access.
+
+We actually set the allow origin to * as shown above, so not sure why it's not mentioned there.
+
+Also re-read a [GitHub answer also linked above](https://github.com/ionic-team/capacitor/issues/630) where someone says you have to run this command after adding the allowMixedContent setting in the capacitor.config.json file:
+```
+npx cap sync
+```
+
+Add that command to the workflow.  Apparently that problem only affects Android WebView.  Have to add React Native to that list.  As far as I know, the server has to send the header with the Access-Control-Allow-Origin option to allow an origin in its response to the client.  It must be that the React Native somehow doesn't apply this rule.  I think the user from the issue mentioned above was talking about the simulators, not devices.
+
 
 
 ## Testing on Android
 
-With problems on-going in the [React Native version of this app](), trying out Android here so that we can actually use the app on a device.  The React Native version has to have the server running on local wifi for it to work.  Once this connection is lost, the app stops working.  There may be a way around this, but haven't found it yet.
+With problems on-going in the [React Native version of this app](https://github.com/timofeysie/teretifolia), trying out Android here so that we can actually use the app on a device.  The React Native version has to have the server running on local wifi for it to work.  Once this connection is lost, the app stops working.  There may be a way around this, but haven't found it yet.
 
 So, starting with ```$ ionic cordova platform add android``` at 10:35, it's not 10:50 and the terminal is still churning away:
 ```
@@ -434,7 +623,7 @@ Next, we need a service to get single item, and a back button.
 
 ## Starting the app and parsing WikiData and WikiMedia
 
-Using [this tut](https://mhartington.io/post/ionic-4-alpha-test/) as a starting point for an Ionic 4 alpha 7 app.
+Using [this tut by Mike Hartington](https://mhartington.io/post/ionic-4-alpha-test/) as a starting point for an Ionic 4 alpha 7 app.
 ```
 npm install -g ionic@rc
 ionic start myApp blank --type=angular

@@ -132,25 +132,32 @@ export class MyDataService {
    */
   loadSingleWikiMediaPage(pageName) {
     return new Promise((resolve, reject) => {
-      let action = "action=parse";
-      let section = "section=0";
-      let prop = 'prop=text&format=json';
-      let subject = pageName.replace(/\s+/g, '_').toLowerCase();
-      let page = 'page='+subject;
-      const baseUrl = 'http://en.wikipedia.org/w/api.php';
-      let sectionUrl = baseUrl+'?'+action+'&'+section+'&'+prop+'&'+page;
-      this.http.get(sectionUrl)
+      const baseUrl = 'https://radiant-springs-38893.herokuapp.com/api/detail/'+pageName;
+      let headers = new Headers();
+      headers.append('content-type','application/json');
+      headers.append('Access-Control-Allow-Origin', '*');
+      headers.append('Access-Control-Request-Method', 'GET,OPTIONS');
+      let myParams = new URLSearchParams();
+      myParams.set('credentials', 'true');
+      myParams.set('withCredentials', 'true');
+      let options = new RequestOptions({ headers:headers, params: myParams });
+      this.http.get(baseUrl, options)
         .toPromise().then((res: any) => {
           const parse = res.json();
+          console.log('res',res);
           //console.log('curator',curator.parseSingleWikiMediaPage(parse));
-          const content = parse['parse']['text']['*'];
-          let one = this.createElementFromHTML(content);
-          const desc:any = one.getElementsByClassName('mw-parser-output')[0].children;
-          let descriptions: string [] = [];
-          for (let i = 0; i < desc.length;i++) {
-            descriptions.push(desc[i].innerText);
+          try {
+            const content = parse['parse']['text']['*'];
+            let one = this.createElementFromHTML(content);
+            const desc:any = one.getElementsByClassName('mw-parser-output')[0].children;
+            let descriptions: string [] = [];
+            for (let i = 0; i < desc.length;i++) {
+              descriptions.push(desc[i].innerText);
+            }
+            resolve(descriptions);
+          }catch (err) {
+            resolve('err: '+err);
           }
-          resolve(descriptions);
         });
     });
   }
