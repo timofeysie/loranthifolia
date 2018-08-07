@@ -101,7 +101,7 @@ headers["Access-Control-Allow-Origin"] = req.headers.origin;
 headers["Access-Control-Allow-Origin"] = "*";
 ```
 
-Produce the same error.
+Produce the same error.  After making changes to the server to and removing the CORS header info here, the details page is working again.
 
 
 ## Using Capacitor
