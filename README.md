@@ -343,6 +343,7 @@ npx cap sync
 
 Add that command to the workflow.  Apparently that problem only affects Android WebView.  Have to add React Native to that list.  As far as I know, the server has to send the header with the Access-Control-Allow-Origin option to allow an origin in its response to the client.  It must be that the React Native somehow doesn't apply this rule.  I think the user from the issue mentioned above was talking about the simulators, not devices.
 
+So after getting the server going, and removing trying to set any CORS header stuff here, we have our working descriptions.
 
 
 ## Testing on Android

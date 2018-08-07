@@ -135,8 +135,6 @@ export class MyDataService {
       const baseUrl = 'https://radiant-springs-38893.herokuapp.com/api/detail/'+pageName;
       let headers = new Headers();
       headers.append('content-type','application/json');
-      headers.append('Access-Control-Allow-Origin', '*');
-      headers.append('Access-Control-Request-Method', 'GET,OPTIONS');
       let myParams = new URLSearchParams();
       myParams.set('credentials', 'true');
       myParams.set('withCredentials', 'true');
@@ -144,20 +142,9 @@ export class MyDataService {
       this.http.get(baseUrl, options)
         .toPromise().then((res: any) => {
           const parse = res.json();
-          console.log('res',res);
-          //console.log('curator',curator.parseSingleWikiMediaPage(parse));
-          try {
-            const content = parse['parse']['text']['*'];
-            let one = this.createElementFromHTML(content);
-            const desc:any = one.getElementsByClassName('mw-parser-output')[0].children;
-            let descriptions: string [] = [];
-            for (let i = 0; i < desc.length;i++) {
-              descriptions.push(desc[i].innerText);
-            }
-            resolve(descriptions);
-          }catch (err) {
-            resolve('err: '+err);
-          }
+            let content = parse['description'];
+            content = content.replace('</div>',''); // why is this even here?
+            resolve(content);
         });
     });
   }

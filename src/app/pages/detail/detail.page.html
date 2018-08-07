@@ -19,10 +19,7 @@
           <b>Wikipedia Description</b>
         </ion-card-header>
         <ion-card-content>
-            <ion-list *ngFor="let desc of descriptions">
-              <p>{{desc}}</p>
-              <br />
-            </ion-list>
+          <div [innerHTML]="description"></div>
         </ion-card-content>
       </ion-card>
       <ion-card *ngIf="wikiMediaCategory">
