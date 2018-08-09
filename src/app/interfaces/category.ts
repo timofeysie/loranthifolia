@@ -17,12 +17,9 @@ export interface Category {
   cognitive_bias: any;
   cognitive_biasLabel: any;
   cognitive_biasDescription: any;
-}
 
-@Injectable()
-export abstract class TodoListService {
-  /**
-   * Returns a list of all of the current user's todos.
-   */
-  abstract getCategories(): Category[];
+    wikiMedia_description: string;
+    wikiMedia_category: string;
+    sortName: string;
+    lang: string;
 }

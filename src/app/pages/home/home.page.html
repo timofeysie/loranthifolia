@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      List of Cognitive Bias <span class="version_text">version: {{version}}</span>
+      List of Cognitive Bias <span *ngIf="list">{{list.length}}</span> <span class="version_text">version: {{version}}</span>
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,17 +9,19 @@
 <ion-content padding>
   	<ion-list no-lines>
       	<ion-item-sliding *ngFor="let item of list">
+					<div *ngIf="item.sortName">
 					<ion-item slot="start"
 						tappable 
-						routerLink="/detail/{{ item.cognitive_biasLabel.value }}" 
+						routerLink="/detail/{{ item.sortName }}" 
 						routerDirection="forward"
 						detail="true">
-						<span>{{ item.cognitive_biasLabel.value }}</span>
+						<span>{{ item.sortName }}</span>
 					</ion-item> 
 					<ion-item-options slot="left"
 						*ngIf="item.cognitive_biasDescription">
-						<div>{{ item.cognitive_biasDescription.value }}</div>
+						<div>{{ item.cognitive_biasDescription }}</div>
 					</ion-item-options>
+				</div>
     	</ion-item-sliding>
   	</ion-list>
 </ion-content>

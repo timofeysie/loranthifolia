@@ -9,6 +9,7 @@ import * as wdk from 'wikidata-sdk';
 import 'rxjs/add/operator/map';
 import { forEach } from '@angular/router/src/utils/collection';
 import * as curator from 'art-curator';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -16,12 +17,13 @@ import * as curator from 'art-curator';
 export class MyDataService {
 
   public myData: BehaviorSubject<Category[]> = new BehaviorSubject<Category[]>([]);
+  public mediaData: BehaviorSubject<Category[]> = new BehaviorSubject<Category[]>([]);
   wikiMediaEntries: Map <string,string>;
-
+  private backendListUrl = 'https://radiant-springs-38893.herokuapp.com/api/list';
   /**
    * private storage: Storage, 
    */
-  constructor(private http: Http) {
+  constructor(private http: Http,private  httpClient:  HttpClient) {
     this.wikiMediaEntries = new Map();
   }
 
@@ -49,6 +51,11 @@ export class MyDataService {
           }
       );
   }  
+
+  getWikiDataList() {
+    return this.httpClient.get<Category>(this.backendListUrl)
+      .pipe(data => data);
+  }
   
   /** WIP
    * 
@@ -91,7 +98,7 @@ export class MyDataService {
   }
    */
   loadWikiMedia(sectionNum) {
-    console.log('called');
+    return new Promise((resolve, reject) => {
       let action = 'action=parse';
       let section = 'section='+sectionNum;
       let prop = 'prop=text&format=json';
@@ -100,29 +107,25 @@ export class MyDataService {
       let sectionUrl = baseUrl+'?'+action+'&'+section+'&'+prop+'&'+page;
       this.http.get( sectionUrl).map((res: any) => {
         const parse = res.json();
-        console.log(sectionNum+' parse',parse);
         const content = parse['parse']['text']['*'];
-        console.log('content',content);
         let one = this.createElementFromHTML(content);
         let title = this.parseTitle(one);
         const rows = one.getElementsByClassName("wikitable")[0].getElementsByTagName('tr');
         for (let i = 1; i < rows.length;i++) {
           let name = rows[i].getElementsByTagName('td')[0].innerText;
-          let description = rows[i].getElementsByTagName('td')[1].innerText;
           this.wikiMediaEntries.set(name,title);
         }
-        console.log(sectionNum+'wikiMediaEntries',this.wikiMediaEntries);
         return this.wikiMediaEntries
-    }).subscribe (
-      (data: any) => {
-        console.log(sectionNum+'wikiMediaEntries.data',data)
-        this.myData.next(data.results.bindings);
-      },
-      (err: any) => console.error("loadAllPackages: ERROR"),
-      () => {
-        console.log("loadAllPackages: always")
-      }
-  );
+      }).subscribe (
+        (data: any) => {
+          resolve(this.wikiMediaEntries);
+        },
+        (err: any) => console.error("loadAllPackages: ERROR"),
+        () => {
+          console.log("loadAllPackages: always")
+        }
+      );
+    });
   }
 
   /**

@@ -20,6 +20,8 @@ export class DetailPage implements OnInit {
     this.wikiMediaCategory = this.myDataService.getWikiMediaDescription(this.itemName);
     this.myDataService.loadSingleWikiMediaPage(this.itemName).then((result) => {
       this.description = result;
+      this.description = this.description.split('href="/wiki/')
+          .join('href="https://en.wikipedia.org/wiki/');
     }).catch((err) => {
       console.log('will we get an error if the promise is not rejected or resolved');
      });

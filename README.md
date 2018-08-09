@@ -26,18 +26,81 @@ npx cap update
 
 ## Table of Contents
 
-### [Using Capacitor](Using-Capacitor) 
-### [Blocked Requests](Blocked-Requests)
-### [Testing on Android](Testing-on-Android)
-### [Fixing the tests](fixing-the-tests)
-### [Implementing Angular routing](Implementing-Angular-routing)
-### [Starting the app and parsing WikiData and WikiMedia](Starting-the-app-and-parsing-WikiData-and-WikiMedia)
+1. [API service caching](#API service caching)
+1. [Scroll Position Restoration](#Scroll Position Restoration)
+1. [Merging the WikiMedia lists](#Merging the WikiMedia lists)
+1. [Ionic 4 Beta and using the Conchifolia server](#ionic-4-beta-and-using-the-conchifolia-server)
+1. [Using Capacitor](#using-Capacitor) 
+1. [Blocked Requests](#Blocked-Requests)
+1. [Testing on Android](#Testing-on-Android)
+1. [Fixing the tests](#fixing-the-tests)
+1. [Implementing Angular routing](#Implementing-Angular-routing)
+1. [Starting the app and parsing WikiData and WikiMedia](#Starting-the-app-and-parsing-WikiData-and-WikiMedia)
 
 #
+
+
+## API service caching
+
+By default an Ionic app comes without any specific HTTP caching.  Since this is a PWA thing usually done with a service worker.  On Ionic, we can use [this Ionic Cash plugin](https://github.com/Nodonisko/ionic-cache).  Under the hood it automatically uses whatever is available in the environment the app is running in, like many other storage libs.
+
+
+
+## Scroll Position Restoration
+
+We were going to implement out own scroll to last viewed item feature, but since Angular 6.1 now has [Router Scroll Position Restoration](https://blog.angular.io/angular-v6-1-now-available-typescript-2-9-scroll-positioning-and-more-9f1c03007bb6), we will wait until Ionic starts using that version and then do this:
+```
+RouterModule.forRoot(routes, {scrollPositionRestoration: 'enabled'})
+```
+
+What else is new in Angular 6.1?
+
+1. ShadowDOM v1 has better cross-browser support
+1. keyvalue Pipe to pipe an Object through the keyvalue pipe, which will give you an array suitable for use within an *ngFor.  Nice.  API to template just keeps getting simpler.
+1. Schematics Chaining adding support for returning a Rule from an existing Rule. This allows developers to more dynamically determine the set of rules to follow when designing Schematics.
+1. TypeScript 2.7, 2.8 and 2.9, errors such as “Exported variable ‘x’ has or is using name ‘y’ from external module ‘z’ but cannot be named”. TypeScript has relaxed these declaration emit visibility rules which means you no longer will see this error and you will no longer have to change your code for such export patterns.
+
+
+## Merging the WikiMedia lists
+
+Along with the 90 WikiData entries for cognitive biases, there is also the roughly 200 in three categories on the Wikipedia page.  If you merge the duplicates you would get 191 on the list.  In the Angular 6 project which is served by the NodeJS app in [Chonchifolia](https://github.com/timofeysie/conchifolia), we did a quick and dirty nested set of service calls to assemble the list.  Then, the sort.  Here, we hope to do something a bit more elegant.  I would like to try an async/await solution.  However, on second thought, this will merely chain promises.  We want all three lists to load at once, and then only merge and sort once they are all done.  So we used the Promise.all() function like this:
+
+```
+getWikiMediaLists() {
+    let promises = [];
+    for (let i = 0; i < this.mediaSections; i++) {
+        promises.push(new Promise((resolve) => {
+            this.myDataService.loadWikiMedia(i+1).then((data) => { resolve(data); });
+        }));
+    }
+    Promise.all(promises)
+        .then(data => {
+            this.addItems(data[2]); // TODO: fix array of dupes
+            this.list.sort(this.dynamicSort('sortName'));
+    });
+}
+```
+
+After sorting the service for the main WikiData list out a bit, the content is a little differently the was expected:
+```
+key:"Actor-observer bias↵"
+value:"Social biases"
+```
+
+That's the bias name and the category.  What are they called in the Conchiflolia app?  Since we started using our NodeJS server, we are not getting raw WikiMedia data anymore.  And, we were using a RxJS behavior subject to monitor the API call.  Since we will be adding items and sorting the list, we can't do that anymore.
+
+So using the same kind of service in Conchiflolia, and some of the functions to add and merge items as well as sort, we have our list.
+
+There are still some unwelcome things going on with the list.  For starters, there are 238 items whereas in Conchfolia there are only 191.  And there is still the lower case entries that get tacked onto the list after the upper case Z items.
+
+
 
 ## Ionic 4 Beta and using the Conchifolia server
 
 Since the [Ionic 4 beta announcement](https://blog.ionicframework.com/announcing-ionic-4-beta/) we have wanted to get back to this project and bring it up to the same level that the Conchifolia NodeJS server/Angular 6 client is at.  Namely this is using the server to get the WikiMedia lists that are blocked by CORS restrictions on Android (the *No Access-Control-Allow-Origin header* problem), and merge them with the Wiki Data list.  Then we will be in a good spot to introduce local storage to then add item state and settings to the app.
+
+Along with the [GitHub project board](https://github.com/ionic-team/ionic/projects/3),
+the CLI has [new docs also](https://beta.ionicframework.com/docs/cli/overview/).
 
 Following the [new installation docs](https://beta.ionicframework.com/docs/installation/cli)
 ```
