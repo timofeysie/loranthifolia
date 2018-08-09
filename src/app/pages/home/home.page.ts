@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MyDataService } from '../../services/api/my-data.service';
 import { CONSTANTS } from '../../constants';
 import { Category } from '../../interfaces/category';
+import { resolve } from 'path';
 
 @Component({
   selector: 'app-page-home',
@@ -32,14 +33,20 @@ export class HomePage {
     let promises = [];
     for (let i = 0; i < this.mediaSections; i++) {
       promises.push(new Promise((resolve) => {
-        this.myDataService.loadWikiMedia(i+1).then((data) => { resolve(data); });
+        this.myDataService.loadWikiMedia(i+1).subscribe((data) => { 
+          let parsedData = this.parseList(data);
+          resolve(parsedData); });
       }));
     }
     Promise.all(promises)
+      .then(data => { return data })
+      .then(data => { return data })
       .then(data => {
+        console.log('data3',data)
         // after all the WikiMedia lists have been merged into one,
         // include those into the list and sort it
-        this.addItems(data[2]); // TODO: fix array of dupes
+        this.addItems(data[0]); // TODO: fix array of dupes
+        this.addItems(data[1]); // TODO: fix array of dupes
         this.list.sort(this.dynamicSort('sortName'));
     });
   }
@@ -68,15 +75,16 @@ export class HomePage {
    * @param section WIkiMedia section
    */
   addItems(section: any) {
-      section.forEach((key,val) => {
-        let itemName = val.trim();
+    console.log('section',section);
+      section.forEach((key) => {
+        let itemName = key.name;
         let found = false;
         for(var j = 0; j < this.list.length; j++) {
           if ((typeof this.list[j].sortName !== 'undefined' && typeof itemName !== 'undefined') && this.list[j].sortName.toLocaleUpperCase() === itemName.toLocaleUpperCase()) {
             found = true;
             this.list[j].wikiMedia_label = itemName;
-            this.list[j].wikiMedia_description = key;
-            this.list[j].wikiMedia_category = key;
+            this.list[j].wikiMedia_description = key.desc;
+            this.list[j].wikiMedia_category = key.category;
             this.list[j].sortName = itemName;
             break;
           }
@@ -84,8 +92,8 @@ export class HomePage {
         if (!found) {
           let wikiMediaObj:any = {};
           wikiMediaObj.wikiMedia_label = itemName;
-          wikiMediaObj.wikiMedia_description = key;
-          wikiMediaObj.wikiMedia_category = key;
+          wikiMediaObj.wikiMedia_description = key.desc;
+          wikiMediaObj.wikiMedia_category = key.category;
           wikiMediaObj.sortName = itemName.split('"').join('');;
           this.list.push(wikiMediaObj);
         }

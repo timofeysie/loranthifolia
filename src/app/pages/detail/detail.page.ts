@@ -17,7 +17,6 @@ export class DetailPage implements OnInit {
 
   ionViewWillEnter(){
     this.itemName = this.route.snapshot.paramMap.get('id');
-    this.wikiMediaCategory = this.myDataService.getWikiMediaDescription(this.itemName);
     this.myDataService.loadSingleWikiMediaPage(this.itemName).then((result) => {
       this.description = result;
       this.description = this.description.split('href="/wiki/')
