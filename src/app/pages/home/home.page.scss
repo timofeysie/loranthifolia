@@ -7,3 +7,20 @@ ion-item-options {
 .version_text {
     font-size: 0.4em;
 }
+
+.list__text::first-letter {
+    text-transform: capitalize;
+}
+.ion-list__defaultItem {
+    list-style-type: none;
+    color: green;
+}
+.list__both {
+    color: black;
+}
+.list__text-wikimedia {
+    color: teal;
+}
+.list__item--viewed {
+    opacity: 0.5;
+}

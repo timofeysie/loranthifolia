@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { MyDataService } from '../../services/api/my-data.service';
 import { CONSTANTS } from '../../constants';
-import { Category } from '../../interfaces/category';
-import { resolve } from 'path';
 import { DataStorageService } from '../../services/storage/data-storage.service';
 
 @Component({
@@ -14,24 +12,37 @@ export class HomePage {
   list: any;
   mediaSections = 3;
   version: string;
-  constructor(private myDataService: MyDataService, private dataStorageService: DataStorageService) {
-      this.myDataService.getWikiDataList().subscribe(
-        data => {
-          this.list = data['list'];
-          this.list.forEach((item) => {
-            item.sortName = item.cognitive_biasLabel;
-          });
-          this.getWikiMediaLists();
-        },
-        error => {
-          console.error('offline error',error);
-          // assume we are offline here and load the previously saved list
-          this.dataStorageService.getList().then((result) => {
-            this.list = result;
-          });
+  constructor(
+    private myDataService: MyDataService, 
+    private dataStorageService: DataStorageService) {
+      this.dataStorageService.getList().then((result) => {
+        if (result) {
+          this.list = result;
+        } else {
+          this.getListFromServer();
         }
-      );
+      });
+      
     this.version = CONSTANTS.VERSION;
+  }
+
+  getListFromServer() {
+    this.myDataService.getWikiDataList().subscribe(
+      data => {
+        this.list = data['list'];
+        this.list.forEach((item) => {
+          item.sortName = item.cognitive_biasLabel;
+        });
+        this.getWikiMediaLists();
+      },
+      error => {
+        console.error('offline error',error);
+        // assume we are offline here and load the previously saved list
+        this.dataStorageService.getList().then((result) => {
+          this.list = result;
+        });
+      }
+    );
   }
 
   getWikiMediaLists() {
@@ -72,6 +83,14 @@ export class HomePage {
     }
   }
 
+  setStateViewed(i) {
+    console.log('coffee',i);
+    let item = this.list[i];
+    console.log('item',item.sortName);
+    this.list[i].detailState = 'viewed';
+    this.dataStorageService.setList(this.list);
+  }
+
   /**
    * Take a complete section of names and descriptions and either add the content
    * to a pre-existing item or create a new item if it is not already on the list.
@@ -89,18 +108,35 @@ export class HomePage {
             this.list[j].wikiMedia_description = key.desc;
             this.list[j].wikiMedia_category = key.category;
             this.list[j].sortName = itemName;
+            this.list[j].detailState = 'un-viewed';
+            this.list[j].descriptionState = 'un-viewed';
+            this.list[j].itemState = 'show';
             break;
           }
         }
         if (!found) {
-          let wikiMediaObj:any = {};
-          wikiMediaObj.wikiMedia_label = itemName;
-          wikiMediaObj.wikiMedia_description = key.desc;
-          wikiMediaObj.wikiMedia_category = key.category;
-          wikiMediaObj.sortName = itemName.split('"').join('');;
+          let wikiMediaObj:any = this.createItemObject(itemName, key);
           this.list.push(wikiMediaObj);
         }
     });
+  }
+
+  /**
+   * Create a new item from a WikiMedia list item.
+   * @param itemName Name of the item
+   * @param key key has desc, and category properties
+   */
+  createItemObject(itemName: string, key: any) {
+    let itemObject:any = {};
+    itemObject.wikiMedia_label = itemName;
+    itemObject.wikiMedia_description = key.desc;
+    itemObject.wikiMedia_category = key.category;
+    itemObject.sortName = itemName.split('"').join('');
+    itemObject.detailState = 'un-viewed';
+    itemObject.descriptionState = 'un-viewed';
+    itemObject.itemState = 'show';
+    //itemObject.itemOrder;
+    return itemObject;
   }
 
   /**
