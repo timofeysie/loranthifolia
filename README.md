@@ -26,7 +26,8 @@ npx cap update
 
 ## Table of Contents
 
-1. [API service caching](#API service caching)
+1. [Item state](#Item state)
+1. [API service caching vs local storage](#API service caching)
 1. [Scroll Position Restoration](#Scroll Position Restoration)
 1. [Merging the WikiMedia lists](#Merging the WikiMedia lists)
 1. [Ionic 4 Beta and using the Conchifolia server](#ionic-4-beta-and-using-the-conchifolia-server)
@@ -39,11 +40,47 @@ npx cap update
 
 #
 
+## Item state]
+
+The planned features for state are as follows:
+1. bookmark the last viewed item
+1. let the user build a short description
+1. swipe right to see short description
+1. wipe up/down on the short description to send the item to the top/bottom of the list
+1. swipe right to remove it from the list
+
+Starting with the first item would be easy, but let's think about a state system to support all these features.  It looks like we have three separate states to keep:
+```
+detailState: un-viewed/viewed
+descriptionState: un-viewed/viewed
+itemState: show/removed
+itemOrder: itemOrderNumber
+```
+
+If you read the [Scroll Position Restoration](#Scroll Position Restoration) section, you know that Angular will take care of this for us (once Ionic has released a version that has started using 6.1).  But we still have an issue with our sort and overriding that.  We will want to let the user choose the kind of sorting in the future, including grouping by category.  So starting off with a list sorting state is also a good idea:
+```
+listSortingProperty: property name (currently sortName)
+```
+
 
 ## API service caching
 
 By default an Ionic app comes without any specific HTTP caching.  Since this is a PWA thing usually done with a service worker.  On Ionic, we can use [this Ionic Cash plugin](https://github.com/Nodonisko/ionic-cache).  Under the hood it automatically uses whatever is available in the environment the app is running in, like many other storage libs.
 
+[Here is another option](https://ionicacademy.com/ionic-caching-service/) for caching.  And a good [Stack Overflow answer](https://stackoverflow.com/questions/48419769/angular-service-worker-caching-api-calls-for-offline-app) to round things out.
+
+The problem is, we want to append state to the list and items, so if we have to do that, we may as well use local storage and go all the way.  The simple choice for Ionic is, you guessed it, [Storage](https://beta.ionicframework.com/docs/building/storage/)
+
+Install like this:
+```
+npm install --save @ionic/storage
+```
+
+Actually, this was already installed because an example using it was followed for the initial data service.  So it was already imported and in the imports array of the app.module file.
+
+Then creating two simple get/set functions and using them in the error that would happen if for example we are offline like in a car, and the list still loads!
+
+Next up, item state!
 
 
 ## Scroll Position Restoration
@@ -91,8 +128,11 @@ That's the bias name and the category.  What are they called in the Conchiflolia
 
 So using the same kind of service in Conchiflolia, and some of the functions to add and merge items as well as sort, we have our list.
 
-There are still some unwelcome things going on with the list.  For starters, there are 238 items whereas in Conchfolia there are only 191.  And there is still the lower case entries that get tacked onto the list after the upper case Z items.
+There are still some unwelcome things going on with the list.  For starters, there are 238 items whereas in Conchifolia there are only 191.  And there is still the lower case entries that get tacked onto the list after the upper case Z items.
 
+When deploying the app to a device, things changed.  We got the CORS error again.  This is because the CORS plugin was turned on in Chrome, and so the old calls directly to Wikipedia were going thru.  In the device, they failed.
+
+So after converting the calls to use the radiant-springs server and changing things to use the right property names, we have 191 items now, same as Conchifolia.
 
 
 ## Ionic 4 Beta and using the Conchifolia server

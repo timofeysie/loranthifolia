@@ -17,9 +17,11 @@
 						detail="true">
 						<span>{{ item.sortName }}</span>
 					</ion-item> 
-					<ion-item-options slot="left"
-						*ngIf="item.cognitive_biasDescription">
-						<div>{{ item.cognitive_biasDescription }}</div>
+					<ion-item-options slot="left">
+						<div *ngIf="item.cognitive_biasDescription">
+							{{ item.cognitive_biasDescription }}</div>
+						<div *ngIf="item.wikiMedia_description">
+							{{ item.wikiMedia_description }}</div>
 					</ion-item-options>
 				</div>
     	</ion-item-sliding>

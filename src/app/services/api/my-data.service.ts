@@ -1,14 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-//import { Storage } from '@ionic/storage';
 import { Category } from '../../interfaces/category';
-import { Http, Response, Headers, RequestOptions } from '@angular/http';
-import { HttpModule } from '@angular/http';
-import { HttpClientModule } from '@angular/common/http';
-import * as wdk from 'wikidata-sdk';
-import 'rxjs/add/operator/map';
-import { forEach } from '@angular/router/src/utils/collection';
-import * as curator from 'art-curator';
+import { Http, Headers, RequestOptions } from '@angular/http';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -17,7 +9,6 @@ import { HttpClient } from '@angular/common/http';
 export class MyDataService {
   private backendListUrl = 'https://radiant-springs-38893.herokuapp.com/api/list';
   private backendWikiListUrl = 'https://radiant-springs-38893.herokuapp.com/api/wiki-list';
-  private backendDetailUrl = 'https://radiant-springs-38893.herokuapp.com/api/detail';
   /**
    * private storage: Storage, 
    */

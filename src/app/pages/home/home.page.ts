@@ -3,6 +3,7 @@ import { MyDataService } from '../../services/api/my-data.service';
 import { CONSTANTS } from '../../constants';
 import { Category } from '../../interfaces/category';
 import { resolve } from 'path';
+import { DataStorageService } from '../../services/storage/data-storage.service';
 
 @Component({
   selector: 'app-page-home',
@@ -13,7 +14,7 @@ export class HomePage {
   list: any;
   mediaSections = 3;
   version: string;
-  constructor(private myDataService: MyDataService) {
+  constructor(private myDataService: MyDataService, private dataStorageService: DataStorageService) {
       this.myDataService.getWikiDataList().subscribe(
         data => {
           this.list = data['list'];
@@ -23,7 +24,11 @@ export class HomePage {
           this.getWikiMediaLists();
         },
         error => {
-          console.error('error',error);
+          console.error('offline error',error);
+          // assume we are offline here and load the previously saved list
+          this.dataStorageService.getList().then((result) => {
+            this.list = result;
+          });
         }
       );
     this.version = CONSTANTS.VERSION;
@@ -42,7 +47,6 @@ export class HomePage {
       .then(data => { return data })
       .then(data => { return data })
       .then(data => {
-        console.log('data3',data)
         // after all the WikiMedia lists have been merged into one,
         // include those into the list and sort it
         this.addItems(data[0]); // TODO: fix array of dupes
@@ -75,7 +79,6 @@ export class HomePage {
    * @param section WIkiMedia section
    */
   addItems(section: any) {
-    console.log('section',section);
       section.forEach((key) => {
         let itemName = key.name;
         let found = false;
