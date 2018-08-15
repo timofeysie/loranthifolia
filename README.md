@@ -2,6 +2,8 @@
 
 Using the latest alpha for Ionic 4, this project is to create a simple demo app to compare with a React Native app.  The app will parse WikiData and Wikipedia for a list of content and provide a master detail view of the results.
 
+Hakea loranthifolia is of the genus Hakea native to an area in the Wheatbelt region of Western Australia.  It typically grows to a height of 2 to 3 metres (7 to 10 ft). It blooms from August to September and produces white flowers.
+
 
 ## Work flow
 
@@ -62,8 +64,10 @@ If you read the [Scroll Position Restoration](#Scroll Position Restoration) sect
 listSortingProperty: property name (currently sortName)
 ```
 
+The one we want first is detailState.  Using the styles for the states from the other project, added another ngClass to make viewed items 50% opaque.  Set the state in an onclick function, and save the list in the storage.
 
-## API service caching
+
+## API service caching vs local storage
 
 By default an Ionic app comes without any specific HTTP caching.  Since this is a PWA thing usually done with a service worker.  On Ionic, we can use [this Ionic Cash plugin](https://github.com/Nodonisko/ionic-cache).  Under the hood it automatically uses whatever is available in the environment the app is running in, like many other storage libs.
 
@@ -80,7 +84,28 @@ Actually, this was already installed because an example using it was followed fo
 
 Then creating two simple get/set functions and using them in the error that would happen if for example we are offline like in a car, and the list still loads!
 
-Next up, item state!
+This works for ionic serve testing.  However, on the Android device at least, it does not.
+
+Should we be using the [native storage plugin](https://beta.ionicframework.com/docs/native/native-storage) instead?
+
+Or maybe we just need to use the Sqlite option with [the current storage](https://beta.ionicframework.com/docs/building/storage/).
+
+```
+$ ionic cordova plugin add cordova-sqlite-storage
+```
+
+
+But, that's using Cordova.  We are using Capacitor to build the naive apps now.  The [docs there](https://capacitor.ionicframework.com/docs/apis/storage) say this: *Mobile OS's may periodically clear data set in window.localStorage, so this API should be used instead of window.localStorage. This API will fall back to using localStorage when running as a Progressive Web App.*
+
+And this: *Storage works on Strings only. However, storing JSON blobs is easy: just JSON.stringify the object before calling set, then JSON.parse the value returned from get.*
+
+The docs referenced above do not cover how to install a plugin with Capacitor.  But there is a general part in the [Basics/Using Cordova Plugins](https://capacitor.ionicframework.com/docs/basics/cordova) section which as you recall shows how to do it.
+```
+npm install cordova-sqlite-storage
+npx cap sync
+```
+
+
 
 
 ## Scroll Position Restoration
