@@ -11,6 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { IonicStorageModule } from '@ionic/storage';
 import { MyDataService } from './services/api/my-data.service';
 import { DataStorageService } from './services/storage/data-storage.service';
+import { NativeStorage } from '@ionic-native/native-storage/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,7 +21,10 @@ import { DataStorageService } from './services/storage/data-storage.service';
     IonicModule.forRoot(), 
     AppRoutingModule,
     HttpModule,
-    IonicStorageModule.forRoot(),
+    IonicStorageModule.forRoot({
+      name: '__mydb',
+      driverOrder: ['indexeddb', 'sqlite', 'websql', 'localstorage']
+    }),
     HttpClientModule
   ],
   providers: [
@@ -28,7 +32,8 @@ import { DataStorageService } from './services/storage/data-storage.service';
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     MyDataService,
-    DataStorageService
+    DataStorageService,
+    NativeStorage
   ],
   bootstrap: [AppComponent]
 })

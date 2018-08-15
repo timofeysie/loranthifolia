@@ -15,7 +15,8 @@ export class HomePage {
   constructor(
     private myDataService: MyDataService, 
     private dataStorageService: DataStorageService) {
-      this.dataStorageService.getList().then((result) => {
+      this.dataStorageService.getListViaNativeStorage().then((result) => {
+        console.log('result',result);
         if (result) {
           this.list = result;
         } else {
@@ -38,7 +39,8 @@ export class HomePage {
       error => {
         console.error('offline error',error);
         // assume we are offline here and load the previously saved list
-        this.dataStorageService.getList().then((result) => {
+        this.dataStorageService.getListViaNativeStorage().then((result) => {
+          console.log('result',result);
           this.list = result;
         });
       }
@@ -63,6 +65,7 @@ export class HomePage {
         this.addItems(data[0]); // TODO: fix array of dupes
         this.addItems(data[1]); // TODO: fix array of dupes
         this.list.sort(this.dynamicSort('sortName'));
+        this.dataStorageService.setList(this.list);
     });
   }
 

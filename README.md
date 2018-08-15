@@ -105,6 +105,146 @@ npm install cordova-sqlite-storage
 npx cap sync
 ```
 
+Next, add the config recommended in the storage docs:
+```
+    IonicStorageModule.forRoot({
+      name: '__mydb',
+      driverOrder: ['indexeddb', 'sqlite', 'websql', 'localstorage']
+    }),
+```
+
+Thought about posting this question on the Capacitor Slack channel:
+
+I want to use local storage in my Ionic app build with Capacitor.  I have installed Capacitor and used it to deploy to devices, but the storage only works with ionic serve.
+There are three docs to go off:
+```
+[Storage](https://beta.ionicframework.com/docs/building/storage/)
+[Native Storage](https://beta.ionicframework.com/docs/native/native-storage)
+Capacitor [Storage](https://capacitor.ionicframework.com/docs/apis/storage)
+```
+I have used the first one, including installing cordova-sqlite-storage.
+In the docs, the last one has no method for importing the Capacitor Storage which has the same name (Storage) of the Ionic version and different usage.  What is the proper way to import this, or should I be trying to use Ionic Native Storage?
+
+But why ask when we can try it out for ourselves.  So, trying the Ionic Native option.
+```
+$ ionic cordova plugin add cordova-plugin-nativestorage
+$ npm install --save @ionic-native/native-storage
+```
+
+Add the Capacitor touch:
+```
+$ npx cap sync
+```
+
+On to the import, TypeScript is not happy: *Cannot find module '@ionic-native/native-storage'.*
+
+There is a small difference in the beta docs for configuring an Ionic Native plugin: *For Angular, the import path should end with /ngx.*
+
+But this:
+```
+import { NativeStorage } from '@ionic-native/native-storage/ngx';
+```
+
+Causes the same error over the path string.  deleting the node_modules and doing another npm i for good measure.
+
+That seemed to fix the problem for a moment, but then the same red squiggly came back with the mouse over message:
+
+Noticed that the native-storage was not in the package json.  Forgot to use the save flag.  Running this again:
+```
+$ npm install --save @ionic-native/native-storage
+```
+
+Got rid of the /ngx extansion on the storage strings and the errors went away.  Now for an ionic serve test and then a device test.
+
+Using ionic serve causes this browser error:
+```
+index.js:133 Uncaught TypeError: Object(...) is not a function
+    at index.js:133
+    at Object../node_modules/@ionic-native/native-storage/index.js (index.js:197)
+```
+
+Probably have to check the platform first.  It's worth trying this on the device before going thru that work to see will the plugin work for us if we do!
+
+The app crashes before the splash screen finishes.  Did we need to do ```npx cap sync``` again?  Trying that now now to be sure.
+
+After that, the splashcreen gets further, but then an error which looks a lot like the React Native error screen:
+```
+Object(...) is not a function
+TypeError: Object(...) is not a function at https/eb...dfcapacitorapp.net/vendor.js:64149:79
+at Object.../node_modules/@ionic-native/native-storage/index.js
+...___webpack_require__
+```
+
+[This forum post](https://forum.ionicframework.com/t/typeerror-object-is-not-a-function/130589/6) has some interesting quotes:
+*The spread operator does not apply to an object. This means you are most likely using a version of TypeScript before 2.1*
+
+We have "typescript": "~2.7.2" in our package.json.
+
+*This error started showing after upgrading the AngularFire2 to 5.0.0-rc.8 or higher and the reason is rxjs 5 is no longer supported in AngularFire2 5.0.0-rc.8 or higher, upgrade to 6 and include rxjs-compat*
+
+We are not using AngularFire, but maybe there is another lib mismatch?
+
+User reedrichards seems like is in the wrong industry with the [answer to this question](https://forum.ionicframework.com/t/ionic-4-beta-object-is-not-a-function/138152/2)
+*I like to give the same answer over and over again…so*
+
+*Use ionic-native beta.14.  Correct your import by adding /ngx like import {Camera} from '@ionic-native/camera/ngx';  Next time plz before asking search thru the forum first https://forum.ionicframework.com/t/camera-in-ionic-v4 or https://forum.ionicframework.com/t/ionic-4-native-plugin-problem*
+
+Using computers requires patience.  Zing!
+
+Anyhow, we had this:
+```
+"@ionic-native/core": "5.0.0-beta.11",
+```
+
+Change the 11 to 14, but the native storage plugin is fixed here:
+```
+"@ionic-native/native-storage": "^4.11.0",
+```
+
+Trying to set that value manually to 5.0.0-beta.14 with an npm i.  Then the errors in the editor are gone again.  Going for another deploy.  The app runs, but getting this message in the console via remote device debugging:
+```
+Error getting item NativeStorageError
+capacitorConsole @ capacitor-runtime.js:70
+```
+
+Shortest error in history!  Actually, the plugin does work.  We are never calling the save function, so getting the value that doesn't exist causes that error.  We make that brief change and we can get the demo value we've saved.  Now, how do we tell if it's a browser?
+
+Without the Platform plugin, we get this error:
+```
+data-storage.service.ts:29 Error getting item cordova_not_available
+```
+
+Put in a function to use native storage if it's available (on a device) and fall back to local storage if it isn't (browser testing).  The app now works for both, so it's time to move on to the short descriptions.
+
+
+
+
+
+
+
+The usage is slightly closer to the Capacitor version:
+```
+this.nativeStorage.setItem('myitem', {property: 'value', anotherProperty: 'anotherValue'})
+  .then(
+      ...
+```
+
+Capacitor version:
+```
+async setObject() {
+  await Storage.set({
+    key: 'user',
+    value: JSON.stringify({
+      id: 1,
+      name: 'Max'
+    })
+  });
+}
+```
+
+
+
+
 
 
 
