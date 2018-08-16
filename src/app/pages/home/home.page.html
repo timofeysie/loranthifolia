@@ -1,37 +1,39 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      List of Cognitive Bias <span *ngIf="list">{{list.length}}</span> <span class="version_text">version: {{version}}</span>
+			<span *ngIf="list">{{list.length}}</span> 
+			Cognitive Biases 
+			<span class="version_text">version: {{version}}</span>
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-  	<ion-list no-lines class="list">
-      	<ion-item-sliding *ngFor="let item of list; let i = index">
-					<div *ngIf="item.sortName">
-					<ion-item slot="start"
-						(click)="setStateViewed(i)"
-						tappable 
-						routerLink="/detail/{{ item.sortName }}" 
-						routerDirection="forward"
-						detail="true">
-						<div *ngIf="item">
-							<span class="ion-list__defaultItem"
-								[ngClass]="{
-									'list__both': item.cognitive_biasLabel && item.wikiMedia_label, 
-									'list__text-wikimedia': !item.cognitive_biasLabel,
-									'list__item--viewed': item.detailState ==='viewed'}">
-								{{ item.sortName }}</span>
-						</div>
-					</ion-item> 
-					<ion-item-options slot="left">
-						<div *ngIf="item.cognitive_biasDescription">
-							{{ item.cognitive_biasDescription }}</div>
-						<div *ngIf="item.wikiMedia_description">
-							{{ item.wikiMedia_description }}</div>
-					</ion-item-options>
-				</div>
-    	</ion-item-sliding>
-  	</ion-list>
+	<ion-list no-lines class="list">
+		<ion-item-sliding #itemSliding *ngFor="let item of list; let i = index">
+			<div *ngIf="item.sortName">
+				<ion-item slot="start"
+					(click)="setStateViewed(i)"
+					tappable 
+					routerLink="/detail/{{ item.sortName }}" 
+					routerDirection="forward"
+					detail="true">
+					<div *ngIf="item">
+						<span class="ion-list__defaultItem"
+							[ngClass]="{
+								'list__both': item.cognitive_biasLabel && item.wikiMedia_label, 
+								'list__text-wikimedia': !item.cognitive_biasLabel,
+								'list__item--viewed': item.detailState ==='viewed'}">
+							{{ item.sortName }}</span>
+					</div>
+				</ion-item> 
+				<ion-item-options slot="left">
+					<div *ngIf="item.cognitive_biasDescription">
+						{{ item.cognitive_biasDescription }}</div>
+					<div *ngIf="item.wikiMedia_description">
+						{{ item.wikiMedia_description }}</div>
+				</ion-item-options>
+			</div>
+		</ion-item-sliding>
+	</ion-list>
 </ion-content>

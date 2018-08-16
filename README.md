@@ -42,7 +42,14 @@ npx cap update
 
 #
 
-## Item state]
+## Short descriptions
+
+The WikiData descriptions are few and far between.  But they are the most important going forward.  Second to those are the WikiMedia descriptions.  These will be used when there is no WikiData description available.  Third will be the user generated description.  This will be either one of the first two by default, but can be changed by the user.  I imagine people cutting and pasting from the long Wikipedia description to create this, so that's what we will start with here.
+
+First off, we have a sliding item that reveals the description, which is cut off after two lines.  The first idea is to expand that section when opened.  This may not work but it's worth trying as the first effort here.
+
+
+## Item state
 
 The planned features for state are as follows:
 1. bookmark the last viewed item
@@ -65,6 +72,129 @@ listSortingProperty: property name (currently sortName)
 ```
 
 The one we want first is detailState.  Using the styles for the states from the other project, added another ngClass to make viewed items 50% opaque.  Set the state in an onclick function, and save the list in the storage.
+
+It may be pretty difficult to fight the styles of a list item.  I have tried before, and it was not easy modifying a single item if the styles for it are not exposed from the shadow DOM.  Let's see what we can use that exists already.
+
+The [API for the sliding lists](https://beta.ionicframework.com/docs/api/item-sliding) has events and methods.
+
+
+The ```ionDrag``` event is emitted when the sliding position changes.
+The ```closeOpened()``` method closes all of the sliding items in the list. Items can also be closed from the List.
+
+Components also have selectors and available properties.  However, for the sliding list, there is no indication of a class that can be injected into our page to call the method on.  I would be helpful to have full examples that show usage of the events, methods, selectors and available properties.
+
+The attributes listed in the docs for button show:
+```
+<ion-button shape="round" color="primary" fill="outline">Hello World</ion-button>
+```
+
+The API page shows this in the properties section:
+```
+Shape
+Attribute:  shape 
+Type: string
+The button shape. Possible values are: "round".
+```
+
+So that's the properties/attributes.  Since these are all web components now, they might all be properties/attributes.
+
+As in Angular, we could try:
+```
+[ionDrag]="ourDragFunction()"
+```
+
+This causes the template error:
+```
+ERROR Error: Uncaught (in promise): Error: Template parse errors:
+Can't bind to 'ionDrag' since it isn't a known property of 'ion-item'.
+```
+
+What about the closeOpened() function?  Do we just add that to our class?  We would need an injected object to call that on, no?
+
+There must be somewhere in the docs the usage is detailed.
+
+In the API reference for the action sheet component, we have the ActionSheetController controller injected into a class.  It is used to call this function: ```this.actionSheetController.create({...})```
+
+There is no create() function in the methods section.  The next item in the API reference however is the [controller](https://beta.ionicframework.com/docs/api/action-sheet-controller) which has create(),
+ dismiss() and getTop() functions.
+
+ But the action sheet shows methods such as ionActionSheetDidDismiss and ionActionSheetWillPresent.  
+
+ We could try this our on a list controller, but there is no list controller mentioned.  In the popover docs it says: *To present a popover, call the present method on a popover instance.*
+
+That instance is returned by the create function:
+```
+const popover = await this.popoverController.create({...})
+```
+
+But since there is no controller for our list...  Going to ask on Slack.
+
+Hi everyone.  How does one use the events, methods and selectors listed in the Ionic 4 beta docs without examples?  The [sliding item docs](https://beta.ionicframework.com/docs/api/item-sliding) show a ```ionDrag``` event and the ```closeOpened()``` method.  But there is no list controller to inject and call functions on.  Is there another place in the docs where the API event, method and selector features have example code? 
+
+Looking at the rate of questions answered in the technical-questions chat, it's not going to get answered.
+
+Someone else asked a [similar question](https://forum.ionicframework.com/t/ionic-4-beta2-correct-usage-of-ion-tabs-methodes/138225) on the forums with no answer in three days.  I'll keep you posted.
+
+Using the old method to get the events does not work either.
+We did change the import but still there was nothing (undefined):
+```
+import { Events } from 'ionic-angular' to '@ionic/angular';
+...
+events.subscribe('ionDrag', (what) => { ...
+```
+
+A common way to get a handle on an element/component is using the Angular @ViewChild annotation.  These references use a #marker syntax in the template, but the references aren't available until after the constructor has run, so we have to extend the after view init which will then call this function when the ui is ready.  But, which one is correct?  Just saw the second one below with async for the first time:
+```
+  ngAfterViewInit() {
+  public async ngAfterViewInit(): Promise<void> {
+```
+
+Someone posted this solution to their problem;
+```
+@ViewChild('detailNav', { read: Nav }) detailNav: Nav;
+```
+
+[This post](https://github.com/ionic-team/ionic/issues/15046#issuecomment-412128537) shows that Ionic 4 is still a work in process.  Brandy Scarney on the Ionic team commented 6 days ago
+*I believe this issue has two parts to it: the update is being called prior to the slides being loaded, and the slides component is being read in as an ElementRef instead of a Slides component.  We're going to see if we can find a way to get this working without passing to the read property.*
+
+She has this example:
+```
+import { Slides } from '@ionic/angular';
+
+@Component({
+  ...
+})
+export class TutorialPage {
+
+  @ViewChild('slides', { read: Slides }) slides: Slides;
+
+  ionViewDidEnter() {
+    this.slides.update();
+  }
+}
+```
+
+This is critical info without which it seems much of the API reference is useless.
+
+We might have to give up on this planned feature until this is either clarified in the docs or 'fixed'.
+
+First, let's give it a try:
+```
+import { ItemSliding } from '@ionic/angular';
+...
+@ViewChild('itemSliding', { read: ItemSliding }) itemSliding: ItemSliding;
+...
+public async ngAfterViewInit(): Promise<void> {
+    console.log('itemSliding',this.itemSliding);
+}
+```
+
+In the template we have:
+```
+<ion-item-sliding #itemSliding *ngFor="let item of list; let i = index">
+```
+
+But the result is still undefined.
 
 
 ## API service caching vs local storage

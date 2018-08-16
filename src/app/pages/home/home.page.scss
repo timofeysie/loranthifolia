@@ -24,3 +24,8 @@ ion-item-options {
 .list__item--viewed {
     opacity: 0.5;
 }
+.shortDescription {
+    min-height: fit-content;
+    padding: 10px;
+    flex-grow: 4;
+}

@@ -1,33 +1,55 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { MyDataService } from '../../services/api/my-data.service';
 import { CONSTANTS } from '../../constants';
 import { DataStorageService } from '../../services/storage/data-storage.service';
+import { Events } from '@ionic/angular';
+import { ItemSliding } from '@ionic/angular';
 
 @Component({
   selector: 'app-page-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements AfterViewInit {
   list: any;
   mediaSections = 3;
   version: string;
+  @ViewChild('itemSliding', { read: ItemSliding }) itemSliding: ItemSliding;
   constructor(
     private myDataService: MyDataService, 
-    private dataStorageService: DataStorageService) {
+    private dataStorageService: DataStorageService,
+    public events: Events) {
       this.dataStorageService.getListViaNativeStorage().then((result) => {
-        console.log('result',result);
         if (result) {
           this.list = result;
         } else {
-          this.getListFromServer();
+          console.log('getting list from storage or server');
+          this.getListFromStorageOrServer();
         }
       });
-      
     this.version = CONSTANTS.VERSION;
+    events.subscribe('ionDrag', (what) => {
+      // user and time are the same arguments passed in `events.publish(user, time)`
+      console.log('Welcome', what);
+    });
+  }
+  
+
+  // ngAfterViewInit() {
+  //   console.log('itemSliding',this.itemSliding);
+  // }
+
+  public async ngAfterViewInit(): Promise<void> {
+    console.log('itemSliding',this.itemSliding);
   }
 
-  getListFromServer() {
+  /**
+   * Get the list either from storage or API if it's not there.
+   * Set the sort name to the label, then on to getting the WikiMedia
+   * category lists which will eventually merge those lists with
+   * the WikiData list.
+   */
+  getListFromStorageOrServer() {
     this.myDataService.getWikiDataList().subscribe(
       data => {
         this.list = data['list'];
@@ -47,6 +69,9 @@ export class HomePage {
     );
   }
 
+  /** Use a promise chain to get the WikiMedia section lists.
+   * Sort the 
+   */
   getWikiMediaLists() {
     let promises = [];
     for (let i = 0; i < this.mediaSections; i++) {
