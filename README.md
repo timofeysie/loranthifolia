@@ -28,6 +28,8 @@ npx cap update
 
 ## Table of Contents
 
+1. [The options page & i18n](#The options page & i18n)
+1. [Short descriptions & incomplete API references](#Short descriptions & incomplete API references)
 1. [Item state](#Item state)
 1. [API service caching vs local storage](#API service caching)
 1. [Scroll Position Restoration](#Scroll Position Restoration)
@@ -42,38 +44,25 @@ npx cap update
 
 #
 
-## Short descriptions
+## The options page & i18n
+
+Planned features for the options page are:
+
+1. language change option
+2. save named list changes in local storage
+3. create a new category
+
+Changing the category is unlikely at this point.  The conditions would be that there is a "list of x" on Wikipedia, and had sections that can be scraped the same as the list of cognitive biases.  We could offer a list of fallacies and see how that goes.  Then lay the rules out for the user to add new ones and see how they go.
+
+But right now, changing the language should be doable.
+
+
+
+## Short descriptions & incomplete API references
 
 The WikiData descriptions are few and far between.  But they are the most important going forward.  Second to those are the WikiMedia descriptions.  These will be used when there is no WikiData description available.  Third will be the user generated description.  This will be either one of the first two by default, but can be changed by the user.  I imagine people cutting and pasting from the long Wikipedia description to create this, so that's what we will start with here.
 
 First off, we have a sliding item that reveals the description, which is cut off after two lines.  The first idea is to expand that section when opened.  This may not work but it's worth trying as the first effort here.
-
-
-## Item state
-
-The planned features for state are as follows:
-1. bookmark the last viewed item
-1. let the user build a short description
-1. swipe right to see short description
-1. wipe up/down on the short description to send the item to the top/bottom of the list
-1. swipe right to remove it from the list
-
-Starting with the first item would be easy, but let's think about a state system to support all these features.  It looks like we have three separate states to keep:
-```
-detailState: un-viewed/viewed
-descriptionState: un-viewed/viewed
-itemState: show/removed
-itemOrder: itemOrderNumber
-```
-
-If you read the [Scroll Position Restoration](#Scroll Position Restoration) section, you know that Angular will take care of this for us (once Ionic has released a version that has started using 6.1).  But we still have an issue with our sort and overriding that.  We will want to let the user choose the kind of sorting in the future, including grouping by category.  So starting off with a list sorting state is also a good idea:
-```
-listSortingProperty: property name (currently sortName)
-```
-
-The one we want first is detailState.  Using the styles for the states from the other project, added another ngClass to make viewed items 50% opaque.  Set the state in an onclick function, and save the list in the storage.
-
-It may be pretty difficult to fight the styles of a list item.  I have tried before, and it was not easy modifying a single item if the styles for it are not exposed from the shadow DOM.  Let's see what we can use that exists already.
 
 The [API for the sliding lists](https://beta.ionicframework.com/docs/api/item-sliding) has events and methods.
 
@@ -157,7 +146,7 @@ Someone posted this solution to their problem;
 [This post](https://github.com/ionic-team/ionic/issues/15046#issuecomment-412128537) shows that Ionic 4 is still a work in process.  Brandy Scarney on the Ionic team commented 6 days ago
 *I believe this issue has two parts to it: the update is being called prior to the slides being loaded, and the slides component is being read in as an ElementRef instead of a Slides component.  We're going to see if we can find a way to get this working without passing to the read property.*
 
-She has this example:
+She has this example which implements something [discussed on this forum post](https://forum.ionicframework.com/t/slides-viewchild/137328/7):
 ```
 import { Slides } from '@ionic/angular';
 
@@ -194,7 +183,50 @@ In the template we have:
 <ion-item-sliding #itemSliding *ngFor="let item of list; let i = index">
 ```
 
-But the result is still undefined.
+But the result is still undefined.  We might want to try upgrading to the latest beta.  We are currently using:
+```
+"@ionic/angular": "4.0.0-alpha.7",
+```
+
+But, being offline right now, what can we actually work on?  Add padding to the description, limit the number of lines with an ellipsis pipe?
+
+Using the ```padding-start``` [element padding](https://beta.ionicframework.com/docs/layout/css-utilities#content-space)a has no effect.
+
+A long description can be seen with the default Actor-observer bias WikiMedia one:
+"The tendency for explanations of other individuals' behaviors to overemphasize the influence of their personality and underemphasize ...".  Since these are supposed to be short reminder descriptions set by the user, it's probably a good idea to limit the length anyhow.  Make the user try harder to make a concise description that is meaningful to them.
+
+That's 132 characters at the end of 'underemphasize'. This is the easiest way to accomplish this:
+```
+{{ item.wikiMedia_description | slice:0:132 }}
+```
+
+Done.  However, if we can get some margin in there, it should be a little shorter.  And we should append some ellipsis to show that it has actually be truncated.
+
+
+
+## Item state
+
+The planned features for state are as follows:
+1. bookmark the last viewed item
+1. let the user build a short description
+1. swipe right to see short description
+1. wipe up/down on the short description to send the item to the top/bottom of the list
+1. swipe right to remove it from the list
+
+Starting with the first item would be easy, but let's think about a state system to support all these features.  It looks like we have three separate states to keep:
+```
+detailState: un-viewed/viewed
+descriptionState: un-viewed/viewed
+itemState: show/removed
+itemOrder: itemOrderNumber
+```
+
+If you read the [Scroll Position Restoration](#Scroll Position Restoration) section, you know that Angular will take care of this for us (once Ionic has released a version that has started using 6.1).  But we still have an issue with our sort and overriding that.  We will want to let the user choose the kind of sorting in the future, including grouping by category.  So starting off with a list sorting state is also a good idea:
+```
+listSortingProperty: property name (currently sortName)
+```
+
+The one we want first is detailState.  Using the styles for the states from the other project, added another ngClass to make viewed items 50% opaque.  Set the state in an onclick function, and save the list in the storage.
 
 
 ## API service caching vs local storage

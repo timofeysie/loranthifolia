@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <button ion-button 
+      icon-only 
+      tappable
+      slot="left"
+      (click)="goBack()"
+      class="back_button">
+        <ion-icon name="arrow-back"
+          class="back_arrow"></ion-icon>
+    </button>
+    <ion-title slot="start">
+			Options
+		</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-item>
+    <ion-label>Language</ion-label>
+    <ion-select [ngModel]="langChoice"
+      (ngModelChange)="changeLang($event)">
+      <ion-select-option *ngFor="let lang of languages">{{lang}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+</ion-content>

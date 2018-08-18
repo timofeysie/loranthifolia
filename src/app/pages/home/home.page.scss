@@ -1,8 +1,14 @@
 .small_arrow {
     font-size: 1em;
 }
+.optionsIcon {
+    position: absolute;
+    right: 6%;
+    font-size: 1.7em;
+    color: lightgray;
+}
 ion-item-options {
-    background-color: tomato;
+    background-color: bisque;
 }
 .version_text {
     font-size: 0.4em;

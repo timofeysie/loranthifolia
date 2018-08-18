@@ -1,10 +1,14 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>
+    <ion-title slot="start">
 			<span *ngIf="list">{{list.length}}</span> 
 			Cognitive Biases 
 			<span class="version_text">version: {{version}}</span>
-    </ion-title>
+		</ion-title>
+		<ion-icon name="settings" 
+			slot="end"
+			class="optionsIcon"
+			routerLink="/options" ></ion-icon>
   </ion-toolbar>
 </ion-header>
 
@@ -27,11 +31,12 @@
 							{{ item.sortName }}</span>
 					</div>
 				</ion-item> 
-				<ion-item-options slot="left">
+				<ion-item-options padding-start
+					slot="left">
 					<div *ngIf="item.cognitive_biasDescription">
 						{{ item.cognitive_biasDescription }}</div>
 					<div *ngIf="item.wikiMedia_description">
-						{{ item.wikiMedia_description }}</div>
+						{{ item.wikiMedia_description | slice:0:132 }}</div>
 				</ion-item-options>
 			</div>
 		</ion-item-sliding>
