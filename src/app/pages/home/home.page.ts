@@ -11,15 +11,16 @@ import { ItemSliding } from '@ionic/angular';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements AfterViewInit {
+  itemName = 'list';
   list: any;
   mediaSections = 3;
   version: string;
-  @ViewChild('itemSliding', { read: ItemSliding }) itemSliding: ItemSliding;
+  @ViewChild('itemSliding', { read: ItemSliding }) private itemSliding: ItemSliding;
   constructor(
     private myDataService: MyDataService, 
     private dataStorageService: DataStorageService,
     public events: Events) {
-      this.dataStorageService.getListViaNativeStorage().then((result) => {
+      this.dataStorageService.getItemViaNativeStorage(this.itemName).then((result) => {
         if (result) {
           this.list = result;
         } else {
@@ -61,7 +62,7 @@ export class HomePage implements AfterViewInit {
       error => {
         console.error('offline error',error);
         // assume we are offline here and load the previously saved list
-        this.dataStorageService.getListViaNativeStorage().then((result) => {
+        this.dataStorageService.getItemViaNativeStorage(this.itemName).then((result) => {
           console.log('result',result);
           this.list = result;
         });
@@ -90,7 +91,7 @@ export class HomePage implements AfterViewInit {
         this.addItems(data[0]); // TODO: fix array of dupes
         this.addItems(data[1]); // TODO: fix array of dupes
         this.list.sort(this.dynamicSort('sortName'));
-        this.dataStorageService.setList(this.list);
+        this.dataStorageService.setItem(this.itemName, this.list);
     });
   }
 
@@ -116,7 +117,7 @@ export class HomePage implements AfterViewInit {
     let item = this.list[i];
     console.log('item',item.sortName);
     this.list[i].detailState = 'viewed';
-    this.dataStorageService.setList(this.list);
+    this.dataStorageService.setItem(this.itemName, this.list);
   }
 
   /**

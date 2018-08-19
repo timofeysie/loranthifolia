@@ -11,37 +11,47 @@ export class DataStorageService {
     private storage: Storage,
     private nativeStorage: NativeStorage) { }
 
-    setList(list:any) {
-      // set a key/value
-      this.storage.set('list', list);
+  /**
+   * Try both local storage and native storage. 
+   * @param itemName name of table to store
+   * @param list array of objects to store
+   */
+  setItem(itemName: string, list:any) {
+    // set a key/value
+    this.storage.set(itemName, list);
+    this.nativeStorage.setItem(itemName, list)
+      .then(
+        () => console.log('Stored '+itemName),
+        error => console.error('Error storing '+itemName, error)
+    );
+  }
 
-      this.nativeStorage.setItem('list', list)
-        .then(
-          () => console.log('Stored list'),
-          error => console.error('Error storing list', error)
+  /**
+   * Try to get the data from the native storage and use the local storage 
+   * if this fails.
+   * @param itemName name of table to store
+   * @returns Promise with contents of the table in storage
+   */
+  getItemViaNativeStorage(itemName: string) {
+    return new Promise((resolve, reject) => {
+      this.nativeStorage.getItem(itemName)
+      .then(
+        data => resolve(data),
+        error => {
+          console.log('Using local storage due to ',error);
+          this.getItemViaStorage(itemName).then((result) => {
+          resolve(result);
+        })}
       );
-    }
+    });
+  }
 
-    getListViaNativeStorage() {
-      return new Promise((resolve, reject) => {
-        this.nativeStorage.getItem('list')
-        .then(
-          data => resolve(data),
-          error => {
-            console.log('Using local storage due to ',error);
-            this.getListViaStorage().then((result) => {
-            resolve(result);
-          })}
-        );
+  getItemViaStorage(itemName: string) {
+    return new Promise((resolve, reject) => {
+      this.storage.get(itemName).then((val) => {
+        resolve(val);
       });
-    }
-
-    getListViaStorage() {
-      return new Promise((resolve, reject) => {
-        this.storage.get('list').then((val) => {
-          resolve(val);
-        });
-      });
-    }
+    });
+  }
 
 }

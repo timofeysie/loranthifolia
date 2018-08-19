@@ -56,6 +56,32 @@ Changing the category is unlikely at this point.  The conditions would be that t
 
 But right now, changing the language should be doable.
 
+At least it appears simple on the surface.  Maybe it is but it will need a little planning.  There are two aspects to i18n in this app that need to be considered.
+
+The first is aspect A, is changing the static text content in the app via language bundles.  This is what most people think about when they do i18n.  Using [ngx translate](https://github.com/ngx-translate/core), it would work like this:
+```
+<h2>{{"home" | translate }}</h2>
+```
+
+We will have to manually translate all our system text to languages we want to support.  One way around this would be to programmatically use Wikitionary to translate the words, hoping that we get the right translations.
+
+Aspect B is about our dynamic content, it is all coming from API calls, so translating those would be as simple as changing the language parameter in the service.  So we can add the option to our local storage and get that value before making the call.
+
+However, our current local storage has one list.  What we will need to do is one of these:
+1. replace that list (and lose all the state info attached to it)
+2. replace that list (and copy all the state info hoping the lists match)
+3. add the list (using some naming convention like list-en, list-kr)
+4. anyone else have another idea?
+
+It seems like we will have to say goodbye to our simple app.  The simplest way for now is to ignore the problem and go with option 1.  But I'm pretty attached to my item states, as it helps me see what I've looked at and what is remaining.
+
+So then option 2 would be better.  At least we don't know yet if there will be a problem with option 2, so we should start with 1 and see what happens.
+
+We could follow one of the [accepted ways of doing app properties](https://stackoverflow.com/questions/43193049/app-settings-the-angular-way), but since we want each user to be able to have their own settings which means using our local storage, we may as well re-use the data storage service to save an array of settings that can be retrieved from anywhere in the app.
+
+First, convert the data storage class to use the name of the item being passed in and retrieved so that we can use the same functions we already have for both the list and the options.
+
+
 
 
 ## Short descriptions & incomplete API references
@@ -183,7 +209,14 @@ In the template we have:
 <ion-item-sliding #itemSliding *ngFor="let item of list; let i = index">
 ```
 
-But the result is still undefined.  We might want to try upgrading to the latest beta.  We are currently using:
+But the result is still undefined.  Also tried this based on [a similar issue](https://github.com/ionic-team/ionic/issues/15176): 
+```
+@ViewChild('itemSliding', { read: ItemSliding }) private itemSliding: ItemSliding;
+```
+
+
+
+We might want to try upgrading to the latest beta.  We are currently using:
 ```
 "@ionic/angular": "4.0.0-alpha.7",
 ```
