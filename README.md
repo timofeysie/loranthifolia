@@ -63,7 +63,7 @@ The first is aspect A, is changing the static text content in the app via langua
 <h2>{{"home" | translate }}</h2>
 ```
 
-We will have to manually translate all our system text to languages we want to support.  One way around this would be to programmatically use Wikitionary to translate the words, hoping that we get the right translations.
+We will have to manually translate all our system text to languages we want to support.  One way around this would be to programmatically use [Wiktionary](https://en.wiktionary.org/wiki/Wiktionary:Main_Page) to translate the words, hoping that we get the right translations.
 
 Aspect B is about our dynamic content, it is all coming from API calls, so translating those would be as simple as changing the language parameter in the service.  So we can add the option to our local storage and get that value before making the call.
 
@@ -81,7 +81,7 @@ We could follow one of the [accepted ways of doing app properties](https://stack
 
 First, convert the data storage class to use the name of the item being passed in and retrieved so that we can use the same functions we already have for both the list and the options.
 
-
+Next, we will have to modify the [Conchifolia NodeJS server app](https://github.com/timofeysie/conchifolia) to accept a local for the API calls.
 
 
 ## Short descriptions & incomplete API references

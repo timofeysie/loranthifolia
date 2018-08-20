@@ -20,7 +20,8 @@
     <ion-label>Language</ion-label>
     <ion-select [ngModel]="langChoice"
       (ngModelChange)="changeLang($event)">
-      <ion-select-option *ngFor="let lang of languages">{{lang}}</ion-select-option>
+      <ion-select-option *ngFor="let item of languages"
+        value="{{item.lang}}">{{item.name}}</ion-select-option>
     </ion-select>
   </ion-item>
 </ion-content>
