@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { MyDataService } from '../../services/api/my-data.service';
 import { CONSTANTS } from '../../constants';
 import { DataStorageService } from '../../services/storage/data-storage.service';
@@ -15,11 +15,15 @@ export class HomePage implements AfterViewInit {
   list: any;
   mediaSections = 3;
   version: string;
+  optionsName = 'options';
+  langChoice: string;
+  options: any;
   @ViewChild('itemSliding', { read: ItemSliding }) private itemSliding: ItemSliding;
   constructor(
     private myDataService: MyDataService, 
     private dataStorageService: DataStorageService,
     public events: Events) {
+
       this.dataStorageService.getItemViaNativeStorage(this.itemName).then((result) => {
         if (result) {
           this.list = result;
@@ -32,6 +36,12 @@ export class HomePage implements AfterViewInit {
     events.subscribe('ionDrag', (what) => {
       // user and time are the same arguments passed in `events.publish(user, time)`
       console.log('Welcome', what);
+    });
+    this.dataStorageService.getItemViaNativeStorage(this.optionsName).then((result) => {
+      if (result) {
+        this.options = result;
+        this.langChoice = this.options['language'];
+      }
     });
   }
   
@@ -51,7 +61,7 @@ export class HomePage implements AfterViewInit {
    * the WikiData list.
    */
   getListFromStorageOrServer() {
-    this.myDataService.getWikiDataList('en').subscribe(
+    this.myDataService.getWikiDataList(this.langChoice).subscribe(
       data => {
         this.list = data['list'];
         this.list.forEach((item) => {
@@ -78,7 +88,7 @@ export class HomePage implements AfterViewInit {
     let promises = [];
     for (let i = 0; i < this.mediaSections; i++) {
       promises.push(new Promise((resolve) => {
-        this.myDataService.loadWikiMedia(i+1,'en',false).subscribe((data) => { 
+        this.myDataService.loadWikiMedia(i+1,this.langChoice).subscribe((data) => { 
           let parsedData = this.parseList(data);
           resolve(parsedData); });
       }));

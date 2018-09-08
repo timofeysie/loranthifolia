@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { DataStorageService } from '../../services/storage/data-storage.service';
 
@@ -14,7 +15,8 @@ export class OptionsPage implements OnInit {
   options: any;
   constructor(
     private location: Location,
-    private dataStorageService: DataStorageService) {
+    private dataStorageService: DataStorageService,
+    private router: Router) {
     this.langChoice = 'en';
   }
 
@@ -35,6 +37,7 @@ export class OptionsPage implements OnInit {
     this.langChoice = event;
     this.options['language'] = event;
     this.dataStorageService.setItem(this.optionsName,this.options);
+    this.location.back();
   }
 
   goBack() {

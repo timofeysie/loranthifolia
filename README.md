@@ -139,7 +139,24 @@ getDetail(pageName: string, lang: string, leaveCaseAlone: boolean) {
 
 That fixes that!
 
-Next, use our language setting.
+Next, use our language setting.  We will have to first load the preference, and then decide on a UX problem that the web app dealt with in a different way.  There, the language choice is on the list page itself.  No options page was created there to save time (ha!).  We also need a way to update the list.  Then we need to save the lists in local storage with the language as part of the list name.
+
+Right now, there is no way to reload the list.  This is also something that was added to the web app to make development easier.  A refresh icon next to the name (where we have the version number here).  So whenever we updated the parse functionality, for example to solve some of the missing redirects, we could click that icon and the list would refresh with the new parse stuff called.
+
+When creating the options page, it crossed someones mind at least that the user then would not see the list change, either until they went back to the list, or if we programmatically send them back to the list page to watch it repopulate.  That sounds like the best option.  We can predict that there will be more options, and don't want to have the situation where the user does several option changes at once and then goes back, which means we would need some kind of command pattern functionality, which is beyond the score of this app for now.  So the send the user back after a change (prompted? nah) and reload the list then.
+
+After calling the ```this.router.navigateByUrl('/home');``` function when the language is changed, the app seems to work and returns to the home (list) page.  But if you do it two more times, the third time, the app will not return to the home page.  If you choose the back button, there appears to be multiple pages added.
+
+Instead of a *naviagate* or *navigateToUrl* function, switching to this works:
+```
+this.location.back();
+```
+
+Next, on the main list home page, we need to listen to a returned navigation event and reload the list with the changed encoding.
+
+After that,
+1. loading spinners
+2. short description layout
 
 
 ## Short descriptions & incomplete API references
