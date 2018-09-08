@@ -17,13 +17,12 @@ export class DetailPage implements OnInit {
 
   ionViewWillEnter(){
     this.itemName = this.route.snapshot.paramMap.get('id');
-    this.myDataService.loadSingleWikiMediaPage(this.itemName).then((result) => {
-      this.description = result;
-      this.description = this.description.split('href="/wiki/')
+    this.myDataService.getDetail(this.itemName.replace(' ','_').toLowerCase(),'en',false).subscribe(
+      data => {
+        this.description = data['description'].toString();
+        this.description = this.description.split('href="/wiki/')
           .join('href="https://en.wikipedia.org/wiki/');
-    }).catch((err) => {
-      console.log('will we get an error if the promise is not rejected or resolved');
-     });
+      });
   }
 
   ngOnInit() {

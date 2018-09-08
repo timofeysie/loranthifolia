@@ -83,6 +83,64 @@ First, convert the data storage class to use the name of the item being passed i
 
 Next, we will have to modify the [Conchifolia NodeJS server app](https://github.com/timofeysie/conchifolia) to accept a local for the API calls.
 
+That was easy to type, but a few days later, the job is still not done.  In order to use language settings in the API calls, the lib that creates the URLs for the calls needs to also accept the language args.  So that was a major change for those API signatures, so it went to version 3.0.  
+
+After adding the language, it was time to test it our in the Angular app served by the Conchifolia server.  This is when it seemed like we wouldn't be able to do this at all.  Using Korean, there were no WikiMedia sections, and the WikiData list was mainly just data pages and not available in Korean.  There ended up being only 28.
+
+Then, the detail pages weren't working.  After working on the library and the server apps, as well as the [demo implementation website](https://github.com/timofeysie/conchifolia), it was almost three week before getting back to implementing the i18n list here.  Work was also done on the site for missing descriptions and URL redirects.  There may be some code there that can be shared, so we can look at that as we make the changes to bring this project up to the same feature level as the website.
+
+The error on the detail page is:
+```
+ERROR Error: Uncaught (in promise): SyntaxError: Unexpected token < in JSON at position 0
+SyntaxError: Unexpected token < in JSON at position 0
+    at JSON.parse (<anonymous>)
+```
+
+We have an API change for our service:
+```
+get('/api/list/:lang')
+get('/api/wiki-list/:id/:lang')
+get('/api/detail/:id/:lang')
+```
+
+And the service in Conchifolia looks like this:
+```
+  private backendListUrl = '/api/list';
+  private backendDetailUrl = '/api/detail';
+  private backendWikiListUrl = '/api/wiki-list';
+  // /api/list
+  getList(lang) {
+      return this.httpClient.get<ListModel>(this.backendListUrl+'/'+lang)
+      .pipe(data => this.listData = data);
+  }
+  // /api/wiki-list
+  getDetail(detailId: string, lang: string, leaveCaseAlone: boolean) {
+    return this.httpClient.get<DetailModel>(encodeURI(this.backendDetailUrl
+        +'/'+detailId+'/'+lang+'/'+leaveCaseAlone))
+      .pipe(data => data);
+  }
+  loadWikiMedia(sectionNum, lang: string) {
+    return this.httpClient.get(
+      encodeURI(
+        this.backendWikiListUrl + '/' + sectionNum + '/' + lang))
+      .pipe(data => data)
+  }
+```
+
+With a little bit of modification, we have this for details:
+```
+getDetail(pageName: string, lang: string, leaveCaseAlone: boolean) {
+    const backendDetailUrl = encodeURI('https://radiant-springs-38893.herokuapp.com/api/detail/'
+        +pageName+'/'+lang+'/'+leaveCaseAlone);
+    return this.httpClient.get(encodeURI(backendDetailUrl))
+      .pipe(data => data);
+}
+```  
+
+That fixes that!
+
+Next, use our language setting.
+
 
 ## Short descriptions & incomplete API references
 

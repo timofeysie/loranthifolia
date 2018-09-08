@@ -15,13 +15,23 @@ export class MyDataService {
   constructor(private http: Http,private  httpClient:  HttpClient) {
   }
 
-  getWikiDataList() {
-    return this.httpClient.get<Category>(this.backendListUrl)
+  /**
+   * /api/list
+   * @param lang 
+   */
+  getWikiDataList(lang: string) {
+    return this.httpClient.get<Category>(this.backendListUrl+'/'+lang)
       .pipe(data => data);
   }
   
-  loadWikiMedia(sectionNum) {
-    return this.httpClient.get(this.backendWikiListUrl + '/' + sectionNum)
+  /**
+   * /api/wiki-list
+   * @param sectionNum 
+   * @param lang 
+   * @param leaveCaseAlone 
+   */
+  loadWikiMedia(sectionNum, lang: string) {
+    return this.httpClient.get(this.backendWikiListUrl+'/'+sectionNum+'/'+lang)
       .pipe(data => data)
   }
 
@@ -30,23 +40,10 @@ export class MyDataService {
    * TODO: Catch and reject errors here.  Not sure if we want to use a promise here however.
    * @param pageName 
    */
-  loadSingleWikiMediaPage(pageName) {
-    return new Promise((resolve, reject) => {
-      const baseUrl = 'https://radiant-springs-38893.herokuapp.com/api/detail/'+pageName;
-      let headers = new Headers();
-      headers.append('content-type','application/json');
-      let myParams = new URLSearchParams();
-      myParams.set('credentials', 'true');
-      myParams.set('withCredentials', 'true');
-      let options = new RequestOptions({ headers:headers, params: myParams });
-      this.http.get(baseUrl, options)
-        .toPromise().then((res: any) => {
-          const parse = res.json();
-            let content = parse['description'];
-            content = content.replace('</div>',''); // why is this even here?
-            resolve(content);
-        });
-    });
+  getDetail(pageName: string, lang: string, leaveCaseAlone: boolean) {
+    const backendDetailUrl = encodeURI('https://radiant-springs-38893.herokuapp.com/api/detail/'+pageName+'/'+lang+'/'+leaveCaseAlone);
+    return this.httpClient.get(encodeURI(backendDetailUrl))
+      .pipe(data => data);
   }
 
   /**

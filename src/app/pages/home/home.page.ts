@@ -51,7 +51,7 @@ export class HomePage implements AfterViewInit {
    * the WikiData list.
    */
   getListFromStorageOrServer() {
-    this.myDataService.getWikiDataList().subscribe(
+    this.myDataService.getWikiDataList('en').subscribe(
       data => {
         this.list = data['list'];
         this.list.forEach((item) => {
@@ -71,13 +71,14 @@ export class HomePage implements AfterViewInit {
   }
 
   /** Use a promise chain to get the WikiMedia section lists.
-   * Sort the 
+   * Sort the list after all calls have completed.
+   * Save the sorted list in the local data storage.
    */
   getWikiMediaLists() {
     let promises = [];
     for (let i = 0; i < this.mediaSections; i++) {
       promises.push(new Promise((resolve) => {
-        this.myDataService.loadWikiMedia(i+1).subscribe((data) => { 
+        this.myDataService.loadWikiMedia(i+1,'en',false).subscribe((data) => { 
           let parsedData = this.parseList(data);
           resolve(parsedData); });
       }));
@@ -113,9 +114,6 @@ export class HomePage implements AfterViewInit {
   }
 
   setStateViewed(i) {
-    console.log('coffee',i);
-    let item = this.list[i];
-    console.log('item',item.sortName);
     this.list[i].detailState = 'viewed';
     this.dataStorageService.setItem(this.itemName, this.list);
   }
