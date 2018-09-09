@@ -36,10 +36,12 @@ export class MyDataService {
   }
 
   /**
-   * WIP.
-   * TODO: Catch and reject errors here.  Not sure if we want to use a promise here however.
+   * /api/detail/lang/leaveCaseAlone
+   * Get a single Wikipedia subject page.
    * @param pageName 
-   */
+   * @param lang 
+   * @param leaveCaseAlone for links that need to be original case, default is false for lowercase.
+  */
   getDetail(pageName: string, lang: string, leaveCaseAlone: boolean) {
     const backendDetailUrl = encodeURI('https://radiant-springs-38893.herokuapp.com/api/detail/'+pageName+'/'+lang+'/'+leaveCaseAlone);
     return this.httpClient.get(encodeURI(backendDetailUrl))

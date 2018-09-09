@@ -159,6 +159,19 @@ After that,
 2. short description layout
 
 
+Listening on the list page, these events will get called after the language change has been confirmed on the details page:
+```
+ngDoCheck
+ngAfterContentChecked
+ngAfterViewChecked
+... repeat 15 or so times ...
+```
+
+So if we get the language preference from storage, and it is different from the current list settings (how do we know what language is the current list is showing?) then we can reload the list (either from storage or http as usual).
+
+The performance of this system could be noticeable unless we use an observable, or behaviour subject.  Even then, it's a waste to slow down the entire app for this check.  Let's look into hook into the navigation change event.  
+
+
 ## Short descriptions & incomplete API references
 
 The WikiData descriptions are few and far between.  But they are the most important going forward.  Second to those are the WikiMedia descriptions.  These will be used when there is no WikiData description available.  Third will be the user generated description.  This will be either one of the first two by default, but can be changed by the user.  I imagine people cutting and pasting from the long Wikipedia description to create this, so that's what we will start with here.

@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, OnChanges, OnInit, DoCheck, AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked, OnDestroy } from '@angular/core';
 import { MyDataService } from '../../services/api/my-data.service';
 import { CONSTANTS } from '../../constants';
 import { DataStorageService } from '../../services/storage/data-storage.service';
@@ -10,7 +10,7 @@ import { ItemSliding } from '@ionic/angular';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements AfterViewInit {
+export class HomePage implements OnChanges, OnInit, DoCheck, AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked, OnDestroy {
   itemName = 'list';
   list: any;
   mediaSections = 3;
@@ -44,15 +44,63 @@ export class HomePage implements AfterViewInit {
       }
     });
   }
+
+  ngOnChanges()	{
+    console.log('ngOnChanges');
+    //console.log('Respond when Angular (re)sets data-bound input properties. The method receives a SimpleChanges object of current and previous property values.');
+    //console.log('Called before ngOnInit() and whenever one or more data-bound input properties change.');
+  }
+
+ngOnInit()	{
+  console.log('ngOnInit');
+  //console.log('Initialize the directive/component after Angular first displays the data-bound properties and sets the directive/component\'s input properties.');
+  //console.log('Called once, after the first ngOnChanges().');
+}
+
+ngDoCheck()	{
+  console.log('ngDoCheck');
+  //console.log('Detect and act upon changes that Angular can\'t or won\'t detect on its own.');
+  //console.log('Called during every change detection run, immediately after ngOnChanges() and ngOnInit().');
+}
+
+ngAfterContentInit()	{
+  console.log('ngAfterContentInit');
+  //console.log('Respond after Angular projects external content into the component\'s view / the view that a directive is in.');
+  //console.log('Called once after the first ngDoCheck().');
+}
+
+ngAfterContentChecked()	{
+  console.log('ngAfterContentChecked');
+  //console.log('Respond after Angular checks the content projected into the directive/component.');
+  //console.log('Called after the ngAfterContentInit() and every subsequent ngDoCheck().');
+}
+
+ngAfterViewInit()	{
+  console.log('ngAfterViewInit');
+  //console.log('Respond after Angular initializes the component\'s views and child views / the view that a directive is in.');
+  console.log('Called once after the first ngAfterContentChecked().');
+}
+
+ngAfterViewChecked()	{
+  console.log('ngAfterViewChecked');
+  //console.log('Respond after Angular checks the component\'s views and child views / the view that a directive is in.');
+  //console.log('Called after the ngAfterViewInit and every subsequent ngAfterContentChecked().');
+}
+
+ngOnDestroy()	{
+  console.log('ngOnDestroy');
+  //console.log('Cleanup just before Angular destroys the directive/component. Unsubscribe Observables and detach event handlers to avoid memory leaks.');
+  console.log('Called just before Angular destroys the directive/component.');
+}
   
 
   // ngAfterViewInit() {
   //   console.log('itemSliding',this.itemSliding);
   // }
 
-  public async ngAfterViewInit(): Promise<void> {
-    console.log('itemSliding',this.itemSliding);
-  }
+  // public async ngAfterViewInit(): Promise<void> {
+  //   console.log('itemSliding',this.itemSliding);
+  // }
 
   /**
    * Get the list either from storage or API if it's not there.
