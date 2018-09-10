@@ -33,12 +33,15 @@ export class DataStorageService {
    * @returns Promise with contents of the table in storage
    */
   getItemViaNativeStorage(itemName: string) {
+    console.log('itemName',itemName);
     return new Promise((resolve, reject) => {
       this.nativeStorage.getItem(itemName)
       .then(
         data => {
+          console.log('dot',data);
           resolve(data)},
         error => {
+          console.log('nativeStorage.getItem',error);
           this.getItemViaStorage(itemName).then((result) => {
             resolve(result);
         })}
@@ -61,9 +64,10 @@ export class DataStorageService {
       language: 'en',
       languages: 
         [{lang: 'en', name: 'English'},
-         {lang: 'kr', name: 'Korean'}]
+         {lang: 'ko', name: 'Korean'}]
     }
     this.setItem('options',options);
+    console.log('options created');
     return options;
   }
 

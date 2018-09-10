@@ -1,14 +1,17 @@
 <ion-header>
   <ion-toolbar>
     <ion-title slot="start">
-			<span *ngIf="list">{{list.length}}</span> 
+		<span *ngIf="list">{{list.length}}</span> 
 			Cognitive Biases 
-			<span class="version_text">version: {{version}}</span>
-		</ion-title>
-		<ion-icon name="settings" 
-			slot="end"
-			class="optionsIcon"
-			routerLink="/options" ></ion-icon>
+	</ion-title>
+	<ion-icon name="refresh"
+			class="refreshIcon"
+			(click)="refreshList()"></ion-icon>
+		<span class="version_text">version: {{version}}</span>
+	<ion-icon name="settings" 
+		slot="end"
+		class="optionsIcon"
+		routerLink="/options" ></ion-icon>
   </ion-toolbar>
 </ion-header>
 

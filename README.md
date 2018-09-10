@@ -171,6 +171,57 @@ So if we get the language preference from storage, and it is different from the 
 
 The performance of this system could be noticeable unless we use an observable, or behaviour subject.  Even then, it's a waste to slow down the entire app for this check.  Let's look into hook into the navigation change event.  
 
+This didn't work:
+```
+this.activatedRoute.url.subscribe(url =>{
+    console.log('url',url);
+});
+```
+
+This does:
+```
+this.router.events.forEach((event) => {
+    if(event instanceof NavigationEnd && this.router.url === '/home') {
+        // reload list
+    }
+});
+```
+
+After re-organizing the way the list is loaded, we get a list that will flow from the language settings.  But, the Korean version is a list of WikiMedia info page ids like this: Q18570.  What did we do in the web app version?  A good thing about having these notes is that the answer to this question and how to solve it is listed in the readme on the Conchifolia project.  The first problem is that the Korean encoding is ko not kr, which is the locale name.
+
+Next, there is no Korean list of cognitive bias.  What we see is a list of pages that are all in multiple languages.  The WikiMedia page is there so after parsing that, an entry that starts with a Q and has 5 digits following can be excluded because there is no Korean page for that bias. 
+
+The function to remove Q-codes looks like this:
+```
+  /*
+   * If a page only has a Q-code, it does not have data for that item in the language requested.
+   * Example:
+   * "cognitive_biasLabel" : {
+   *     "type" : "literal",
+   *     "value" : "Q177603"
+   * }
+   * @param item WikiData item to check if a language page exists
+   */
+  languagePageDoesNotExist(item, index) {
+    let label = item.cognitive_biasLabel;
+    let first = label.substr(0,1);
+    let second = label.substr(1,2);
+    if (first === 'Q' && !isNaN(second) || typeof label === 'undefined') {
+        // no page exists
+        return false;
+    } else {
+      // page exists
+      return true;
+    }
+  }
+```
+
+This will be the second time that we need this code but in two different projects.  We will also need to do this for the React app.  Since there will be more business logic shared across projects, it's not a bad idea to have another library that can contain this kind of function.
+
+We can use the rule of three: if you have to cut and paste functions, on third it should be refactored out into shared code.  So when faced with implementing all this again the next time, we can look at what will work as a tool function.  Remember earlier on in this project, adding DOM parsing functionality in the curator lib ruined both Ionic and React Native app builds and took up loads of time until it was realized that some JavaScript from NodeJS land will not work in the browser.  So basically we need a backend lib, and a front end lib.
+ 
+
+
 
 ## Short descriptions & incomplete API references
 

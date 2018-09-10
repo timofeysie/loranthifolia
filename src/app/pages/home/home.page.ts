@@ -1,39 +1,40 @@
-import { Component, ViewChild, OnChanges, OnInit, DoCheck, AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked, OnDestroy } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MyDataService } from '../../services/api/my-data.service';
 import { CONSTANTS } from '../../constants';
 import { DataStorageService } from '../../services/storage/data-storage.service';
 import { Events } from '@ionic/angular';
 import { ItemSliding } from '@ionic/angular';
+import { Router, NavigationEnd} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-page-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnChanges, OnInit, DoCheck, AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked, OnDestroy {
-  itemName = 'list';
+export class HomePage {
+  itemName: string = 'list';
   list: any;
   mediaSections = 3;
   version: string;
   optionsName = 'options';
-  langChoice: string;
+  langChoice: string = 'en';
   options: any;
   @ViewChild('itemSliding', { read: ItemSliding }) private itemSliding: ItemSliding;
   constructor(
     private myDataService: MyDataService, 
     private dataStorageService: DataStorageService,
-    public events: Events) {
-
-      this.dataStorageService.getItemViaNativeStorage(this.itemName).then((result) => {
-        if (result) {
-          this.list = result;
-        } else {
-          console.log('getting list from storage or server');
-          this.getListFromStorageOrServer();
+    public events: Events,
+    private router:Router,
+    private activatedRoute : ActivatedRoute) {
+      this.router.events.forEach((event) => {
+        if(event instanceof NavigationEnd && this.router.url === '/home') {
+          // reload list with the new options if they have changed
+          this.checkForUpdateOptions();
         }
       });
-    this.version = CONSTANTS.VERSION;
-    events.subscribe('ionDrag', (what) => {
+      this.version = CONSTANTS.VERSION;
+      events.subscribe('ionDrag', (what) => {
       // user and time are the same arguments passed in `events.publish(user, time)`
       console.log('Welcome', what);
     });
@@ -41,58 +42,79 @@ export class HomePage implements OnChanges, OnInit, DoCheck, AfterContentInit, A
       if (result) {
         this.options = result;
         this.langChoice = this.options['language'];
+        // kick off the action
+        this.getList();
       }
     });
   }
 
-  ngOnChanges()	{
-    console.log('ngOnChanges');
-    //console.log('Respond when Angular (re)sets data-bound input properties. The method receives a SimpleChanges object of current and previous property values.');
-    //console.log('Called before ngOnInit() and whenever one or more data-bound input properties change.');
+  getList() {
+    if (typeof this.list !== 'undefined' && !this.list) {
+      this.getFromLocalStorage();
+    } else {
+      this.getListFromStorage();
+    }
   }
 
-ngOnInit()	{
-  console.log('ngOnInit');
-  //console.log('Initialize the directive/component after Angular first displays the data-bound properties and sets the directive/component\'s input properties.');
-  //console.log('Called once, after the first ngOnChanges().');
-}
+  refreshList() {
+    console.log('what?');
+    this.list = null;
+    this.getListFromStorageOrServer();
+  }
 
-ngDoCheck()	{
-  console.log('ngDoCheck');
-  //console.log('Detect and act upon changes that Angular can\'t or won\'t detect on its own.');
-  //console.log('Called during every change detection run, immediately after ngOnChanges() and ngOnInit().');
-}
+  getListFromStorage() {
+    this.dataStorageService.getItemViaNativeStorage(this.langChoice+'-'+this.itemName).then((result) => {
+      if (result) {
+        this.list = result;
+      } else {
+        // if the app checks for an existing local list first and uses http after that,
+        // then this block will never happen.
+        console.log('then this block will never happen');
+        this.getListFromStorageOrServer();
+      }
+    });
+  }
 
-ngAfterContentInit()	{
-  console.log('ngAfterContentInit');
-  //console.log('Respond after Angular projects external content into the component\'s view / the view that a directive is in.');
-  //console.log('Called once after the first ngDoCheck().');
-}
+  /**
+   * If a page only has a Q-code, it does not have data for that item in the language requested.
+   * Example:
+   * "cognitive_biasLabel" : {
+   *     "type" : "literal",
+   *     "value" : "Q177603"
+   * }
+   * @param item WikiData item to check if a language page exists
+   */
+  languagePageDoesNotExist(item, index) {
+    let label = item.cognitive_biasLabel;
+    let first = label.substr(0,1);
+    let second = label.substr(1,2);
+    if (first === 'Q' && !isNaN(second)) {
+        // no page exists
+        console.log((first === 'Q')+' - '+!isNaN(second)+' - '+label);
+        return true; // if this returns true, then why aren't these items being removed from the list?
+    } else {
+      // page exists
+      console.log(item.sortName);
+      return false;
+    }
+  }
 
-ngAfterContentChecked()	{
-  console.log('ngAfterContentChecked');
-  //console.log('Respond after Angular checks the content projected into the directive/component.');
-  //console.log('Called after the ngAfterContentInit() and every subsequent ngDoCheck().');
-}
-
-ngAfterViewInit()	{
-  console.log('ngAfterViewInit');
-  //console.log('Respond after Angular initializes the component\'s views and child views / the view that a directive is in.');
-  console.log('Called once after the first ngAfterContentChecked().');
-}
-
-ngAfterViewChecked()	{
-  console.log('ngAfterViewChecked');
-  //console.log('Respond after Angular checks the component\'s views and child views / the view that a directive is in.');
-  //console.log('Called after the ngAfterViewInit and every subsequent ngAfterContentChecked().');
-}
-
-ngOnDestroy()	{
-  console.log('ngOnDestroy');
-  //console.log('Cleanup just before Angular destroys the directive/component. Unsubscribe Observables and detach event handlers to avoid memory leaks.');
-  console.log('Called just before Angular destroys the directive/component.');
-}
-  
+  /**
+   * 
+   */
+  checkForUpdateOptions() {
+    this.dataStorageService.getItemViaNativeStorage(this.optionsName).then((result) => {
+      if (result) {
+        this.options = result;
+        if (this.langChoice !== this.options['language']) {
+          console.log('lang change');   
+          this.langChoice = this.options['language'];  
+          this.list = null;
+          this.getListFromStorage();     
+        }
+      }
+    });
+  }
 
   // ngAfterViewInit() {
   //   console.log('itemSliding',this.itemSliding);
@@ -111,21 +133,36 @@ ngOnDestroy()	{
   getListFromStorageOrServer() {
     this.myDataService.getWikiDataList(this.langChoice).subscribe(
       data => {
-        this.list = data['list'];
-        this.list.forEach((item) => {
-          item.sortName = item.cognitive_biasLabel;
-        });
-        this.getWikiMediaLists();
+        if (!this.list) {
+          this.list = data['list'];
+          this.list.forEach((item, index) => {
+            if (!this.languagePageDoesNotExist(item, index)) {
+              // remove the element
+              item.sortName = item.cognitive_biasLabel;
+              this.list.splice(item.length - 1 - index, 1);
+            } else {
+              item.sortName = item.cognitive_biasLabel;
+            }
+          });
+          this.getWikiMediaLists();
+        }
       },
       error => {
         console.error('offline error',error);
         // assume we are offline here and load the previously saved list
-        this.dataStorageService.getItemViaNativeStorage(this.itemName).then((result) => {
-          console.log('result',result);
-          this.list = result;
-        });
+        this.getFromLocalStorage();
       }
     );
+  }
+
+  /**
+   * Get the list from local storage.
+   */
+  getFromLocalStorage() {
+    this.dataStorageService.getItemViaNativeStorage(this.langChoice+'-'+this.itemName).then((result) => {
+      console.log('result',result);
+      this.list = result;
+    });
   }
 
   /** Use a promise chain to get the WikiMedia section lists.
@@ -137,8 +174,11 @@ ngOnDestroy()	{
     for (let i = 0; i < this.mediaSections; i++) {
       promises.push(new Promise((resolve) => {
         this.myDataService.loadWikiMedia(i+1,this.langChoice).subscribe((data) => { 
-          let parsedData = this.parseList(data);
-          resolve(parsedData); });
+          if (data['parse']) {
+            let parsedData = this.parseList(data);
+            resolve(parsedData); 
+          }
+        });
       }));
     }
     Promise.all(promises)
@@ -173,7 +213,7 @@ ngOnDestroy()	{
 
   setStateViewed(i) {
     this.list[i].detailState = 'viewed';
-    this.dataStorageService.setItem(this.itemName, this.list);
+    this.dataStorageService.setItem(this.langChoice+'-'+this.itemName, this.list);
   }
 
   /**
