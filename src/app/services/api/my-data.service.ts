@@ -46,6 +46,7 @@ export class MyDataService {
   */
   getDetail(pageName: string, lang: string, leaveCaseAlone: boolean) {
     const backendDetailUrl = encodeURI('https://radiant-springs-38893.herokuapp.com/api/detail/'+pageName+'/'+lang+'/'+leaveCaseAlone);
+    console.log('backendDetailUrl',backendDetailUrl);
     return this.httpClient.get(encodeURI(backendDetailUrl))
       .pipe(data => data);
   }

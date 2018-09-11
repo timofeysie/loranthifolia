@@ -17,7 +17,6 @@ export class HomePage {
   list: any;
   mediaSections = 3;
   version: string;
-  optionsName = 'options';
   langChoice: string = 'en';
   options: any;
   @ViewChild('itemSliding', { read: ItemSliding }) private itemSliding: ItemSliding;
@@ -38,7 +37,7 @@ export class HomePage {
       // user and time are the same arguments passed in `events.publish(user, time)`
       console.log('Welcome', what);
     });
-    this.dataStorageService.getItemViaNativeStorage(this.optionsName).then((result) => {
+    this.dataStorageService.getItemViaNativeStorage(CONSTANTS.OPTIONS_NAME).then((result) => {
       if (result) {
         this.options = result;
         this.langChoice = this.options['language'];
@@ -103,7 +102,7 @@ export class HomePage {
    * 
    */
   checkForUpdateOptions() {
-    this.dataStorageService.getItemViaNativeStorage(this.optionsName).then((result) => {
+    this.dataStorageService.getItemViaNativeStorage(CONSTANTS.OPTIONS_NAME).then((result) => {
       if (result) {
         this.options = result;
         if (this.langChoice !== this.options['language']) {

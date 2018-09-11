@@ -218,8 +218,100 @@ The function to remove Q-codes looks like this:
 
 This will be the second time that we need this code but in two different projects.  We will also need to do this for the React app.  Since there will be more business logic shared across projects, it's not a bad idea to have another library that can contain this kind of function.
 
-We can use the rule of three: if you have to cut and paste functions, on third it should be refactored out into shared code.  So when faced with implementing all this again the next time, we can look at what will work as a tool function.  Remember earlier on in this project, adding DOM parsing functionality in the curator lib ruined both Ionic and React Native app builds and took up loads of time until it was realized that some JavaScript from NodeJS land will not work in the browser.  So basically we need a backend lib, and a front end lib.
+We can use the rule of three: if you have to cut and paste functions, on third it should be refactored out into shared code.  So when faced with implementing all this again the next time, we can look at what will work as a tool function.  Remember earlier on in this project, adding DOM parsing functionality in the curator lib ruined both Ionic and React Native app builds and took up loads of time until it was realized that some JavaScript from NodeJS land will not work in the browser.  So basically we need a backend lib, and a front end lib.  We already have one; 
+[Socius](https://github.com/timofeysie/socius): A shared component library which can be used in Angular 2 projects.
+
+We can also include our constants and data models there.
  
+OK.  All that about adding a new project to the five projects already at play with this (look mom, it's a microservice!), is taking us away from getting this feature finished.
+
+Removing the Q-code items is not so simple.  They need to be removed from the list, and right now it's not working as it does in Conchifolia.
+
+The detail links that are in Korean cause a 500 error:
+```
+GET https://radiant-springs-38893.herokuapp.com/api/detail/%25EC%25B9%25A8%25EB%25AC%25B5%25EC%259D%2598_%25EB%2582%2598%25EC%2584%25A0/en/false 500 (Internal Server Error)
+```
+
+However, tyring to get the logs from the server is failing:
+```
+$ heroku logs
+2018-09-10T23:12:02+00:00 heroku[logplex]: L15: Error displaying log lines. Please try again.
+```
+
+If it's not one thing, it's another.  A Han Solo movie with the Mahavishnu Orchestra soundtrack.  Yeah baby!  Could test it locally mofo.  Start up the server with node index.js, then go here: https://localhost:5000/api/detail/%EC%B9%A8%EB%AC%B5%EC%9D%98_%EB%82%98%EC%84%A0/en/false
+
+Result:
+```
+This site can’t provide a secure connection
+localhost sent an invalid response.
+ERR_SSL_PROTOCOL_ERROR
+```
+
+Doh!  Http for localhost!  New response:
+```
+No data in response:[object Object]
+```
+
+But now we have our server log:
+```
+$ node index.js
+Listening on 5000
+id 침묵의_나선
+leaveCaseAlone false
+wikiRes.headers { date: 'Mon, 10 Sep 2018 23:41:51 GMT',
+  'content-type': 'application/json; charset=utf-8',
+  'content-length': '345',
+  connection: 'close',
+  server: 'mw1276.eqiad.wmnet',
+  'x-powered-by': 'HHVM/3.18.6-dev',
+  'mediawiki-api-error': 'missingtitle',
+  p3p: 'CP="This is not a P3P policy! See https://en.wikipedia.org/wiki/Special:CentralAutoLogin/P3P for more info."',
+  'cache-control': 'private, must-revalidate, max-age=0',
+  vary: 'Accept-Encoding',
+  'content-disposition': 'inline; filename=api-result.json',
+  'x-content-type-options': 'nosniff',
+  'x-frame-options': 'SAMEORIGIN',
+  'backend-timing': 'D=31371 t=1536622911182231',
+  'x-varnish': '308225602, 687847215, 308634397, 53115105',
+  via: '1.1 varnish (Varnish/5.1), 1.1 varnish (Varnish/5.1), 1.1 varnish (Varnish/5.1), 1.1 varnish (Varnish/5.1)',
+  'accept-ranges': 'bytes',
+  age: '0',
+  'x-cache': 'cp1075 pass, cp2013 pass, cp5009 pass, cp5011 pass',
+  'x-cache-status': 'pass',
+  'strict-transport-security': 'max-age=106384710; includeSubDomains; preload',
+  'set-cookie': 
+   [ 'WMF-Last-Access=10-Sep-2018;Path=/;HttpOnly;secure;Expires=Fri, 12 Oct 2018 12:00:00 GMT',
+     'WMF-Last-Access-Global=10-Sep-2018;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Fri, 12 Oct 2018 12:00:00 GMT',
+     'GeoIP=AU:NSW:Lane_Cove:-33.82:151.17:v4; Path=/; secure; Domain=.wikipedia.org' ],
+  'x-analytics': 'https=1;nocookies=1',
+  'x-client-ip': '49.195.129.24' }
+Url: https://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=%EC%B9%A8%EB%AC%B5%EC%9D%98_%EB%82%98%EC%84%A0
+```
+
+Me: Computer, what is 'mediawiki-api-error': 'missingtitle'?
+Computer: The page you requested doesn't exist.
+Me: So why doesn't the message say 'missingpage'?
+Computer: Because a human wrote it.
+
+OK.  Very funny.  Now, what *should* the url be?
+```
+https://ko.wikipedia.org/wiki/%EC%B9%A8%EB%AC%B5%EC%9D%98_%EB%82%98%EC%84%A0
+```
+
+Me: Oh, and I'm the human, so I didn't see the wrong language was being passed for a Korean title.  The computer's got a point.
+Zoo Keeper: How's the day going fellas?
+Computer: Very well, thank you.
+Me: Pretty darn good now we know how to fix these links.  Not so good for getting rid of the Q-codes tho...
+
+The problem was that we still had en hardwired into the service.  Replace that with the option, and move the name of the options key into the constants class to do things a little more properly, and our call works:
+```
+https://radiant-springs-38893.herokuapp.com/api/detail/%EC%B9%A8%EB%AC%B5%EC%9D%98_%EB%82%98%EC%84%A0/ko/false
+
+Result:
+{"description":"<div class=\"mw-parser-output\"><p><b>침묵의 나선 이론</b> (沈默- 螺線理論, <span style=\"font-size: smaller;\"><a href=\"/wiki/%EB%8F%85%EC%9D%BC%EC%96%B4\" title=\"독일어\">독일어</a>&#58; </span><span lang=\"de\">Die Theorie der Schweigespirale</span>, <span style=\"font-size: smaller;\"><a href=\"/wiki/%EC%98%81%EC%96%B4\" title=\"영어\">영어</a>&#58; </span><span lang=\"en\">Spiral of Silence Theory</span>)은 <a href=\"/wiki/%EC%A0%95%EC%B9%98%ED%95%99\" title=\"정치학\">정치학</a>과 <a href=\"/wiki/%EB%8C%80%EC%A4%91%EB%A7%A4%EC%B2%B4\" class=\"mw-redirect\" title=\"대중매체\">대중매체</a>에 관한 이론이다. 1966년 독일의 사회과학자 <a href=\"/w/index.php?title=%EC%97%98%EB%A6%AC%EC%9E%90%EB%B2%A0%EC%8A%A4_%EB%85%B8%EC%97%98%EB%A0%88-%EB%85%B8%EC%9D%B4%EB%A7%8C&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"엘리자베스 노엘레-노이만 (없는 문서)\">엘리자베스 노엘레-노이만</a>(Elisabeth Noelle-Neumann)이 발표한 〈Öffentliche Meinung und Soziale Kontrolle<span style=\"color:gray;\"><small>→여론과 사회 통제</small></span>〉에서 제시되었다.\n</p><p>\n하나의 특정한 의견이 다수의 사람들에게 인정되고 있다면, 반대되는 의견을 가지고 있는 ... </div>"}
+```
+
+If you an see one span has the title in English: *Spiral of Silence Theory*.  This will be helpful in learner mode where there is a native language setting and a language to be learned setting which will turn the list into text/translation list where the translation takes the place of our short description.
 
 
 
