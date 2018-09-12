@@ -33,7 +33,6 @@ export class DataStorageService {
    * @returns Promise with contents of the table in storage
    */
   getItemViaNativeStorage(itemName: string) {
-    console.log('itemName',itemName);
     return new Promise((resolve, reject) => {
       this.nativeStorage.getItem(itemName)
       .then(
@@ -41,7 +40,7 @@ export class DataStorageService {
           console.log('dot',data);
           resolve(data)},
         error => {
-          console.log('nativeStorage.getItem',error);
+          //console.log('nativeStorage.getItem',error);
           this.getItemViaStorage(itemName).then((result) => {
             resolve(result);
         })}

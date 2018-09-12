@@ -313,6 +313,11 @@ Result:
 
 If you an see one span has the title in English: *Spiral of Silence Theory*.  This will be helpful in learner mode where there is a native language setting and a language to be learned setting which will turn the list into text/translation list where the translation takes the place of our short description.
 
+Regarding the Q-code items.  They are fixed now.  We were forgetting to use list.slice().reverse().forEach instead of a normal forEach.
+
+The only thing remaining with the Korean list then is the details page.
+
+
 
 
 ## Short descriptions & incomplete API references

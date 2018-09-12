@@ -89,17 +89,16 @@ export class HomePage {
     let second = label.substr(1,2);
     if (first === 'Q' && !isNaN(second)) {
         // no page exists
-        console.log((first === 'Q')+' - '+!isNaN(second)+' - '+label);
-        return true; // if this returns true, then why aren't these items being removed from the list?
+        return false; // if this returns true, then why aren't these items being removed from the list?
     } else {
       // page exists
       console.log(item.sortName);
-      return false;
+      return true;
     }
   }
 
   /**
-   * 
+   * If the options have changed, then reload and parse the list.
    */
   checkForUpdateOptions() {
     this.dataStorageService.getItemViaNativeStorage(CONSTANTS.OPTIONS_NAME).then((result) => {
@@ -134,11 +133,11 @@ export class HomePage {
       data => {
         if (!this.list) {
           this.list = data['list'];
-          this.list.forEach((item, index) => {
+          this.list.slice().reverse().forEach((item, index, object) => {
             if (!this.languagePageDoesNotExist(item, index)) {
-              // remove the element
+              // remove the item from the list
               item.sortName = item.cognitive_biasLabel;
-              this.list.splice(item.length - 1 - index, 1);
+              this.list.splice(object.length - 1 - index, 1);
             } else {
               item.sortName = item.cognitive_biasLabel;
             }
