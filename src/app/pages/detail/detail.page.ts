@@ -13,15 +13,14 @@ export class DetailPage implements OnInit {
   itemName: string;
   description:any;
   wikiMediaCategory: string;
-  langChoice: string = 'en';
+  langChoice: string;
   options: any;
 
   constructor(private route: ActivatedRoute,
     private myDataService: MyDataService,
     private dataStorageService: DataStorageService) { }
 
-  ionViewWillEnter() {
-    console.log('this.langChoice',this.langChoice);
+  getDetails() {
     this.itemName = this.route.snapshot.paramMap.get('id');
     this.myDataService.getDetail(this.itemName.replace(' ','_').toLowerCase(),this.langChoice,false).subscribe(
       data => {
@@ -32,13 +31,12 @@ export class DetailPage implements OnInit {
   }
 
   ngOnInit() {
-    console.log('this.langChoice',this.langChoice);
     this.dataStorageService.getItemViaNativeStorage(CONSTANTS.OPTIONS_NAME).then((result) => {
       if (result) {
         this.options = result;
         if (this.langChoice !== this.options['language']) {
-          console.log('lang change');   
           this.langChoice = this.options['language'];  
+          this.getDetails();
         }
       }
     });

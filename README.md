@@ -317,7 +317,85 @@ Regarding the Q-code items.  They are fixed now.  We were forgetting to use list
 
 The only thing remaining with the Korean list then is the details page.
 
+Here is a sample link created for a detail page:
+```
+https://radiant-springs-38893.herokuapp.com/api/detail/%EC%A3%BC%EC%88%A0%EC%A0%81_%EC%82%AC%EA%B3%A0/ko/false
+```
 
+In the browser, this returns a seeming usable response:
+```
+{
+    "description":"<div class=\"mw-parser-output\"><p><b>주술적 사고</b> (呪術的思考, Magical thinking)는 <a href=\"/wiki/%EC%A3%BC%EC%88%A0\" title=\"주술\">주술</a>이 효과가 있다는 전제로 사물을 생각하거나 문제가 있을 때에 자기의 건전하고 합리적인 <a href=\"/wiki/%EB%85%B8%EB%A0%A5\" title=\"노력\">노력</a>이 부족한 채로, 주술에 유사한 행동에만 따라 해결해 버리려는 사고를 가리킨다. <b>마술적 사고</b>라고도 불린다. <a href=\"/wiki/%EC%A7%84%ED%99%94_%EC%8B%AC%EB%A6%AC%ED%95%99\" title=\"진화 심리학\">진화 심리학</a>적으로 생각하면, 불결한 냄새를 혐오해, 그 일반화로서 <a href=\"/w/index.php?title=%EB%8D%94%EB%9F%AC%EC%9B%80&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"더러움 (없는 문서)\">더러움</a>을 꺼리는 것은 병을 예방하고 유전자를 늘리는 것에 연결되어, 어느 정도 합리성이 있었다고 말할 수 있다.\n</p>\n<!-- \nNewPP limit report\nParsed by mw1228\nCached time: 20180912080036\nCache expiry: 1900800\nDynamic content: false\nCPU time usage: 0.004 seconds\nReal time usage: 0.005 seconds\nPreprocessor visited node count: 1/1000000\nPreprocessor generated node count: 0/1500000\nPost‐expand include size: 0/2097152 bytes\nTemplate argument size: 0/2097152 bytes\nHighest expansion depth: 1/40\nExpensive parser function count: 0/500\nUnstrip recursion depth: 0/20\nUnstrip post‐expand size: 0/5000000 bytes\nNumber of Wikibase entities loaded: 0/400\n-->\n<!--\nTransclusion expansion time report (%,ms,calls,template)\n100.00%    0.000      1 -total\n-->\n</div>"}
+```
+
+In the app it's a 500 (Internal Server Error).
+
+fails:
+```
+https://radiant-springs-38893.herokuapp.com/api/detail/%25ED%2598%25B8%25EC%2586%2590_%25ED%259A%25A8%25EA%25B3%25BC/en/false 
+
+this one also fails.
+http://localhost:5000/api/detail/%25ED%2598%25B8%25EC%2586%2590_%25ED%259A%25A8%25EA%25B3%25BC/en/false 
+
+The server uses:
+Url: https://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=%25ED%2598%25B8%25EC%2586%2590_%25ED%259A%25A8%25EA%25B3%25BC
+```
+
+This returns the message:
+```
+{"error":{"code":"invalidtitle","info":"Bad title \"%ED%98%B8%EC%86%90_%ED%9A%A8%EA%B3%BC\".","*":"See https://en.wikipedia.org/w/api.php for API usage. Subscribe to the mediawiki-api-announce mailing list at &lt;https://lists.wikimedia.org/mailman/listinfo/mediawiki-api-announce&gt; for notice of API deprecations and breaking changes."},"servedby":"mw2206"}
+```
+
+What needs to happen is the server needs to deal with this kind of error.  But yes, first we need to know what the root problem is.
+
+The front end should also look for this error and print out the info:
+```
+{"error":{"code":"invalidtitle","info":"Bad title \"
+```
+
+Also, the detail page is detecting a language change.
+
+For some reason, we are getting a CORS warning now, or was it there all along and no one noticed it?
+```
+Cross-origin response https://radiant-springs-38893.herokuapp.com/api/detail/%ED%98%B8%EC%86%90_%ED%9A%A8%EA%B3%BC/undefined/false with MIME type text/html. See https://www.chromestatus.com/feature/5629709824032768 for more details.
+```
+
+This works with the web app.  What's the difference there and here?  Maybe look at those notes again?  Nothing cooking there.  All that is said about this was *after encoding the URL for the detail page, the 28 links are working as well as the English version.*
+ Unless there was some secret that came before that?
+
+ In this project, we do:
+ ```
+ return this.httpClient.get(encodeURI(backendDetailUrl))
+ ```
+ 
+ In Conchifolia, we do this:
+ ```
+return this.httpClient.get<DetailModel>(encodeURI(this.backendDetailUrl+'/'+detailId+'/'+lang+'/'+leaveCaseAlone)).pipe(data => data);
+```
+
+Then, suddenly the detail content for the first item shows up.  But after that it appears to be a zone.js:2969 Cross-Origin Read Blocking (CORB) blocked cross-origin response issue.
+
+Testing some more links, using this url:
+https://radiant-springs-38893.herokuapp.com/api/detail/%EA%B3%A8%EB%A0%98_%ED%9A%A8%EA%B3%BC/ko/false 
+
+We get an official Heroku application error page:
+```
+Application error
+An error occurred in the application and your page could not be served. If you are the application owner, check your logs for details. You can do this from the Heroku CLI with the command
+heroku logs --tail
+```
+
+Only one problem with that:
+$ heroku logs --tail
+ ▸    Logs eventsource failed with: 503 Service Unavailable
+
+Let's do another deployment.  Then we get the first item detail again!  But the second item:
+```
+zone.js:2969 GET https://radiant-springs-38893.herokuapp.com/api/detail/%ED%98%84%EC%83%81%EC%9C%A0%EC%A7%80%ED%8E%B8%ED%96%A5/undefined/false 503 (Service Unavailable)
+```
+Undefined, our old friend!  We had both an ngOnInit and a ionViewWillEnter function, the first one to get and set the preferences, the second to get the details via http.  It seems like these don't always fire in order, so getting rid of the ionic one and calling that after the options have been loaded seems to fix that issue.
+
+The only thing we need now (desperately) is a spinner.  Luckily for us, Ionic already has a spinner so we don't have to create our own svg components like in the Conchifolia project.  Yes, we could have used Material Design, Bootstrap or any other design framework, but we learn more doing things by hand.  But, using Material Design or Bootstrap, and then having that on the resume and being able to talk about them well during interviews is also something to think about.  But that's kind of out of scope for this project.  Another day.  First lunch, and then the spinner.
 
 
 ## Short descriptions & incomplete API references

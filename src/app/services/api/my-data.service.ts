@@ -20,7 +20,6 @@ export class MyDataService {
    * @param lang 
    */
   getWikiDataList(lang: string) {
-    console.log('lang'+lang)
     return this.httpClient.get<Category>(this.backendListUrl+'/'+lang)
       .pipe(data => data);
   }
@@ -32,7 +31,6 @@ export class MyDataService {
    * @param leaveCaseAlone 
    */
   loadWikiMedia(sectionNum, lang: string) {
-    console.log('lang'+lang)
     return this.httpClient.get(this.backendWikiListUrl+'/'+sectionNum+'/'+lang)
       .pipe(data => data)
   }
@@ -45,8 +43,7 @@ export class MyDataService {
    * @param leaveCaseAlone for links that need to be original case, default is false for lowercase.
   */
   getDetail(pageName: string, lang: string, leaveCaseAlone: boolean) {
-    const backendDetailUrl = encodeURI('https://radiant-springs-38893.herokuapp.com/api/detail/'+pageName+'/'+lang+'/'+leaveCaseAlone);
-    console.log('backendDetailUrl',backendDetailUrl);
+    const backendDetailUrl = 'https://radiant-springs-38893.herokuapp.com/api/detail/'+pageName+'/'+lang+'/'+leaveCaseAlone;
     return this.httpClient.get(encodeURI(backendDetailUrl))
       .pipe(data => data);
   }
