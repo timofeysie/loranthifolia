@@ -16,6 +16,7 @@
 </ion-header>
 
 <ion-content padding>
+	<ion-spinner *ngIf="!list" name="lines"></ion-spinner>
 	<ion-list no-lines class="list">
 		<ion-item-sliding #itemSliding *ngFor="let item of list; let i = index">
 			<div *ngIf="item.sortName">

@@ -397,6 +397,18 @@ Undefined, our old friend!  We had both an ngOnInit and a ionViewWillEnter funct
 
 The only thing we need now (desperately) is a spinner.  Luckily for us, Ionic already has a spinner so we don't have to create our own svg components like in the Conchifolia project.  Yes, we could have used Material Design, Bootstrap or any other design framework, but we learn more doing things by hand.  But, using Material Design or Bootstrap, and then having that on the resume and being able to talk about them well during interviews is also something to think about.  But that's kind of out of scope for this project.  Another day.  First lunch, and then the spinner.
 
+Love this little graphic:
+```
+<img alt="Psi template.gif" src="//upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Psi_template.gif/45px-Psi_template.gif" width="45" height="45" srcset="//upload.wikimedia.org/wikipedia/commons/4/4b/Psi_template.gif 1.5x">
+```
+
+In Ionic, the spinner is as simpke as this:
+```
+<ion-spinner></ion-spinner>
+```
+
+Us the list and the description page being empty as the trigger, and we have our spinner.
+
 
 ## Short descriptions & incomplete API references
 

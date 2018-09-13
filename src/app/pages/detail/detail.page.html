@@ -15,7 +15,10 @@
 
 <ion-content padding>
     <ion-card>
-        <ion-card-header>
+      <div *ngIf="!description">
+        <ion-spinner name="lines"></ion-spinner>
+      </div>
+        <ion-card-header *ngIf="description">
           <b>Wikipedia Description</b>
         </ion-card-header>
         <ion-card-content>
