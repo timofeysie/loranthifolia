@@ -15,6 +15,8 @@ export class DetailPage implements OnInit {
   wikiMediaCategory: string;
   langChoice: string;
   options: any;
+  wikipediaLink: string;
+  yourBiasLink: string;
 
   constructor(private route: ActivatedRoute,
     private myDataService: MyDataService,
@@ -22,6 +24,8 @@ export class DetailPage implements OnInit {
 
   getDetails() {
     this.itemName = this.route.snapshot.paramMap.get('id');
+    this.wikipediaLink = 'https://en.wikipedia.org/wiki/'+this.itemName.replace(' ','_');
+    this.yourBiasLink = 'https://www.yourbias.is/'+this.itemName.replace(' ','-');
     this.myDataService.getDetail(this.itemName.replace(' ','_').toLowerCase(),this.langChoice,false).subscribe(
       data => {
         this.description = data['description'].toString();

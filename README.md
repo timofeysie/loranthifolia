@@ -44,6 +44,72 @@ npx cap update
 
 #
 
+
+## Adding links
+
+We would like to add more content, especially mitigation and debiasing info for each bias.  This is the kind of thing that really needs to be part of some kind of list customization feature.
+
+The easiest link to put is Wikipedia.  Just replace spaces with underscores and add the base URL like this:
+```
+https://en.wikipedia.org/wiki/Acquiescence_bias
+```
+
+There is another bias site with great content we will call Your Bias.  Fir this site, we add dashes to the item name and add the base URL:
+```
+https://www.yourbias.is/the-sunk-cost-fallacy
+```
+
+The content for this site is great, and there is mitigating ideas for each one.  However, there are only about 20 or so items on the site which have to be scrolled through one at a time.  So it's a long shot for most of the items on our list.  
+
+We could use a service that checks if the page is there or not and change the UI in some way to indicate yes or no.  But this is not a really dependable service, and the names might be different enough, that most of them wont work.  We will just create dumb links for now to see what happens.
+
+For example, there is a Wikipedia page for *sunk cost*.  This has a section with this link:
+```
+https://en.wikipedia.org/wiki/Sunk_cost#Loss_aversion_and_the_sunk_cost_fallacy
+```
+
+The Your Bias link is:
+```
+https://www.yourbias.is/the-sunk-cost-fallacy
+```
+
+We can easily create a link, but ```https://www.yourbias.is/Framing-effect``` would need a *the* in from of the name and be lower cased.
+
+To see what all the problems are, here are all 24 links:
+```
+https://www.yourbias.is/the-framing-effect
+https://www.yourbias.is/fundamental-attribution-error
+https://www.yourbias.is/the-halo-effect
+https://www.yourbias.is/optimism-bias
+https://www.yourbias.is/pessimism-bias
+https://www.yourbias.is/just-world-hypothesis
+https://www.yourbias.is/in-group-bias
+https://www.yourbias.is/the-placebo-effect
+https://www.yourbias.is/the-bystander-effect
+https://www.yourbias.is/reactance
+https://www.yourbias.is/the-spotlight-effect
+https://www.yourbias.is/anchoring
+https://www.yourbias.is/the-sunk-cost-fallacy
+https://www.yourbias.is/the-availability-heuristic
+https://www.yourbias.is/the-curse-of-knowledge
+https://www.yourbias.is/confirmation-bias
+https://www.yourbias.is/the-dunning-kruger-effect
+https://www.yourbias.is/belief-bias
+https://www.yourbias.is/self-serving-bias
+https://www.yourbias.is/the-backfire-effect
+https://www.yourbias.is/the-barnum-effect
+https://www.yourbias.is/groupthink
+https://www.yourbias.is/negativity-bias
+https://www.yourbias.is/declinism
+```
+
+May as well just memorize the list and be done with it.  Then we can move on to a more useful job, like automatic re-directs.
+
+Take the *framing effect* again.  The server returns content which is a re-direct to *Framing (social sciences).
+
+This needs to happen on the server, so it's back to Conchifolia for that.
+
+
 ## The options page & i18n
 
 Planned features for the options page are:
