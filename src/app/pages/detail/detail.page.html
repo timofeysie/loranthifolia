@@ -15,14 +15,14 @@
 
 <ion-content padding>
     <ion-card>
-      <div *ngIf="!description"
-        class="center">
-        <ion-spinner name="lines"></ion-spinner>
-      </div>
-        <ion-card-header *ngIf="description">
-          <b>Wikipedia Description</b>
+        <ion-card-header>
+          <b>Wikipedia description <span *ngIf="!description"> loading ...</span></b>
         </ion-card-header>
         <ion-card-content>
+          <div *ngIf="!description"
+            class="spinner">
+            <ion-spinner name="lines"></ion-spinner>
+          </div>
           <div [innerHTML]="description"></div>
         </ion-card-content>
       </ion-card>
@@ -35,7 +35,6 @@
       <ion-card>
         <ion-card-content>
             <p>Wikipedia page for <a href="{{wikipediaLink}}">{{itemName}}</a></p>
-            <p><a href="{{yourBiasLink}}">YourBias link</a></p>
         </ion-card-content>
       </ion-card>
 

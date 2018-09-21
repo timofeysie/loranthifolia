@@ -28,21 +28,39 @@ npx cap update
 
 ## Table of Contents
 
-1. [The options page & i18n](#The options page & i18n)
-1. [Short descriptions & incomplete API references](#Short descriptions & incomplete API references)
-1. [Item state](#Item state)
-1. [API service caching vs local storage](#API service caching)
-1. [Scroll Position Restoration](#Scroll Position Restoration)
-1. [Merging the WikiMedia lists](#Merging the WikiMedia lists)
+1. [Adding links](#a-dding-links)
+1. [The options page & i18n](#the-options-page-&-i18n)
+1. [Short descriptions & incomplete API references](#Short-descriptions-&-incomplete-API-references)
+1. [Item state](#Item-state)
+1. [API service caching vs local storage](#API-service-caching)
+1. [Scroll Position Restoration](#Scroll-Position-Restoration)
+1. [Merging the WikiMedia lists](#Merging-the-WikiMedia-lists)
 1. [Ionic 4 Beta and using the Conchifolia server](#ionic-4-beta-and-using-the-conchifolia-server)
 1. [Using Capacitor](#using-Capacitor) 
 1. [Blocked Requests](#Blocked-Requests)
 1. [Testing on Android](#Testing-on-Android)
 1. [Fixing the tests](#fixing-the-tests)
 1. [Implementing Angular routing](#Implementing-Angular-routing)
-1. [Starting the app and parsing WikiData and WikiMedia](#Starting-the-app-and-parsing-WikiData-and-WikiMedia)
+1. [Starting the app and parsing Wikipedia](#Starting-the-app-and-parsing-Wikipedia)
 
 #
+
+
+## Alpha release
+
+There is a long list now of things to do to make the app better.  After using the app during development for a while, it's becoming clear that a long list of items is nice, but really we want to go one screen at a time, and we want the app to organize that for us based on the state of items.
+
+But if we keep on adding new features, there will never be a release, and we will never be able to tell our friends and colleagues about it.  So what is the list of items that would make the first release something to not be ashamed of?
+
+1. icon and splash screen
+2. add padding to the spinner
+3. put the refresh list action in the options page
+4. make the short descriptions responsive
+5. add the beige theme for the header
+
+Nothing really big here, but things that look bad should be fixed before jumping in to any new features.
+
+
 
 
 ## Adding links
@@ -67,6 +85,10 @@ For example, there is a Wikipedia page for *sunk cost*.  This has a section with
 ```
 https://en.wikipedia.org/wiki/Sunk_cost#Loss_aversion_and_the_sunk_cost_fallacy
 ```
+
+The section has this note: *Further information: [Escalation of commitment](https://en.wikipedia.org/wiki/Escalation_of_commitment)*
+
+This is billed as *a human behavior pattern*, not a bias at all.  So we will just have to let the user find this kind of content themselves.  So the Wikipedia links will help a bit for that.
 
 The Your Bias link is:
 ```
@@ -103,7 +125,11 @@ https://www.yourbias.is/negativity-bias
 https://www.yourbias.is/declinism
 ```
 
-May as well just memorize the list and be done with it.  Then we can move on to a more useful job, like automatic re-directs.
+May as well just memorize the list and be done with it.  Or, we could make an optional field to let the user add links?  Then we will have to have the *user created content* discussion, which ends in some kind of overhead each app.  We could store it locally, but all that will be lost in an update, or moving to a new device.  So we could have a manual backup service, or a paywall or something which requires more work and expenses for all.
+
+Still, with our short descriptions which we want the user to create or alter, we will have to come up with a good solution.
+
+For now we can move on to a more useful job, like automatic re-directs.
 
 Take the *framing effect* again.  The server returns content which is a re-direct to *Framing (social sciences).
 
@@ -1477,7 +1503,7 @@ Since this is the name of the bias, we can use that for the heading of page.
 Next, we need a service to get single item, and a back button.
 
 
-## Starting the app and parsing WikiData and WikiMedia
+## Starting the app and parsing Wikipedia
 
 Using [this tut by Mike Hartington](https://mhartington.io/post/ionic-4-alpha-test/) as a starting point for an Ionic 4 alpha 7 app.
 ```
