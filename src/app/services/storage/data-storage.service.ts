@@ -6,7 +6,7 @@ import { NativeStorage } from '@ionic-native/native-storage/ngx';
   providedIn: 'root'
 })
 export class DataStorageService {
-
+  sharedAction:string = 'none';
   constructor(
     private storage: Storage,
     private nativeStorage: NativeStorage) { }

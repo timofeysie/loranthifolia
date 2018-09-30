@@ -57,10 +57,12 @@ But if we keep on adding new features, there will never be a release, and we wil
 3. put the refresh list action in the options page
 4. make the short descriptions responsive
 5. add the beige theme for the header
+6. deal with the lower case items at the end of the main list
+7. make sure redirect failures are handled gracefully
 
 Nothing really big here, but things that look bad should be fixed before jumping in to any new features.
 
-
+Number 2 & 3 have been addressed already.  Currently, number 7 is requiring quite a bit of work due to finding the Q-codes for WikiData items.  See the [Conchifolia project]((https://github.com/timofeysie/conchifolia)) for updates on that saga.  Once it's working there we can implement the same solution here.
 
 
 ## Adding links
@@ -896,7 +898,7 @@ getWikiMediaLists() {
 }
 ```
 
-After sorting the service for the main WikiData list out a bit, the content is a little differently the was expected:
+After sorting the service for the main WikiData list out a bit, the content is a little different the was expected:
 ```
 key:"Actor-observer bias↵"
 value:"Social biases"

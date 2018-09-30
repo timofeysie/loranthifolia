@@ -27,16 +27,22 @@ export class HomePage {
     private router:Router,
     private activatedRoute : ActivatedRoute) {
       this.router.events.forEach((event) => {
-        if(event instanceof NavigationEnd && this.router.url === '/home') {
+        if (event instanceof NavigationEnd && this.router.url === '/home') {
           // reload list with the new options if they have changed
           this.checkForUpdateOptions();
+          /* Since a back(params) is not available, we need a way to tell the
+          app to refresh the list when coming back from the options page.*/
+          if (this.dataStorageService.sharedAction === 'reset-list') {
+            this.dataStorageService.sharedAction = 'none';
+            this.refreshList();
+          }
         }
       });
       this.version = CONSTANTS.VERSION;
       events.subscribe('ionDrag', (what) => {
-      // user and time are the same arguments passed in `events.publish(user, time)`
-      console.log('Welcome', what);
-    });
+        // user and time are the same arguments passed in `events.publish(user, time)`
+        console.log('Welcome', what);
+      });
     this.dataStorageService.getItemViaNativeStorage(CONSTANTS.OPTIONS_NAME).then((result) => {
       if (result) {
         this.options = result;
@@ -56,7 +62,6 @@ export class HomePage {
   }
 
   refreshList() {
-    console.log('what?');
     this.list = null;
     this.getListFromStorageOrServer();
   }
@@ -92,7 +97,6 @@ export class HomePage {
         return false; // if this returns true, then why aren't these items being removed from the list?
     } else {
       // page exists
-      console.log(item.sortName);
       return true;
     }
   }
@@ -105,7 +109,6 @@ export class HomePage {
       if (result) {
         this.options = result;
         if (this.langChoice !== this.options['language']) {
-          console.log('lang change');   
           this.langChoice = this.options['language'];  
           this.list = null;
           this.getListFromStorage();     
@@ -188,7 +191,7 @@ export class HomePage {
         this.addItems(data[0]); // TODO: fix array of dupes
         this.addItems(data[1]); // TODO: fix array of dupes
         this.list.sort(this.dynamicSort('sortName'));
-        this.dataStorageService.setItem(this.itemName, this.list);
+        this.dataStorageService.setItem(this.langChoice+'-'+this.itemName, this.list);
     });
   }
 

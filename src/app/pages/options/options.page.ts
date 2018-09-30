@@ -33,6 +33,13 @@ export class OptionsPage implements OnInit {
     });
   }
 
+  refreshList() {
+    console.log('refreshList');
+    this.dataStorageService.sharedAction = 'reset-list';
+    this.location.back();
+    
+  }
+
   changeLang(event: any) {
     this.langChoice = event;
     this.options['language'] = event;

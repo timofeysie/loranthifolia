@@ -24,4 +24,12 @@
         value="{{item.lang}}">{{item.name}}</ion-select-option>
     </ion-select>
   </ion-item>
+  <ion-item>
+      <ion-label>Refresh list</ion-label>
+      <ion-label>
+          <p>Warning: this will clear the item states.</p>
+        </ion-label>
+      <ion-button (click)="refreshList()"
+        color="secondary">Refresh now</ion-button> 
+    </ion-item>
 </ion-content>
