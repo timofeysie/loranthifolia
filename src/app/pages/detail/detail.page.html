@@ -23,7 +23,9 @@
             class="spinner">
             <ion-spinner name="lines"></ion-spinner>
           </div>
-          <div [innerHTML]="description"></div>
+          <div *ngIf="description" 
+            #descriptionhook 
+            [innerHTML]="description"></div>
         </ion-card-content>
       </ion-card>
       <ion-card *ngIf="wikiMediaCategory">

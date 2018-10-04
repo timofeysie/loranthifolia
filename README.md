@@ -52,18 +52,81 @@ There is a long list now of things to do to make the app better.  After using th
 
 But if we keep on adding new features, there will never be a release, and we will never be able to tell our friends and colleagues about it.  So what is the list of items that would make the first release something to not be ashamed of?
 
+1. detail page icons skewed
 1. icon and splash screen
-2. add padding to the spinner
-3. put the refresh list action in the options page
+2. (done) add padding to the spinner
+3. (done) put the refresh list action in the options page
 4. make the short descriptions responsive
 5. add the beige theme for the header
 6. deal with the lower case items at the end of the main list
-7. make sure redirect failures are handled gracefully
+7. (done) make sure redirect failures are handled gracefully
 
 Nothing really big here, but things that look bad should be fixed before jumping in to any new features.
 
-Number 2 & 3 have been addressed already.  Currently, number 7 is requiring quite a bit of work due to finding the Q-codes for WikiData items.  See the [Conchifolia project]((https://github.com/timofeysie/conchifolia)) for updates on that saga.  Once it's working there we can implement the same solution here.
+Number 2 & 3 have been addressed already.  Currently, number 7 is requiring quite a bit of work due to finding the Q-codes for WikiData items.  See the [Conchifolia project]((https://github.com/timofeysie/conchifolia)) for updates on that saga.  Once it's working there we can implement the same solution here.  After getting the redirects working, instead of getting in to using the Q-codes for anything else, it's time to have some fun with issue 1. detail page icons skewed.
 
+We actually want to hide the text and just show the icons, which can then be expanded and collapsed.
+
+A brief view of the html shows a table with two styles that will indicate the two elements:
+```
+<tbody>
+    <tr>
+        <td class="mbox-image">
+            <div style="width:52px">
+                <img alt="" 
+                    src="//upload.wikimedia.org/...Ambox_important.svg.png" 
+                    width="40" height="40" srcset="//upload.wikimedia.org/...Ambox_important.svg.png 1.5x, //upload.wikimedia.org/...Ambox_important.svg.png 2x" 
+                    data-file-width="40" 
+                    data-file-height="40" />
+            </div>
+        </td>
+        <td class="mbox-text">
+            <div class="mbox-text-span">
+                <div class="mw-collapsible" 
+                    style="width:95%; 
+                    margin: 0.2em 0;">
+                    <b>This article has multiple issues.</b> Please help
+```
+
+The classes mbox-image and mbox-text are what we can do.  We want to put a click handler on the image, and a conditional show/don't show on the text.  Find element by class.
+
+
+I always have to look at a lot of examples when accessing elements via the renderer in Angular.
+
+```
+texts[i].innerHTML:0
+<div class="mbox-text-span">
+    <div class="mw-collapsible"><b>This article has multiple issues.</b> Please help <b><a class="external text" href="//en.wikipedia.org/w/index.php?title=Actor%E2%80%93observer_asymmetry&amp;action=edit">improve it</a></b> or discuss these issues on the <b><a href="https://en.wikipedia.org/wiki/Talk:Actor%E2%80%93observer_asymmetry" title="Talk:Actor–observer asymmetry">talk page</a></b>. <small><i>(<a href="https://en.wikipedia.org/wiki/Help:Maintenance_template_removal" title="Help:Maintenance template removal">Learn how and when to remove these template messages</a>)</i></small>
+        <div class="mw-collapsible-content">
+            <table class="plainlinks metadata ambox ambox-style ambox-More_footnotes" role="presentation">
+                <tbody>
+                    <tr>
+                        <td class="mbox-image">
+                            <div><img alt="" src="//upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Text_document_with_red_question_mark.svg/40px-Text_document_with_red_question_mark.svg.png" width="40" height="40" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Text_document_with_red_question_mark.svg/60px-Text_document_with_red_question_mark.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Text_document_with_red_question_mark.svg/80px-Text_document_with_red_question_mark.svg.png 2x"></div>
+                        </td>
+                        <td class="mbox-text">
+                            <div class="mbox-text-span">This article includes a <a href="https://en.wikipedia.org/wiki/Wikipedia:Citing_sources" title="Wikipedia:Citing sources">list of references</a>, but <b>its sources remain unclear</b> because it has <b>insufficient <a href="https://en.wikipedia.org/wiki/Wikipedia:Citing_sources#Inline_citations" title="Wikipedia:Citing sources">inline citations</a></b>.<span class="hide-when-compact"> Please help to <a href="https://en.wikipedia.org/wiki/Wikipedia:WikiProject_Fact_and_Reference_Check" title="Wikipedia:WikiProject Fact and Reference Check">improve</a> this article by <a href="https://en.wikipedia.org/wiki/Wikipedia:When_to_cite" title="Wikipedia:When to cite">introducing</a> more precise citations.</span> <small><i>(June 2012)</i></small><small class="hide-when-compact"><i> (<a href="https://en.wikipedia.org/wiki/Help:Maintenance_template_removal" title="Help:Maintenance template removal">Learn how and when to remove this template message</a>)</i></small></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="plainlinks metadata ambox ambox-content" role="presentation">
+                <tbody>
+                    <tr>
+                        <td class="mbox-image">
+                            <div>
+                                <a href="https://en.wikipedia.org/wiki/File:Crystal_Clear_app_kedit.svg" class="image"><img alt="Crystal Clear app kedit.svg" src="//upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Crystal_Clear_app_kedit.svg/40px-Crystal_Clear_app_kedit.svg.png" width="40" height="40" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Crystal_Clear_app_kedit.svg/60px-Crystal_Clear_app_kedit.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Crystal_Clear_app_kedit.svg/80px-Crystal_Clear_app_kedit.svg.png 2x"></a>
+                            </div>
+                        </td>
+                        <td class="mbox-text">
+                            <div class="mbox-text-span">This article may need to be <b>rewritten entirely</b> to comply with Wikipedia's <a href="https://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style" title="Wikipedia:Manual of Style">quality standards</a>.<span class="hide-when-compact"> <a class="external text" href="//en.wikipedia.org/w/index.php?title=Actor%E2%80%93observer_asymmetry&amp;action=edit">You can help</a>. The <a href="https://en.wikipedia.org/wiki/Talk:Actor%E2%80%93observer_asymmetry" title="Talk:Actor–observer asymmetry">discussion page</a> may contain suggestions.</span> <small><i>(February 2015)</i></small></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div><small class="hide-when-compact"><i> (<a href="https://en.wikipedia.org/wiki/Help:Maintenance_template_removal" title="Help:Maintenance template removal">Learn how and when to remove this template message</a>)</i></small></div>
+    ```
 
 ## Adding links
 
