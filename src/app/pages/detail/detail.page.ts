@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, Renderer2, ViewChild, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, ElementRef, Renderer2, ViewChild, AfterViewChecked, TemplateRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CONSTANTS } from '../../constants';
 import { MyDataService } from '../../services/api/my-data.service';
@@ -32,38 +32,27 @@ export class DetailPage implements OnInit, AfterViewChecked {
         
         // texts/outer innner
         let texts = this.descriptionhook.nativeElement.getElementsByClassName('mbox-text');
-        console.log('texts',texts.length);
         this.preamblesBackup = texts.innerHTML;
         if (texts.length > 0) {
-          console.log('texts[0]',texts[0]);
           let exclamationMarkDesc = texts[0].getElementsByClassName('mw-collapsible');
-          console.log('exclamationMarkDesc',exclamationMarkDesc);
           exclamationMarkDesc[0].innerHTML = '';
         }
         for (let i = 1; i < texts.length; i++) {
           texts[i].innerHTML = '';
         };
         
+        // (learn how and when ...)
         let smalls = this.descriptionhook.nativeElement.getElementsByClassName('hide-when-compact');
-        console.log('smalls',smalls.length);
         for (let a = 0; a < smalls.length; a++) {
           smalls[a].innerHTML = '';
         }
         
-        // let images = this.descriptionhook.nativeElement.getElementsByClassName('ambox');
-        // console.log('smalls',smalls.length);
-        // if (images.length > 0) {
-        //   images[0].addEventListener('click', this.onImageClick.bind(this));
-        // }
-      } else if (typeof this.descriptionhook !== 'undefined' && this.showPreambles) {
-        //this.descriptionhook.nativeElement.getElementsByClassName('mbox-text').innerHTML = this.preamblesBackup;
-        //console.log('adding',this.descriptionhook.nativeElement.getElementsByClassName('mbox-text'))
-      }
-    }
-
-    descriptionOnClick(what) {
-      console.log('what',what);
-      this.showPreambles = true;
+        let images = this.descriptionhook.nativeElement.getElementsByClassName('ambox');
+        if (images.length > 0) {
+          images[0].innerHTML = '';
+        }
+      } 
+      
     }
 
   getDetails() {
@@ -75,6 +64,43 @@ export class DetailPage implements OnInit, AfterViewChecked {
         this.description = data['description'].toString();
         this.description = this.description.split('href="/wiki/')
           .join('href="https://'+this.langChoice+'.wikipedia.org/wiki/');
+        let newDOM = this.createElementFromHTML(this.description);
+        //console.log('newDOM',newDOM);
+        let mboxText = newDOM.getElementsByClassName('mbox-text');
+        //console.log('mboxText',mboxText.length);
+        
+        // the exclamation mark icon description, and sub icons and descriptions
+        let preambles = mboxText[0];
+        //this.description = mboxText[0].innerHTML;
+
+        let exclamationMarkDesc = preambles.getElementsByClassName('mw-collapsible');
+        //this.description = exclamationMarkDesc[0].innerHTML;
+
+        // this article includes a list of references but...
+        //this.description = mboxText[1].innerHTML;
+
+        // this article may have to be rewritten entirely to comply ...
+        //this.description = mboxText[2].innerHTML;
+
+        // the exclamation mark icon description, and sub icons and descriptions        
+        // let exclamationMarkDesc = newDOM.getElementsByClassName('mw-collapsible');
+        // console.log('exclamationMarkDesc',exclamationMarkDesc[0]);
+        // this.description = exclamationMarkDesc[0].innerHTML;
+
+        // Please help to improve this article ...
+        //let smalls = preambles.getElementsByClassName('hide-when-compact');
+
+        // this is an array of the specific preambles including icons and descriptions
+        //let images = preambles.getElementsByClassName('ambox');
+        //console.log('images',images.length);
+        
+        // EXAMPLES
+        // This article includes a list of references ...
+        //this.description = images[0].innerHTML;
+        
+        // this article may have to be rewritten entirely to comply ...
+        //this.description = images[1].innerHTML;
+
       });
   }
 

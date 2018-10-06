@@ -174,6 +174,25 @@ The method we tried first was this:
 @ViewChild('descriptionhook') descriptionhook: ElementRef;
 ```
 
+Looking at the TemplateRef method next, our hook is undefined in the recommends lifecycle hood of ngAfterViewInit().  So does this mean that we shouldn't be using the embedded vue method?  ViewContainerRef also shows as undefined in this hook.  Trying the other problem lifecycle hooks that at least worked for ElementRef's, both TemplateRef and ViewControllerRef are also undefined.  Need to finish reading that blog and looking at some of the sample code.
+
+A first thought is that using the following is not working for these methods:
+```
+<div>[innerHTML]="description"></div>
+```
+
+Maybe what we need to be doing is what is discussed in the blog.
+Create a host view with a component factory, use the componentFactoryResolver service to obtain a reference to the component factory and use it to initialize the component, create the host view and attach this view to a view container.  After all that, the writer has the gall to say: *To do that we simply call createComponent method and pass in a component factory*.  I don't know about you, but I find nothing simple about this process.  The domain name for the blog is: Angular-in-depth.  That gives you a hint that it is in fact *not* simple.  I hate it when writers trying and fool you into to thinking that something is each (maybe because it is for them that that point in their career) by using the word *simply*.  What's the bias for that?  The curse of knowledge?
+
+Rant over, the [example here](https://stackblitz.com/github/maximusk/dom-manipulation-workshop/tree/s4?file=src%2Fapp%2Fapp.component.ts) looks like exactly what we want to be doing.
+
+Can we cut up the description markup and put the parts of it we want to interact with?  Then the detach method preserves the detached DOM parts to be re-used in the future, also exactly what we need.
+
+So after the description content returns from the service, we pass it into a sub component.  Inside that component, we can further disect the content and do the same thing recursively for the different types of messages in the entire exclamation DOM structure.
+
+This all hinges on breaking up the description markup before it is passed into any child component.  This thing with that is, if we are doing all the work to cut the DOM up, we can just add the parts to separate elements and use ngIf to turn them on or off. 
+
+For now, we will just remove the preambles completely.  This expand/collapse preambles feature will take more work and are not part of our MVP release.  What we want is the description for now, and we have that by removing the inner HTML content manually.
 
 
 ## Adding links
