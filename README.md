@@ -28,6 +28,8 @@ npx cap update
 
 ## Table of Contents
 
+1. [Alpha release](#alpha-release)
+1. [Manipulating the preamble DOM](#manipulating-the-preamble-DOM) 
 1. [Adding links](#a-dding-links)
 1. [The options page & i18n](#the-options-page-&-i18n)
 1. [Short descriptions & incomplete API references](#Short-descriptions-&-incomplete-API-references)
@@ -52,7 +54,7 @@ There is a long list now of things to do to make the app better.  After using th
 
 But if we keep on adding new features, there will never be a release, and we will never be able to tell our friends and colleagues about it.  So what is the list of items that would make the first release something to not be ashamed of?
 
-1. detail page icons skewed
+1. (done) detail page icons skewed
 1. icon and splash screen
 2. (done) add padding to the spinner
 3. (done) put the refresh list action in the options page
@@ -65,7 +67,12 @@ Nothing really big here, but things that look bad should be fixed before jumping
 
 Number 2 & 3 have been addressed already.  Currently, number 7 is requiring quite a bit of work due to finding the Q-codes for WikiData items.  See the [Conchifolia project]((https://github.com/timofeysie/conchifolia)) for updates on that saga.  Once it's working there we can implement the same solution here.  After getting the redirects working, instead of getting in to using the Q-codes for anything else, it's time to have some fun with issue 1. detail page icons skewed.
 
-We actually want to hide the text and just show the icons, which can then be expanded and collapsed.
+We actually want to hide the text and just show the icons, which can then be expanded and collapsed.  This turns out to be more involved that we have time for with our goal of getting an MVP release ready.  The work done so far on this is in the [Manipulating the preamble DOM](#manipulating-the-preamble-DOM) section.
+
+So with that done (for now) the next issue on deck is creating a icon and splash screen for the app.  Fire up [Gimp](https://www.gimp.org/)!
+
+
+## Manipulating the preamble DOM
 
 A brief view of the html shows a table with two styles that will indicate the two elements:
 ```
