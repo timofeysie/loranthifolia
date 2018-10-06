@@ -24,6 +24,7 @@
             <ion-spinner name="lines"></ion-spinner>
           </div>
           <div *ngIf="description" 
+            (click)="descriptionOnClick()"
             #descriptionhook 
             [innerHTML]="description"></div>
         </ion-card-content>

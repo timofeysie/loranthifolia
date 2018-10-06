@@ -91,42 +91,90 @@ A brief view of the html shows a table with two styles that will indicate the tw
 The classes mbox-image and mbox-text are what we can do.  We want to put a click handler on the image, and a conditional show/don't show on the text.  Find element by class.
 
 
-I always have to look at a lot of examples when accessing elements via the renderer in Angular.
-
+I always have to look at a lot of examples when accessing elements via the renderer in Angular.  Getting an array of DOM elements by class name is the classic way to go.  This is the 2018 Angular way to do it:
 ```
-texts[i].innerHTML:0
-<div class="mbox-text-span">
-    <div class="mw-collapsible"><b>This article has multiple issues.</b> Please help <b><a class="external text" href="//en.wikipedia.org/w/index.php?title=Actor%E2%80%93observer_asymmetry&amp;action=edit">improve it</a></b> or discuss these issues on the <b><a href="https://en.wikipedia.org/wiki/Talk:Actor%E2%80%93observer_asymmetry" title="Talk:Actor–observer asymmetry">talk page</a></b>. <small><i>(<a href="https://en.wikipedia.org/wiki/Help:Maintenance_template_removal" title="Help:Maintenance template removal">Learn how and when to remove these template messages</a>)</i></small>
-        <div class="mw-collapsible-content">
-            <table class="plainlinks metadata ambox ambox-style ambox-More_footnotes" role="presentation">
-                <tbody>
-                    <tr>
-                        <td class="mbox-image">
-                            <div><img alt="" src="//upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Text_document_with_red_question_mark.svg/40px-Text_document_with_red_question_mark.svg.png" width="40" height="40" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Text_document_with_red_question_mark.svg/60px-Text_document_with_red_question_mark.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Text_document_with_red_question_mark.svg/80px-Text_document_with_red_question_mark.svg.png 2x"></div>
-                        </td>
-                        <td class="mbox-text">
-                            <div class="mbox-text-span">This article includes a <a href="https://en.wikipedia.org/wiki/Wikipedia:Citing_sources" title="Wikipedia:Citing sources">list of references</a>, but <b>its sources remain unclear</b> because it has <b>insufficient <a href="https://en.wikipedia.org/wiki/Wikipedia:Citing_sources#Inline_citations" title="Wikipedia:Citing sources">inline citations</a></b>.<span class="hide-when-compact"> Please help to <a href="https://en.wikipedia.org/wiki/Wikipedia:WikiProject_Fact_and_Reference_Check" title="Wikipedia:WikiProject Fact and Reference Check">improve</a> this article by <a href="https://en.wikipedia.org/wiki/Wikipedia:When_to_cite" title="Wikipedia:When to cite">introducing</a> more precise citations.</span> <small><i>(June 2012)</i></small><small class="hide-when-compact"><i> (<a href="https://en.wikipedia.org/wiki/Help:Maintenance_template_removal" title="Help:Maintenance template removal">Learn how and when to remove this template message</a>)</i></small></div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <table class="plainlinks metadata ambox ambox-content" role="presentation">
-                <tbody>
-                    <tr>
-                        <td class="mbox-image">
-                            <div>
-                                <a href="https://en.wikipedia.org/wiki/File:Crystal_Clear_app_kedit.svg" class="image"><img alt="Crystal Clear app kedit.svg" src="//upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Crystal_Clear_app_kedit.svg/40px-Crystal_Clear_app_kedit.svg.png" width="40" height="40" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Crystal_Clear_app_kedit.svg/60px-Crystal_Clear_app_kedit.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Crystal_Clear_app_kedit.svg/80px-Crystal_Clear_app_kedit.svg.png 2x"></a>
-                            </div>
-                        </td>
-                        <td class="mbox-text">
-                            <div class="mbox-text-span">This article may need to be <b>rewritten entirely</b> to comply with Wikipedia's <a href="https://en.wikipedia.org/wiki/Wikipedia:Manual_of_Style" title="Wikipedia:Manual of Style">quality standards</a>.<span class="hide-when-compact"> <a class="external text" href="//en.wikipedia.org/w/index.php?title=Actor%E2%80%93observer_asymmetry&amp;action=edit">You can help</a>. The <a href="https://en.wikipedia.org/wiki/Talk:Actor%E2%80%93observer_asymmetry" title="Talk:Actor–observer asymmetry">discussion page</a> may contain suggestions.</span> <small><i>(February 2015)</i></small></div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div><small class="hide-when-compact"><i> (<a href="https://en.wikipedia.org/wiki/Help:Maintenance_template_removal" title="Help:Maintenance template removal">Learn how and when to remove this template message</a>)</i></small></div>
-    ```
+let texts = this.descriptionhook.nativeElement.getElementsByClassName('mbox-text');
+for (let i = 1; i < texts.length; i++) {
+    texts[i].innerHTML = '';
+};
+```
+
+Setting them to an empty string works to remove all their children.  But, actaully, we want to hid and show them.  Do we keep a backup of them before deleting them, and add them back in the icon element on click function?  Guess that would work.  It would be nice to put an *ngIf on it to remove and add it back from the DOM.  But, maybe we should be destructuring the preambles and making our own array of preambles.  Maybe we should make a class for this purpose.
+
+The above code actually is doing a poor job.  The array returns a parent div (the exclamation icon) with three child divs (a question mark, a pencil on paper, etc).  But, maybe if someone here learned more about querying WikiData/Media, we could get exactly what we need.
+
+The exclamation mark has a generic preamble description in elements:
+*This article has multiple issues.  Please help improve it or discuss these issues on the talk page.(Learn how and when to remove these template messages)*
+
+Onclick of this icon, we want this description to appear, and the icons inside the mbox-text to appear.  Onclick of *those* icons will then show each description in turn.
+
+Here is the markup for the content after the exclamation mark.
+```
+<td class="mbox-text">
+    <div class="mbox-text-span">
+        <div class="mw-collapsible"><b>This article has multiple issues.</b> Please help <b><a class="external text" href="//en.wikipedia.org/w/index.php?title=Actor%E2%80%93observer_asymmetry&amp;action=edit">improve it</a></b> or discuss these issues on the <b><a href="https://en.wikipedia.org/wiki/Talk:Actor%E2%80%93observer_asymmetry" title="Talk:Actor–observer asymmetry">talk page</a></b>. <small><i>(<a href="https://en.wikipedia.org/wiki/Help:Maintenance_template_removal" title="Help:Maintenance template removal">Learn how and when to remove these template messages</a>)</i></small>
+            <div class="mw-collapsible-content">
+                <table class="plainlinks metadata ambox ambox-style ambox-More_footnotes" role="presentation">
+                    <tbody>
+                        <tr>
+                            <td class="mbox-image">
+                                <div><img alt="" src="//upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Text_document_with_red_question_mark.svg/40px-Text_document_with_red_question_mark.svg.png" width="40" height="40" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Text_document_with_red_question_mark.svg/60px-Text_document_with_red_question_mark.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Text_document_with_red_question_mark.svg/80px-Text_document_with_red_question_mark.svg.png 2x"></div>
+                            </td>
+                            <td class="mbox-text"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="plainlinks metadata ambox ambox-content" role="presentation">
+                    <tbody>
+                        <tr>
+                            <td class="mbox-image">
+                                <div>
+                                    <a href="https://en.wikipedia.org/wiki/File:Crystal_Clear_app_kedit.svg" class="image"><img alt="Crystal Clear app kedit.svg" src="//upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Crystal_Clear_app_kedit.svg/40px-Crystal_Clear_app_kedit.svg.png" width="40" height="40" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Crystal_Clear_app_kedit.svg/60px-Crystal_Clear_app_kedit.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Crystal_Clear_app_kedit.svg/80px-Crystal_Clear_app_kedit.svg.png 2x"></a>
+                                </div>
+                            </td>
+                            <td class="mbox-text"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div><small class="hide-when-compact"></small></div>
+</td>
+```
+
+As a challenge, and a learning experience, we will try and use class names and elements to add these actions.
+
+First, to show only the exclamation mark, we can hid all the other content like this (ignoring error checking):
+```
+let texts = this.descriptionhook.nativeElement.getElementsByClassName('mbox-text');
+let exclamationMarkDesc = texts[0].getElementsByClassName('mw-collapsible');
+```
+
+Next, adding the click listeners.  The ngAfterViewChecked lifecycle hook gets called four times after adding the click listener once which means the listener is being added multiple times.  Even if we put the click event on the element that contains the content in our template, the ngAfterViewChanged hook gets called multiple times, which reprocesses all the hiding login again and again.  Not good.
+
+However, if we add the listeners in the ionViewDidEnter where it seems we should be able to, nothing happens and we don't have access to the DOM.
+
+Reading through [this blog](https://blog.angularindepth.com/working-with-dom-in-angular-unexpected-consequences-and-optimization-techniques-682ac09f6866) on working with the DOM in Angular, it says after removing elements this way *change detection is still run for the child component and its children*.  It's actually a kind of virtual DOM (hello React!).  Internally Angular has a data structure commonly called a View or a Component View.  So removing the actual DOM does not touch this model.
+
+works directly with views and such tool in Angular is View Container.
+it can hold two types of views: embedded and host views.
+Embedded views are created from templates using TemplateRef, while host views are created using a view (component) factory.
+for static views it holds a reference to child views inside the node specific to the child component.
+Dynamic view hooks are obtained like this:
+```
+@ViewChild('vc', {read: ViewContainerRef}) vc: ViewContainerRef;
+```
+
+embedded views like this:
+```
+@ViewChild('tpl', {read: TemplateRef}) tpl: TemplateRef<null>;
+```
+  
+The method we tried first was this:
+```
+@ViewChild('descriptionhook') descriptionhook: ElementRef;
+```
+
+
 
 ## Adding links
 

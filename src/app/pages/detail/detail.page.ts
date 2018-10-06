@@ -29,27 +29,41 @@ export class DetailPage implements OnInit, AfterViewChecked {
 
     ngAfterViewChecked() {
       if (typeof this.descriptionhook !== 'undefined' && !this.showPreambles) {
+        
+        // texts/outer innner
         let texts = this.descriptionhook.nativeElement.getElementsByClassName('mbox-text');
+        console.log('texts',texts.length);
         this.preamblesBackup = texts.innerHTML;
-        let smalls = this.descriptionhook.nativeElement.getElementsByClassName('hide-when-compact');
-        for (let a = 0; a < smalls.length; a++) {
-          smalls[a].innerHTML = '';
+        if (texts.length > 0) {
+          console.log('texts[0]',texts[0]);
+          let exclamationMarkDesc = texts[0].getElementsByClassName('mw-collapsible');
+          console.log('exclamationMarkDesc',exclamationMarkDesc);
+          exclamationMarkDesc[0].innerHTML = '';
         }
-        console.log('removing',texts[0]);
         for (let i = 1; i < texts.length; i++) {
           texts[i].innerHTML = '';
         };
-        let images = this.descriptionhook.nativeElement.getElementsByClassName('mbox-image');
-        images[0].addEventListener('click', this.onImageClick.bind(this));
+        
+        let smalls = this.descriptionhook.nativeElement.getElementsByClassName('hide-when-compact');
+        console.log('smalls',smalls.length);
+        for (let a = 0; a < smalls.length; a++) {
+          smalls[a].innerHTML = '';
+        }
+        
+        // let images = this.descriptionhook.nativeElement.getElementsByClassName('ambox');
+        // console.log('smalls',smalls.length);
+        // if (images.length > 0) {
+        //   images[0].addEventListener('click', this.onImageClick.bind(this));
+        // }
       } else if (typeof this.descriptionhook !== 'undefined' && this.showPreambles) {
-        this.descriptionhook.nativeElement.getElementsByClassName('mbox-text').innerHTML = this.preamblesBackup;
-        console.log('adding',this.descriptionhook.nativeElement.getElementsByClassName('mbox-text'))
+        //this.descriptionhook.nativeElement.getElementsByClassName('mbox-text').innerHTML = this.preamblesBackup;
+        //console.log('adding',this.descriptionhook.nativeElement.getElementsByClassName('mbox-text'))
       }
     }
 
-    onImageClick(what) {
+    descriptionOnClick(what) {
       console.log('what',what);
-      this.showPreambles = true;;
+      this.showPreambles = true;
     }
 
   getDetails() {
