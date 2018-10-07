@@ -55,7 +55,7 @@ There is a long list now of things to do to make the app better.  After using th
 But if we keep on adding new features, there will never be a release, and we will never be able to tell our friends and colleagues about it.  So what is the list of items that would make the first release something to not be ashamed of?
 
 1. (done) detail page icons skewed
-1. icon and splash screen
+1. (done) icon and splash screen
 2. (done) add padding to the spinner
 3. (done) put the refresh list action in the options page
 4. make the short descriptions responsive
@@ -70,6 +70,63 @@ Number 2 & 3 have been addressed already.  Currently, number 7 is requiring quit
 We actually want to hide the text and just show the icons, which can then be expanded and collapsed.  This turns out to be more involved that we have time for with our goal of getting an MVP release ready.  The work done so far on this is in the [Manipulating the preamble DOM](#manipulating-the-preamble-DOM) section.
 
 So with that done (for now) the next issue on deck is creating a icon and splash screen for the app.  Fire up [Gimp](https://www.gimp.org/)!
+
+Instead of doing something elaborate and taking days to create options and then choose the best and then generate the icons and splash screens needed, we will go with a basic psi symbol as a placeholder to get this box checked for a first release.
+
+Optimistically ran ```ionic cordova resources``` which generates all the various size assets used for deployments for iOS and Android.  Loaded the app on a device and there was no change to the graphics.  Then, realizing it's right there in the command: *cordova*.  Since we are using Capacitor now, of course it will fail.  Good old [Josh Morony](https://www.joshmorony.com/adding-icons-splash-screens-launch-images-to-capacitor-projects/), the Ionic tut king spells it out for us:
+*Unlike Cordova, where splash screens and icons were specified in the config.xml file, in Capacitor projects we can just manage the splash screens and icons directly in the native project like any normal native application developer would.*
+
+Actually, I was hoping that Cordova could still be used as the generating tool for the assets.  I guess this is in line with Capacitor forcing the developer to be more hands on with the respective build tools for deployment.
+
+Maybe we can still use what Cordova did.  In the output from the command, and in git status, we can see what was generated:
+```
+ rewrite resources/android/icon/drawable-hdpi-icon.png (99%)
+ rewrite resources/android/icon/drawable-ldpi-icon.png (99%)
+ rewrite resources/android/icon/drawable-mdpi-icon.png (99%)
+ rewrite resources/android/icon/drawable-xhdpi-icon.png (99%)
+ rewrite resources/android/icon/drawable-xxhdpi-icon.png (99%)
+ rewrite resources/android/icon/drawable-xxxhdpi-icon.png (99%)
+ rewrite resources/android/splash/drawable-land-hdpi-screen.png (99%)
+ rewrite resources/android/splash/drawable-land-ldpi-screen.png (99%)
+ rewrite resources/android/splash/drawable-land-mdpi-screen.png (99%)
+ rewrite resources/android/splash/drawable-land-xhdpi-screen.png (98%)
+ rewrite resources/android/splash/drawable-land-xxhdpi-screen.png (98%)
+ rewrite resources/android/splash/drawable-land-xxxhdpi-screen.png (84%)
+ rewrite resources/android/splash/drawable-port-hdpi-screen.png (98%)
+ rewrite resources/android/splash/drawable-port-ldpi-screen.png (99%)
+ rewrite resources/android/splash/drawable-port-mdpi-screen.png (99%)
+ rewrite resources/android/splash/drawable-port-xhdpi-screen.png (99%)
+ rewrite resources/android/splash/drawable-port-xxhdpi-screen.png (98%)
+ rewrite resources/android/splash/drawable-port-xxxhdpi-screen.png (67%)
+ rewrite resources/icon.png (95%)
+ rewrite resources/splash.png (98%)
+ ```
+
+And the resources command is on the list of tools from the Morony blog.  But actually using those generated assets (feels like money using that word) will be platform specific.
+
+So one with the Android workflow.  The icons are located *inside of the mipmap folder, which you can find at app > res > mipmap.  To generate a new set of icons, right-click on the res folder and go to New > Image Asset, select a 1024×1024 pixels or larger icon, click Next and then Finish.*
+
+So that's that for the icon.  Next up, the splashy splash.  *The default splash screens are in app > res > drawable > splash. Right-click on the drawable folder and choose Reveal in Finder you will be able to see folders for all of the various resolutions, then replace the splash.png file in each of these drawable*.
+
+This is where we can re-use the Cordova files.  We have to do is move them to their correct directory and then rename the.  Kind of a drag.  There are still a few folders that we don't have images for.  To see how it goes with just those, while generating the .apk file, we got this message:
+```
+12:09 PM	Build APK(s): Errors while building APK. You can find the errors in the 'Messages' view.
+```
+
+There is no messages in the view menu options.  On a 'Text' tab in the colossal IDE shows this:
+```
+/Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/android/app/src/main/res/drawable-land-xxxhdpi/splash-old.png: Error: '-' is not a valid file-based resource name character: File-based resource names must contain only lowercase a-z, 0-9, or underscore
+```
+
+The previous files were renamed to splash-old so that if there was a problem we could just alter the file causing the problem by modifying the original.  But have to get rid of those files and try again.  You would think the big bad IDE could handle a few extra files.
+
+Anyhow, since this is going in app stores, it could be on any device, so we should make sure the images are all complete.  So to be safe we will also manually provide the icons and splashes that do not contain the new images.  For example, there is a mipmap-mdpi/icon.png that has the size 48 x 46.
+
+After that, we are on to the short descriptions and making them fit into the slide out container or crop them depending on available size.  That should be fun.  We will let the user edit these (in the next release, we promise!) when we decide on where to store the user generated content.  A leading contender now is AWS using thier [Amplify whatever](https://aws-amplify.github.io/amplify-js/media/ionic_guide).  The good thing about this is it includes OAuth/user management and hosting.  We can also play with serverless funtions and put it on our resume!
+
+
+
+
 
 
 ## Manipulating the preamble DOM
