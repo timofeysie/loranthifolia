@@ -1,3 +1,10 @@
+
+.shortDescription {
+    padding-bottom: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .small_arrow {
     font-size: 1em;
 }

@@ -39,8 +39,8 @@
 					slot="left">
 					<!-- <div *ngIf="item.cognitive_biasDescription">
 						{{ item.cognitive_biasDescription | slice:0:132 }}</div> -->
-					<div *ngIf="item.wikiMedia_description">
-						{{ item.wikiMedia_description | slice:0:100 }}</div>
+					<div class="shortDescription" *ngIf="item.wikiMedia_description">
+						{{ item.wikiMedia_description }}</div>
 				</ion-item-options>
 			</div>
 		</ion-item-sliding>

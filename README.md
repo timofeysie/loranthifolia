@@ -58,7 +58,7 @@ But if we keep on adding new features, there will never be a release, and we wil
 1. (done) icon and splash screen
 2. (done) add padding to the spinner
 3. (done) put the refresh list action in the options page
-4. make the short descriptions responsive
+4. (done) make the short descriptions responsive
 5. add the beige theme for the header
 6. deal with the lower case items at the end of the main list
 7. (done) make sure redirect failures are handled gracefully
@@ -124,9 +124,22 @@ Anyhow, since this is going in app stores, it could be on any device, so we shou
 
 After that, we are on to the short descriptions and making them fit into the slide out container or crop them depending on available size.  That should be fun.  We will let the user edit these (in the next release, we promise!) when we decide on where to store the user generated content.  A leading contender now is AWS using thier [Amplify whatever](https://aws-amplify.github.io/amplify-js/media/ionic_guide).  The good thing about this is it includes OAuth/user management and hosting.  We can also play with serverless funtions and put it on our resume!
 
+With the descriptions, it's proving elusive getting perfectly centered short descriptions.  Some of the items are covered on the left, as if the slide wont slide all the way to reveal the whole thing.  Attentional bias is one example of this.
 
+Someone might have figured this out.  One answer on SO said it's *a bug in how the CSS rules are being applied*, so I don't feel so bad about banging my head against this problem now.  Google!
 
+After a little be we are getting rid of the '| slice:0:100' ellipsis template method and using this little css trick thanks to [Chris Coyier](https://css-tricks.com/snippets/css/truncate-string-with-ellipsis/):
+```
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+```
 
+The only problem with this is it gives us only one one.  If it will get us to our first release and doesn't look bad, it's in.  Tick that one off.
+
+Another minor change is that we have to remove any footnotes from the short descriptions.  Where did that function go?
+
+Next up, some more css to add the beige theme for the header.
 
 
 ## Manipulating the preamble DOM
@@ -400,7 +413,7 @@ Trait acription bias
 </div>
 ```
 
-It seems like we should be getting rid of the entire table.  We can choose vertical-navbox, nowraplinks, or hlist.
+It seems like we should be getting rid of the entire table.  We can choose vertical-navbox, nowraplinks, or hlist.  nowraplinks works fine for now.
 
 
 ## Adding links

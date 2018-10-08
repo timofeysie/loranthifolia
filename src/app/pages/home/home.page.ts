@@ -54,7 +54,7 @@ export class HomePage {
   }
 
   ionViewWillEnter() {
-    console.log('this.',this.itemSliding);
+    //console.log('this.itemSliding',this.itemSliding);
   }
 
   getList() {
