@@ -17,7 +17,7 @@
 		name="lines"
 		class="center"></ion-spinner>
 	<ion-list no-lines class="list">
-		<ion-item-sliding #itemSliding *ngFor="let item of list; let i = index">
+		<ion-item-sliding *ngFor="let item of list; let i = index">
 			<div *ngIf="item.sortName">
 				<ion-item slot="start"
 					(click)="setStateViewed(i)"
@@ -35,6 +35,7 @@
 					</div>
 				</ion-item> 
 				<ion-item-options padding-start
+					#itemSliding
 					slot="left">
 					<!-- <div *ngIf="item.cognitive_biasDescription">
 						{{ item.cognitive_biasDescription | slice:0:132 }}</div> -->

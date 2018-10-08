@@ -35,7 +35,9 @@ export class DetailPage implements OnInit, AfterViewChecked {
         this.preamblesBackup = texts.innerHTML;
         if (texts.length > 0) {
           let exclamationMarkDesc = texts[0].getElementsByClassName('mw-collapsible');
-          exclamationMarkDesc[0].innerHTML = '';
+          if (exclamationMarkDesc.length > 0) {
+            exclamationMarkDesc[0].innerHTML = '';
+          }
         }
         for (let i = 1; i < texts.length; i++) {
           texts[i].innerHTML = '';
@@ -51,8 +53,12 @@ export class DetailPage implements OnInit, AfterViewChecked {
         if (images.length > 0) {
           images[0].innerHTML = '';
         }
+
+        let preambleTable = this.descriptionhook.nativeElement.getElementsByClassName('nowraplinks');
+        if (preambleTable.length > 0) {
+          preambleTable[0].innerHTML = '';
+        }
       } 
-      
     }
 
   getDetails() {
@@ -73,7 +79,7 @@ export class DetailPage implements OnInit, AfterViewChecked {
         let preambles = mboxText[0];
         //this.description = mboxText[0].innerHTML;
 
-        let exclamationMarkDesc = preambles.getElementsByClassName('mw-collapsible');
+        //let exclamationMarkDesc = preambles.getElementsByClassName('mw-collapsible');
         //this.description = exclamationMarkDesc[0].innerHTML;
 
         // this article includes a list of references but...

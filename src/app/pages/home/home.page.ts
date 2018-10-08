@@ -53,6 +53,10 @@ export class HomePage {
     });
   }
 
+  ionViewWillEnter() {
+    console.log('this.',this.itemSliding);
+  }
+
   getList() {
     if (typeof this.list !== 'undefined' && !this.list) {
       this.getFromLocalStorage();

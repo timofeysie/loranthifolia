@@ -258,6 +258,150 @@ This all hinges on breaking up the description markup before it is passed into a
 
 For now, we will just remove the preambles completely.  This expand/collapse preambles feature will take more work and are not part of our MVP release.  What we want is the description for now, and we have that by removing the inner HTML content manually.
 
+After a bit of testing, a few more preambles are still there.  Decided to raise them as issue on GitHub to keep track of updates and other preamble problems since testing is usually done away from the editor.
+
+Trait acription bias
+```
+<div class="mw-parser-output">
+    <table class="vertical-navbox nowraplinks hlist" style="float:right;clear:right;width:22.0em;margin:0 0 1.0em 1.0em;background:#f9f9f9;border:1px solid #aaa;padding:0.2em;border-spacing:0.4em 0;text-align:center;line-height:1.4em;font-size:88%">
+        <tbody>
+            <tr>
+                <td style="padding-top:0.4em;line-height:1.2em">Part of a series on</td>
+            </tr>
+            <tr>
+                <th class="navbox-title" style="padding:0.2em 0.4em 0.2em;padding-top:0;font-size:145%;line-height:1.2em"><a href="https://en.wikipedia.org/wiki/Psychology" title="Psychology">Psychology</a></th>
+            </tr>
+            <tr>
+                <td style="padding:0.2em 0 0.4em;padding-bottom:0;"><img alt="" src="//upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Psi2.svg/100px-Psi2.svg.png" width="100" height="100" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Psi2.svg/150px-Psi2.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Psi2.svg/200px-Psi2.svg.png 2x" data-file-width="100" data-file-height="100" /></td>
+            </tr>
+            <tr>
+                <td style="padding:0.3em 0.4em 0.3em;font-weight:bold;border-top: 1px solid #aaa; border-bottom: 1px solid #aaa;padding-bottom:0.35em;">
+                    <ul>
+                        <li><a href="https://en.wikipedia.org/wiki/Outline_of_psychology" title="Outline of psychology">Outline</a></li>
+                        <li><a href="https://en.wikipedia.org/wiki/History_of_psychology" title="History of psychology">History</a></li>
+                        <li><a href="https://en.wikipedia.org/wiki/Subfields_of_psychology" title="Subfields of psychology">Subfields</a></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0 0.1em 0.4em;padding:0.15em 0.5em 0.6em;">
+                    <div class="NavFrame collapsed" style="border:none;padding:0">
+                        <div class="NavHead" style="font-size:105%;background:transparent;text-align:left;background:#ddddff;text-align:center;"><a href="https://en.wikipedia.org/wiki/Basic_science_(psychology)" title="Basic science (psychology)">Basic types</a></div>
+                        <div class="NavContent" style="font-size:105%;padding:0.2em 0 0.4em;text-align:center">
+                            <ul>
+                                <li><a href="https://en.wikipedia.org/wiki/Abnormal_psychology" title="Abnormal psychology">Abnormal</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Behavioural_genetics" title="Behavioural genetics">Behavioral genetics</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Behavioral_neuroscience" title="Behavioral neuroscience">Biological</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Cognitive_psychology" title="Cognitive psychology">Cognitive</a>/<a href="https://en.wikipedia.org/wiki/Cognitivism_(psychology)" title="Cognitivism (psychology)">Cognitivism</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Comparative_psychology" title="Comparative psychology">Comparative</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Cross-cultural_psychology" title="Cross-cultural psychology">Cross-cultural</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Cultural_psychology" title="Cultural psychology">Cultural</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Differential_psychology" title="Differential psychology">Differential</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Developmental_psychology" title="Developmental psychology">Developmental</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Evolutionary_psychology" title="Evolutionary psychology">Evolutionary</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Experimental_psychology" title="Experimental psychology">Experimental</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Mathematical_psychology" title="Mathematical psychology">Mathematical</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Neuropsychology" title="Neuropsychology">Neuropsychology</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Personality_psychology" title="Personality psychology">Personality</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Positive_psychology" title="Positive psychology">Positive</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Quantitative_psychology" title="Quantitative psychology">Quantitative</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Social_psychology" title="Social psychology">Social</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0 0.1em 0.4em;padding:0.15em 0.5em 0.6em;">
+                    <div class="NavFrame collapsed" style="border:none;padding:0">
+                        <div class="NavHead" style="font-size:105%;background:transparent;text-align:left;background:#ddddff;text-align:center;"><a href="https://en.wikipedia.org/wiki/Applied_psychology" title="Applied psychology">Applied psychology</a></div>
+                        <div class="NavContent" style="font-size:105%;padding:0.2em 0 0.4em;text-align:center">
+                            <ul>
+                                <li><a href="https://en.wikipedia.org/wiki/Applied_behavior_analysis" title="Applied behavior analysis">Applied behavior analysis</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Clinical_psychology" title="Clinical psychology">Clinical</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Community_psychology" title="Community psychology">Community</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Consumer_behaviour" title="Consumer behaviour">Consumer</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Counseling_psychology" title="Counseling psychology">Counseling</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Critical_psychology" title="Critical psychology">Critical</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Educational_psychology" title="Educational psychology">Educational</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Environmental_psychology" title="Environmental psychology">Environmental</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Human_factors_and_ergonomics" title="Human factors and ergonomics">Ergonomics</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Forensic_psychology" title="Forensic psychology">Forensic</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Health_psychology" title="Health psychology">Health</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Humanistic_psychology" title="Humanistic psychology">Humanistic</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Industrial_and_organizational_psychology" title="Industrial and organizational psychology">Industrial and organizational</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Legal_psychology" title="Legal psychology">Legal</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Medical_psychology" title="Medical psychology">Medical</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Military_psychology" title="Military psychology">Military</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Music_psychology" title="Music psychology">Music</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Occupational_health_psychology" title="Occupational health psychology">Occupational health</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Political_psychology" title="Political psychology">Political</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Psychology_of_religion" title="Psychology of religion">Religion</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/School_psychology" title="School psychology">School</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Sport_psychology" title="Sport psychology">Sport</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Traffic_psychology" title="Traffic psychology">Traffic</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0 0.1em 0.4em;padding:0.15em 0.5em 0.6em;">
+                    <div class="NavFrame collapsed" style="border:none;padding:0">
+                        <div class="NavHead" style="font-size:105%;background:transparent;text-align:left;background:#ddddff;text-align:center;"><a href="https://en.wikipedia.org/wiki/Category:Psychology_lists" title="Category:Psychology lists">Lists</a></div>
+                        <div class="NavContent" style="font-size:105%;padding:0.2em 0 0.4em;text-align:center">
+                            <ul>
+                                <li><a href="https://en.wikipedia.org/wiki/List_of_psychology_disciplines" title="List of psychology disciplines">Disciplines</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/List_of_psychology_organizations" title="List of psychology organizations">Organizations</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/List_of_psychologists" title="List of psychologists">Psychologists</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/List_of_psychotherapies" title="List of psychotherapies">Psychotherapies</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/List_of_important_publications_in_psychology" title="List of important publications in psychology">Publications</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/List_of_psychological_research_methods" title="List of psychological research methods">Research methods</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/List_of_psychological_schools" title="List of psychological schools">Theories</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Timeline_of_psychology" title="Timeline of psychology">Timeline</a></li>
+                                <li><a href="https://en.wikipedia.org/wiki/Index_of_psychology_articles" title="Index of psychology articles">Topics</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0.3em 0.4em 0.3em;font-weight:bold;border-top: 1px solid #aaa; border-bottom: 1px solid #aaa;border-top:1px solid #aaa;border-bottom:1px solid #aaa;">
+                    <ul>
+                        <li>
+                            <a href="https://en.wikipedia.org/wiki/File:Psi2.svg" class="image"><img alt="Psi2.svg" src="//upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Psi2.svg/16px-Psi2.svg.png" width="16" height="16" class="noviewer" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Psi2.svg/24px-Psi2.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Psi2.svg/32px-Psi2.svg.png 2x" data-file-width="100" data-file-height="100" /></a> <a href="https://en.wikipedia.org/wiki/Portal:Psychology" title="Portal:Psychology">Psychology&#32;portal</a></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align:right;font-size:115%;padding-top: 0.6em;">
+                    <div class="plainlinks hlist navbar mini">
+                        <ul>
+                            <li class="nv-view"><a href="https://en.wikipedia.org/wiki/Template:Psychology_sidebar" title="Template:Psychology sidebar"><abbr title="View this template">v</abbr></a></li>
+                            <li class="nv-talk"><a href="https://en.wikipedia.org/wiki/Template_talk:Psychology_sidebar" title="Template talk:Psychology sidebar"><abbr title="Discuss this template">t</abbr></a></li>
+                            <li class="nv-edit"><a class="external text" href="//en.wikipedia.org/w/index.php?title=Template:Psychology_sidebar&amp;action=edit"><abbr title="Edit this template">e</abbr></a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p><b>Trait ascription bias</b> is the tendency for people to view <i>themselves</i> as relatively variable in terms of <a href="https://en.wikipedia.org/wiki/Personality" title="Personality">personality</a>, behavior and mood while viewing others as much more predictable in their personal traits across different situations.<sup id="cite_ref-kammer_1-0" class="reference"><a href="#cite_note-kammer-1">&#91;1&#93;</a></sup> More specifically, it is a tendency to describe one's own behaviour in terms of situational factors while preferring to describe another's behaviour by ascribing fixed dispositions to their personality. This may occur because peoples' own internal states are more readily observable and <a href="https://en.wikipedia.org/wiki/Availability_heuristic" title="Availability heuristic">available</a> to them than those of others.
+    </p>
+    <p>
+        This <a href="https://en.wikipedia.org/wiki/Attributional_bias" class="mw-redirect" title="Attributional bias">attributional bias</a> intuitively plays a role in the formation and maintenance of <a href="https://en.wikipedia.org/wiki/Stereotype" title="Stereotype">stereotypes</a> and <a href="https://en.wikipedia.org/wiki/Prejudice" title="Prejudice">prejudice</a>, combined with the <a href="https://en.wikipedia.org/wiki/Negativity_effect" class="mw-redirect" title="Negativity effect">negativity effect</a>. However, trait ascription and trait-based models of personality remain contentious in modern <a href="https://en.wikipedia.org/wiki/Psychology" title="Psychology">psychology</a> and <a href="https://en.wikipedia.org/wiki/Social_science" title="Social science">social science</a> research. Trait ascription bias refers to the situational and dispositional evaluation and description of personality traits on a personal level. A similar bias on the group level is called the <a href="https://en.wikipedia.org/wiki/Outgroup_homogeneity_bias" class="mw-redirect" title="Outgroup homogeneity bias">outgroup homogeneity bias</a>.</p>
+    <div class="mw-references-wrap">
+        <ol class="references">
+            <li id="cite_note-kammer-1"><span class="mw-cite-backlink"><b><a href="#cite_ref-kammer_1-0">^</a></b></span> <span class="reference-text"><cite class="citation journal">Kammer, D. (1982). "Differences in trait ascriptions to self and friend: Unconfounding intensity from variability". <i>Psychological Reports</i>. <b>51</b> (1): 99–102. <a href="https://en.wikipedia.org/wiki/Digital_object_identifier" title="Digital object identifier">doi</a>:<a rel="nofollow" class="external text" href="//doi.org/10.2466%2Fpr0.1982.51.1.99">10.2466/pr0.1982.51.1.99</a>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=article&amp;rft.jtitle=Psychological+Reports&amp;rft.atitle=Differences+in+trait+ascriptions+to+self+and+friend%3A+Unconfounding+intensity+from+variability&amp;rft.volume=51&amp;rft.issue=1&amp;rft.pages=99-102&amp;rft.date=1982&amp;rft_id=info%3Adoi%2F10.2466%2Fpr0.1982.51.1.99&amp;rft.aulast=Kammer&amp;rft.aufirst=D.&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3ATrait+ascription+bias" class="Z3988"></span>
+                </span>
+            </li>
+        </ol>
+    </div>
+</div>
+```
+
+It seems like we should be getting rid of the entire table.  We can choose vertical-navbox, nowraplinks, or hlist.
+
 
 ## Adding links
 
