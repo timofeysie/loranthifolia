@@ -230,12 +230,15 @@ export class HomePage {
   addItems(section: any) {
       section.forEach((key) => {
         let itemName = key.name;
+        if (itemName === 'Attentional bias') {
+          console.log('found');
+        }
         let found = false;
         for(var j = 0; j < this.list.length; j++) {
           if ((typeof this.list[j].sortName !== 'undefined' && typeof itemName !== 'undefined') && this.list[j].sortName.toLocaleUpperCase() === itemName.toLocaleUpperCase()) {
             found = true;
             this.list[j].wikiMedia_label = itemName;
-            this.list[j].wikiMedia_description = key.desc;
+            this.list[j].wikiMedia_description = this.removeFootnotes(key.desc);
             this.list[j].wikiMedia_category = key.category;
             this.list[j].sortName = itemName;
             this.list[j].detailState = 'un-viewed';
@@ -251,6 +254,17 @@ export class HomePage {
     });
   }
 
+  removeFootnotes(description: string) {
+    if (description) {
+        const indexOfBracket = description.indexOf('[');
+        if (indexOfBracket !== -1) {
+            return description.substring(0, indexOfBracket);
+          } else {
+              return description;
+          }
+      }
+  }
+
   /**
    * Create a new item from a WikiMedia list item.
    * @param itemName Name of the item
@@ -259,7 +273,7 @@ export class HomePage {
   createItemObject(itemName: string, key: any) {
     let itemObject:any = {};
     itemObject.wikiMedia_label = itemName;
-    itemObject.wikiMedia_description = key.desc;
+    itemObject.wikiMedia_description = this.removeFootnotes(key.desc);
     itemObject.wikiMedia_category = key.category;
     itemObject.sortName = itemName.split('"').join('');
     itemObject.detailState = 'un-viewed';

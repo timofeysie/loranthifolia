@@ -59,7 +59,7 @@ But if we keep on adding new features, there will never be a release, and we wil
 2. (done) add padding to the spinner
 3. (done) put the refresh list action in the options page
 4. (done) make the short descriptions responsive
-5. add the beige theme for the header
+5. (done) add the beige theme for the header
 6. deal with the lower case items at the end of the main list
 7. (done) make sure redirect failures are handled gracefully
 
@@ -135,11 +135,24 @@ overflow: hidden;
 text-overflow: ellipsis;
 ```
 
-The only problem with this is it gives us only one one.  If it will get us to our first release and doesn't look bad, it's in.  Tick that one off.
+The only problem with this is it gives us only one one.  If it will get us to our first release and doesn't look bad, it's in.  I was about to tick this one off, but on testing a device view, it's just not enough information to be helpful without two lines, so we're not out of the woods yet.
 
-Another minor change is that we have to remove any footnotes from the short descriptions.  Where did that function go?
+[This SO question](https://stackoverflow.com/questions/48047524/dynamically-styling-ionic-ion-item-sliding-items-with-ngstyle) is 9 months old.  I'm thinking now this is a shadow DOM issue, so let's find out what properties are exposed in this Ionic component before settling for less.  As a bonus we will be able to answer that question on SO and get some brownie points.
 
-Next up, some more css to add the beige theme for the header.
+You can only affect things that Ionic has created css variables for within the shadow-root elements.  But, I can't see any '#shadow-root' tags in the DOM window of Chrome inspector.
+
+We could always play with the native elements like with the failed preamble expander attempt.  There is something appealing about playing with the DOM.
+
+Still, there should be a shadow DOM there in the inspector.  [This answer](https://forum.ionicframework.com/t/ionic-4-header-background-image/138677/2) points to the problem:
+*The problem why whe can’t use css to style the header anymore is that ionic 4 encapsulates it inside a web component. Web components are meant to be uneffected by outside css.*
+
+*Luckily we can absuse the color variables in “theme/variables.scss” to insert an image into the header. Because it’s content is direcly used as value for the css background property it is possible to do something like this:*
+
+So using the color="medium" on the toolbar let's us set the color of the header.  The two line descriptions are not centered, but looking better than they were.  It's time to move on for now and triage these issues for the next sprint.
+
+One more minor change that took far too long was removing footnotes from the short descriptions.  Where did that function go?  It was in Conchifolia.  Tried to move it into Socius but had difficulty removing any Angular from that dated project.  I couldn't make up my mind on the best way to create the simplest vanilla JavaScript front-end neutral lib.  Stay tuned.  This will be needed when we get back to the React, React Native and Stencil implementations of this app.
+
+The last thing on our list then is the lower case items at the end of the main list.
 
 
 ## Manipulating the preamble DOM

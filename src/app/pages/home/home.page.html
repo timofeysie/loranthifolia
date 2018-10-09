@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="medium">
     <ion-title slot="start">
 		<span *ngIf="list">{{list.length}}</span> 
 			Cognitive Biases 
@@ -36,10 +36,11 @@
 				</ion-item> 
 				<ion-item-options padding-start
 					#itemSliding
-					slot="left">
+					slot="left"
+					class="shortDescription">
 					<!-- <div *ngIf="item.cognitive_biasDescription">
 						{{ item.cognitive_biasDescription | slice:0:132 }}</div> -->
-					<div class="shortDescription" *ngIf="item.wikiMedia_description">
+					<div *ngIf="item.wikiMedia_description">
 						{{ item.wikiMedia_description }}</div>
 				</ion-item-options>
 			</div>
