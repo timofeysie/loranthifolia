@@ -152,7 +152,15 @@ So using the color="medium" on the toolbar let's us set the color of the header.
 
 One more minor change that took far too long was removing footnotes from the short descriptions.  Where did that function go?  It was in Conchifolia.  Tried to move it into Socius but had difficulty removing any Angular from that dated project.  I couldn't make up my mind on the best way to create the simplest vanilla JavaScript front-end neutral lib.  Stay tuned.  This will be needed when we get back to the React, React Native and Stencil implementations of this app.
 
-The last thing on our list then is the lower case items at the end of the main list.
+The last thing on our list then is the lower case items at the end of the main list.  This is the first item that we can't find to uppercase the first letter of the search name.
+```
+cognitive_bias: "http://www.wikidata.org/entity/Q382233"
+cognitive_biasLabel: "affect heuristic"
+lang: "en"
+sortName: "affect heuristic"
+```
+
+After clarifying the various places where the sort names are created, someone decided lower case looks better.  Something about e e cummings.
 
 
 ## Manipulating the preamble DOM

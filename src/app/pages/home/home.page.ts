@@ -143,10 +143,10 @@ export class HomePage {
           this.list.slice().reverse().forEach((item, index, object) => {
             if (!this.languagePageDoesNotExist(item, index)) {
               // remove the item from the list
-              item.sortName = item.cognitive_biasLabel;
+              item.sortName = item.cognitive_biasLabel.toLowerCase();
               this.list.splice(object.length - 1 - index, 1);
             } else {
-              item.sortName = item.cognitive_biasLabel;
+              item.sortName = item.cognitive_biasLabel.toLowerCase();
             }
           });
           this.getWikiMediaLists();
@@ -194,6 +194,7 @@ export class HomePage {
         // include those into the list and sort it
         this.addItems(data[0]); // TODO: fix array of dupes
         this.addItems(data[1]); // TODO: fix array of dupes
+        console.log('list',this.list);
         this.list.sort(this.dynamicSort('sortName'));
         this.dataStorageService.setItem(this.langChoice+'-'+this.itemName, this.list);
     });
@@ -230,9 +231,6 @@ export class HomePage {
   addItems(section: any) {
       section.forEach((key) => {
         let itemName = key.name;
-        if (itemName === 'Attentional bias') {
-          console.log('found');
-        }
         let found = false;
         for(var j = 0; j < this.list.length; j++) {
           if ((typeof this.list[j].sortName !== 'undefined' && typeof itemName !== 'undefined') && this.list[j].sortName.toLocaleUpperCase() === itemName.toLocaleUpperCase()) {
@@ -240,10 +238,11 @@ export class HomePage {
             this.list[j].wikiMedia_label = itemName;
             this.list[j].wikiMedia_description = this.removeFootnotes(key.desc);
             this.list[j].wikiMedia_category = key.category;
-            this.list[j].sortName = itemName;
+            this.list[j].sortName = itemName.toLowerCase();
             this.list[j].detailState = 'un-viewed';
             this.list[j].descriptionState = 'un-viewed';
             this.list[j].itemState = 'show';
+            //console.log('this.list[j].sortName',this.list[j].sortName);
             break;
           }
         }
@@ -275,11 +274,13 @@ export class HomePage {
     itemObject.wikiMedia_label = itemName;
     itemObject.wikiMedia_description = this.removeFootnotes(key.desc);
     itemObject.wikiMedia_category = key.category;
-    itemObject.sortName = itemName.split('"').join('');
+    itemObject.sortName = itemName.toLowerCase();
     itemObject.detailState = 'un-viewed';
     itemObject.descriptionState = 'un-viewed';
     itemObject.itemState = 'show';
     //itemObject.itemOrder;
+    //console.log('itemObject.sortName',itemObject.sortName );
+
     return itemObject;
   }
 
@@ -324,7 +325,8 @@ export class HomePage {
         let newItem = {
           'name': itemName,
           'desc': itemDesc,
-          'category': category
+          'category': category,
+          'sortName': itemName.charAt(0).toUpperCase()+itemName.slice(1)
         }
         descriptions.push(newItem);
       }
