@@ -13,7 +13,7 @@ To test on a device, with [Capacitor](https://capacitor.ionicframework.com/), th
 ```
 ionic build
 npx cap copy
-npx cap open
+npx cap open (android/ios)
 ```
 
 This will ask you what kind of project you want to work with, for example, Android.  You could also choose iOS, Electron, or a PWA.  This will open the appropriate IDE such as Android Studio or Xcode after returning you to the prompt.  You can then build and deploy the project from there.
@@ -161,6 +161,10 @@ sortName: "affect heuristic"
 ```
 
 After clarifying the various places where the sort names are created, someone decided lower case looks better.  Something about e e cummings.
+
+There are still some funny things going on.
+
+*contrast effect*.
 
 
 ## Manipulating the preamble DOM

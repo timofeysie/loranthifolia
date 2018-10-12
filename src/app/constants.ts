@@ -1,4 +1,4 @@
 export var CONSTANTS = {
-    VERSION: '0.3.6',
+    VERSION: '0.5.3',
     OPTIONS_NAME: 'options'
 };

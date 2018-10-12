@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { DataStorageService } from '../../services/storage/data-storage.service';
+import { CONSTANTS } from '../../constants';
 
 @Component({
   selector: 'options',
@@ -9,15 +10,19 @@ import { DataStorageService } from '../../services/storage/data-storage.service'
   styleUrls: ['./options.page.scss'],
 })
 export class OptionsPage implements OnInit {
+  version: string;
   optionsName = 'options';
   languages: string [];
   langChoice: string;
   options: any;
+  customPopoverOptions: any
+  
   constructor(
     private location: Location,
     private dataStorageService: DataStorageService,
     private router: Router) {
-    this.langChoice = 'en';
+      this.version = CONSTANTS.VERSION;
+      this.langChoice = 'en';
   }
 
   /**
@@ -31,6 +36,11 @@ export class OptionsPage implements OnInit {
         this.langChoice = this.options['language'];
       }
     });
+    this.customPopoverOptions = {
+      header: 'Available languages',
+      subHeader: 'Select',
+      message: 'This will change the list language'
+    };
   }
 
   refreshList() {

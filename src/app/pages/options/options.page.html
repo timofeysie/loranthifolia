@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="medium">
     <button ion-button 
       icon-only 
       tappable
@@ -11,25 +11,32 @@
     </button>
     <ion-title slot="start">
 			Options
-		</ion-title>
+    </ion-title>
+    <span class="version_text">version: {{version}}</span>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
+
+  <ion-item>
+    <ion-label>Refresh list</ion-label>
+    <ion-label>
+        <p>Warning: this will clear the item states.</p>
+      </ion-label>
+    <ion-button (click)="refreshList()"
+      color="secondary">Refresh now</ion-button> 
+  </ion-item>
+
   <ion-item>
     <ion-label>Language</ion-label>
-    <ion-select [ngModel]="langChoice"
+    <ion-select [interfaceOptions]="customPopoverOptions" 
+      interface="popover" 
+      placeholder="Select One"
+      [ngModel]="langChoice"
       (ngModelChange)="changeLang($event)">
       <ion-select-option *ngFor="let item of languages"
         value="{{item.lang}}">{{item.name}}</ion-select-option>
     </ion-select>
   </ion-item>
-  <ion-item>
-      <ion-label>Refresh list</ion-label>
-      <ion-label>
-          <p>Warning: this will clear the item states.</p>
-        </ion-label>
-      <ion-button (click)="refreshList()"
-        color="secondary">Refresh now</ion-button> 
-    </ion-item>
+
 </ion-content>
