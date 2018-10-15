@@ -60,7 +60,7 @@ But if we keep on adding new features, there will never be a release, and we wil
 3. (done) put the refresh list action in the options page
 4. (done) make the short descriptions responsive
 5. (done) add the beige theme for the header
-6. deal with the lower case items at the end of the main list
+6. (done) deal with the lower case items at the end of the main list
 7. (done) make sure redirect failures are handled gracefully
 
 Nothing really big here, but things that look bad should be fixed before jumping in to any new features.
@@ -160,11 +160,26 @@ lang: "en"
 sortName: "affect heuristic"
 ```
 
-After clarifying the various places where the sort names are created, someone decided lower case looks better.  Something about e e cummings.
+After clarifying the various places where the sort names are created, someone decided lower case looks better.  Something about e e cummings.  This actually needs to be upper case.  e e cummings might be OK with us here, but the rest of the world might expect proper capitalizations.
 
 There are still some funny things going on.
 
-*contrast effect*.
+*contrast effect* had no description.
+
+Also, when refreshing the list hangs.  Actually, if you re-load the app, the new list is there, but the UI sometimes does not refresh.
+
+To rule things out, we can catch these errors that happen when the app is offline:
+```
+zone.js:2969 GET https://radiant-springs-38893.herokuapp.com/api/list/en net::ERR_INTERNET_DISCONNECTED
+...
+globalZoneAwareCallback @ zone.js:1566
+home.page.ts:156 offline error HttpErrorResponse {headers: HttpHeaders, status: 0, statusText: "Unknown Error", url: null, ok: false, …}
+```
+
+The *contrast effect* actually does return a description sometimes also, so this may be a network connect issue we need to handle gracefully.
+
+
+
 
 
 ## Manipulating the preamble DOM
