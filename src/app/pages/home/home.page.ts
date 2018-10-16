@@ -24,8 +24,7 @@ export class HomePage {
     private myDataService: MyDataService, 
     private dataStorageService: DataStorageService,
     public events: Events,
-    private router:Router,
-    private activatedRoute : ActivatedRoute) {
+    private router:Router) {
       this.router.events.forEach((event) => {
         if (event instanceof NavigationEnd && this.router.url === '/home') {
           // reload list with the new options if they have changed
@@ -197,6 +196,8 @@ export class HomePage {
         console.log('list',this.list);
         this.list.sort(this.dynamicSort('sortName'));
         this.dataStorageService.setItem(this.langChoice+'-'+this.itemName, this.list);
+        // UI doesn't refresh here on a device so this will force the page to reload
+        location.reload();
     });
   }
 
@@ -237,7 +238,6 @@ export class HomePage {
             found = true;
             this.list[j].wikiMedia_label = itemName;
             this.list[j].wikiMedia_description = this.removeFootnotes(key.desc).substring(0,82)+'...';
-            console.log('this.list[j].wikiMedia_description',this.list[j].wikiMedia_description.length);
             this.list[j].wikiMedia_category = key.category;
             this.list[j].sortName = itemName.toLowerCase();
             this.list[j].detailState = 'un-viewed';
@@ -274,7 +274,6 @@ export class HomePage {
     let itemObject:any = {};
     itemObject.wikiMedia_label = itemName;
     itemObject.wikiMedia_description = this.removeFootnotes(key.desc).substring(0,82)+'...';
-    console.log('itemObject.wikiMedia_description',itemObject.wikiMedia_description.length);
     itemObject.wikiMedia_category = key.category;
     itemObject.sortName = itemName.toLowerCase();
     itemObject.detailState = 'un-viewed';

@@ -4,6 +4,8 @@ Using the latest alpha for Ionic 4, this project is to create a simple demo app 
 
 Hakea loranthifolia is of the genus Hakea native to an area in the Wheatbelt region of Western Australia.  It typically grows to a height of 2 to 3 metres (7 to 10 ft). It blooms from August to September and produces white flowers.
 
+A note about this readme, the oldest items are at the end and most recent at the beginning after the table of contents if you want to go from the beginning of the project to the current work.
+
 
 ## Work flow
 
@@ -178,8 +180,63 @@ home.page.ts:156 offline error HttpErrorResponse {headers: HttpHeaders, status:
 
 The *contrast effect* actually does return a description sometimes also, so this may be a network connect issue we need to handle gracefully.
 
+The line shown above, namely home.page.ts:156 is triggered in the catch block of the myDataService.getWikiDataList call.  The problem is we have used a spinner that shows when there is no list.  On the detail page, we show a message indicating re-direct status as well as the spinner.  Well, that's one problem.  We could fix that by using an updated message that will show as well as the spinner, and at the end, if everything fails, update the message and cancelling the spinner by setting the list to an empty array.
 
+The strange thing is the refresh list function works with ionic serve, and returns rather quickly, but on our Android test device, we get an infinite spinner every time.  We will have to connect it and use remote debugging to see what's going on in the console to see where it's getting stuck.  
 
+In any case, we never want to allow an infinite spinner.  On another project I work on, we use a timeout service which can be set to show an alert after a specific length of time.  This would allow the user to try again or try another feature, or at least stop them from waiting and getting impatient and giving up on the app forever.
+
+But I don't think that that is the situation.  If you kill the app and load it again, the new list is there in the local storage, so obviously it did load and was saved.  For some reason the UI was not updated.  I'm pretty sure that the refresh list used to work on the device, so we have a regressions here.
+
+Looking at the log on a device when the list is loaded but now shown, we see this:
+```
+list (191) [{…}, {…}, …]
+capacitor-runtime.js:70 2.1: Stored en-list
+```
+
+That's in the DataStorageService.setItem function.  When testing with ionic serve, we don't see the second comment.  That's because it's using native storage on the device which is not available in the browser.  In the home/list page, this is where the action should end.  In the browser we can see the number of items in the list starting at 90, then increasing quickly as the WikiMedia calls come back.  The list is live and shows it change as it is sorted, right before the list is then put into either local storage for the browser or native storage for a device.
+
+Since we see nothing during this process, the problem has already started.  So this may be a navigation issue.  We send the navigation back to the home page when the user chooses to refresh the list in the options page like this:
+```
+    this.dataStorageService.sharedAction = 'reset-list';
+    this.location.back();
+```
+
+The role of the data storage is kind of a hack since there is no navigate back with parameters, and using a navigate to would create a whole new class and enter the world of the memory leak.
+
+Back in the home page we check for the presence of 'reset-list' in the storage service, set it back to none, and then call refreshList().
+```
+refreshList() {
+    this.list = null;
+    this.getListFromStorageOrServer();
+}
+```
+
+When the list is set to null, the UI does refresh, as this is what triggers the spinner to be shown.  What happens if this is removed?  Nothing in the browser.  I would expect the list to double in size.  Not sure if it's worth going through the build and deploy process on the device.
+
+There are at least three things to try based on [this Ionic Forum thread](https://forum.ionicframework.com/t/ionic-refresh-current-page/47167/24):
+```
+location.reload();
+// or 
+window.location.reload()
+
+// 2nd option
+import { Content } from ‘ionic-angular’;
+export class TestPage {
+@ViewChild(Content) content: Content;
+...
+this.content.resize();
+
+// 3rd option
+// apparently, pull to refresh does this:
+this.navCtrl.setRoot(this.navCtrl.getActive().component);
+```
+
+The first two options work, but now our loading spinner solution is not so great.  It will show until the first call returns, so the user will see the list of 91 items from the WikiData call.  But then nothing for quite some time until the three Wikipedia sections load and are added to the list and sorted.  Then the screen goes blank and the new list is re-loaded.  Not great UX.
+
+Some solutions to this would be to show the spinner in the header.  Possibly disable the items in the list to prevent the user clicking thru and interrupting the load.  Maybe this wouldn't be an issue.  Not sure if all that work would finish if the user navigated away during the process.
+
+Anyhow, time to deploy to the device and see if it works there.
 
 
 ## Manipulating the preamble DOM
