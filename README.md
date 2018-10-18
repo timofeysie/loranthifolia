@@ -238,6 +238,13 @@ Some solutions to this would be to show the spinner in the header.  Possibly dis
 
 Anyhow, time to deploy to the device and see if it works there.
 
+The good news is, it does!  Actually better than the experience in the browser.  As I mentioned before, the spinner disappears after the first list loads, but the user is hanging until the rest are loaded, merged, sorted and the page refreshes.  It would be better to check the platform and only do that on a device.
+
+But this brings up a good point.  We need to really go back to a website with this app.  It doesn't use any native features, so it may as well be a PWA or use a db.  It is time to look at [Amplify](https://aws-amplify.github.io/amplify-js/media/ionic_guide) a bit more.
+
+It make sense to combine hosting with OAuth deb and serverless lambda functionality.  And it has a CLI.
+
+Anyhow, it's time to deploy.  We will need some more graphics and content for the app stores.  First up, the Play Store, then the App Store.
 
 ## Manipulating the preamble DOM
 
