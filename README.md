@@ -238,13 +238,67 @@ Some solutions to this would be to show the spinner in the header.  Possibly dis
 
 Anyhow, time to deploy to the device and see if it works there.
 
-The good news is, it does!  Actually better than the experience in the browser.  As I mentioned before, the spinner disappears after the first list loads, but the user is hanging until the rest are loaded, merged, sorted and the page refreshes.  It would be better to check the platform and only do that on a device.
+The good news is, it does!  Actually better than the experience in the browser.  As I mentioned before, the spinner disappears after the first list loads, but the user is hanging until the rest are loaded, merged, sorted and the page refreshes. 
 
-But this brings up a good point.  We need to really go back to a website with this app.  It doesn't use any native features, so it may as well be a PWA or use a db.  It is time to look at [Amplify](https://aws-amplify.github.io/amplify-js/media/ionic_guide) a bit more.
+On the matter of spinners, we still have to fix the infinite spinner by setting the list to something.
 
-It make sense to combine hosting with OAuth deb and serverless lambda functionality.  And it has a CLI.
+```
+error: "Redirect to data uri value"
+message: "Http failure response for https://radiant-springs-38893.herokuapp.com/api/detail/experimenter's/en/false: 300 Multiple Choices"
+```
+Not sure what statusText: "Multiple Choices" means.  If you look at the Wikipedia page, it does have a long list of things to try.  The real link should be in the backup title, shouldn't it?
 
-Anyhow, it's time to deploy.  We will need some more graphics and content for the app stores.  First up, the Play Store, then the App Store.
+This is what the Conchifolia readme says about it:
+
+*Experimenter'* appears on the list with the backup title of *Experimenter's bias*
+```500 Experimenter%27s_bias redirect error Internal Server Error```
+
+Some of us here were wondering if that was a typo in the readme or not.
+The actual Wikipedia page is a redirect:
+```
+Observer-expectancy effect (Redirected from Experimenter's bias)
+```
+
+It looks like this kind of business logic got lost in that project.  It just goes to prove that we need a better more organized way to implement these re-directs.  Some are done on the server, and some are done in the clients.  Where is the single source of truth?  Scattered across five projects.  Sometimes a monolith makes sense.
+
+Anyhow, on with the work.  How does Conchifolia deal with getting the backup titles?
+
+If you look at [the Heroku site hosting the sample demonstration site](https://radiant-springs-38893.herokuapp.com/detail/experimenter's/en/Experimenter's%20bias/null) and look for our item, you find *Experimenter's (Experimenter's bias)*.  We shouldn't be showing the main title in this case.  But whatever.  Choose the item and we get:
+```
+[object Object]
+Redirect to data uri value
+```
+
+Not a very successful re-direct.  It is some unfinished business with the data page.  We do get the WikiData page for the item.  Here is the console log for the re-direct.
+```
+1.this.list[i][backupTitle] Experimenter's bias
+detail.page.ts:47 4. error HttpErrorResponse {headers: HttpHeaders, status: 300, statusText: "Multiple Choices", url: "https://radiant-springs-38893.herokuapp.com/api/detail/experimenter's/en/false", ok: false, …}
+(anonymous) @ detail.page.ts:47
+push../node_modules/rxjs/_esm5/internal/Subscriber.js.SafeSubscriber.__tryOrUnsub @ Subscriber.js:195
+push../node_modules/rxjs/_esm5/internal/Subscriber.js.SafeSubscriber.error @ Subscriber.js:146
+...
+(anonymous) @ pages-detail-detail-module.js:1
+detail.page.ts:50 5. error msg Redirect to data uri value
+detail.page.ts:53 6. Redirect to data uri value
+backend-api.service.ts:22 label /api/data/query/Experimenter's bias/en
+detail.page.ts:99 
+```
+
+You can see in the backend-api.service.ts line 22 has *Experimenter's bias* there.  The bindings array returned from this call is an array of one item with two objects, item and item label.
+```
+item:
+    type: "uri"
+    value: "http://www.wikidata.org/entity/Q2556417"
+itemLabel:
+    type: "literal"
+    value: "observer-expectancy effect"
+    xml:lang: "en"
+```
+
+The value there could be used to create yet another re-direct to the *observer-expectancy effect*.  For now we have a solution to the infinite spinner.  But if we can we want all these redirect automatically.
+
+
+
 
 ## Manipulating the preamble DOM
 

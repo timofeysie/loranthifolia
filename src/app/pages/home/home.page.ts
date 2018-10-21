@@ -69,6 +69,10 @@ export class HomePage {
     this.getListFromStorageOrServer();
   }
 
+  /**
+   * First try the local native storage to set the list.
+   * If that fails, try http.
+   */
   getListFromStorage() {
     this.dataStorageService.getItemViaNativeStorage(this.langChoice+'-'+this.itemName).then((result) => {
       if (result) {

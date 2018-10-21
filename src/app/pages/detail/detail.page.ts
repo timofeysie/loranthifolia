@@ -65,7 +65,8 @@ export class DetailPage implements OnInit, AfterViewChecked {
     this.itemName = this.route.snapshot.paramMap.get('id');
     this.wikipediaLink = 'https://en.wikipedia.org/wiki/'+this.itemName.replace(' ','_');
     this.yourBiasLink = 'https://www.yourbias.is/'+this.itemName.replace(' ','-');
-    this.myDataService.getDetail(this.itemName.replace(' ','_').toLowerCase(),this.langChoice,false).subscribe(
+    const itemNameAgain = encodeURI(this.itemName.replace(' ','_').toLowerCase());
+    this.myDataService.getDetail(itemNameAgain,this.langChoice,false).subscribe(
       data => {
         this.description = data['description'].toString();
         this.description = this.description.split('href="/wiki/')
@@ -107,7 +108,11 @@ export class DetailPage implements OnInit, AfterViewChecked {
         // this article may have to be rewritten entirely to comply ...
         //this.description = images[1].innerHTML;
 
-      });
+      },((error: any) => {
+        console.log('error from detail',error);
+        this.description = error.message+' failed.';
+      })
+      );
   }
 
   ngOnInit() {
