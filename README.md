@@ -297,6 +297,7 @@ itemLabel:
 
 The value there could be used to create yet another re-direct to the *observer-expectancy effect*.  For now we have a solution to the infinite spinner.  But if we can we want all these redirect automatically.
 
+First, we need to go back to Conchifolia and fix that re-direct, then eventually come back here to implement the backup title and full re-direct.
 
 
 
