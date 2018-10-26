@@ -22,7 +22,7 @@
 				<ion-item slot="start"
 					(click)="setStateViewed(i)"
 					tappable 
-					routerLink="/detail/{{ item.sortName }}" 
+					(click)="navigateAction(item.sortName, i)"
 					routerDirection="forward"
 					detail="true">
 					<div *ngIf="item">

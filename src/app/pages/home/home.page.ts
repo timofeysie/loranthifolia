@@ -5,7 +5,7 @@ import { DataStorageService } from '../../services/storage/data-storage.service'
 import { Events } from '@ionic/angular';
 import { ItemSliding } from '@ionic/angular';
 import { Router, NavigationEnd} from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
+import { DetailModel } from '../../models/detail-model';
 
 @Component({
   selector: 'app-page-home',
@@ -54,6 +54,48 @@ export class HomePage {
 
   ionViewWillEnter() {
     //console.log('this.itemSliding',this.itemSliding);
+  }
+
+  /**
+   * Go to the detail page.  If an item has a backup title, add that to the route.
+   * @param item Set state as viewed, get language setting, create list name, and/or title
+   * And pass on to the detail page.
+   * @param i item index
+   */
+  navigateAction(item: string, i: number) {
+    let qCode = this.findQCode(this.list[i]);
+    this.list[i].detailState = 'viewed';
+    //this.dataService.setItem(this.listLanguage+'-'+this.listName, this.list);
+    let itemRoute = item.replace(/\s+/g, '_').toLowerCase();
+    if (typeof this.list[i]['backupTitle'] !== 'undefined') {
+      let backupTitle = this.list[i]['backupTitle'];
+      console.log('1.this.list[i][backupTitle]',backupTitle);
+      this.router.navigate(['detail/'+itemRoute+'/'+this.langChoice+'/'+backupTitle+'/'+qCode]);
+    } else if (typeof this.list[i]['cognitive_bias'] !== 'undefined') {
+      let backupTitle = this.list[i]['cognitive_bias'].replace(/\//g,'*'); 
+      console.log('2.this.list[i][cognitive_bias].replace()',backupTitle);
+      this.router.navigate(['detail/'+itemRoute+'/'+this.langChoice+'/'+backupTitle+'/'+qCode]);
+    } else {
+      console.log('3.else sortName',this.list[i].sortName);
+      this.router.navigate(['detail/'+itemRoute+'/'+this.langChoice+'/'+this.list[i].sortName+'/'+qCode]);
+    }
+  }
+
+  /**
+   * 
+   * @param item @returns the q-code which is the last item in a URI http://www.wikidata.org/entity/Q4533272
+   */
+  findQCode(item) {
+    let qCode;
+    if (typeof item['cognitive_bias'] !== 'undefined') {
+      // item has a q-code
+      let lastSlash = item['cognitive_bias'].lastIndexOf('/');
+      qCode = item.cognitive_bias.substr(lastSlash,item.cognitive_bias.length);
+    } else {
+      // no q-code
+      qCode = null;
+    }
+    return qCode;
   }
 
   getList() {
@@ -201,7 +243,7 @@ export class HomePage {
         this.list.sort(this.dynamicSort('sortName'));
         this.dataStorageService.setItem(this.langChoice+'-'+this.itemName, this.list);
         // UI doesn't refresh here on a device so this will force the page to reload
-        location.reload();
+        //location.reload();
     });
   }
 
@@ -236,6 +278,11 @@ export class HomePage {
   addItems(section: any) {
       section.forEach((key) => {
         let itemName = key.name;
+        let backupTitle;
+        if (typeof key['backupTitle'] !== 'undefined') {
+          backupTitle = key['backupTitle'];
+          console.log(itemName+' -> '+backupTitle);
+        }
         let found = false;
         for(var j = 0; j < this.list.length; j++) {
           if ((typeof this.list[j].sortName !== 'undefined' && typeof itemName !== 'undefined') && this.list[j].sortName.toLocaleUpperCase() === itemName.toLocaleUpperCase()) {
@@ -247,6 +294,9 @@ export class HomePage {
             this.list[j].detailState = 'un-viewed';
             this.list[j].descriptionState = 'un-viewed';
             this.list[j].itemState = 'show';
+            if (backupTitle) {
+              this.list[j].backupTitle = backupTitle;
+            }
             //console.log('this.list[j].sortName',this.list[j].sortName);
             break;
           }
@@ -318,6 +368,7 @@ export class HomePage {
           itemDesc = tableDiv[1].innerText;
         }
         let itemName;
+        let backupTitle = this.getAnchorTitleForBackupTitle(tableDiv[0],itemName);
         if (typeof tableDiv[0].getElementsByTagName('a')[0] !== 'undefined') {
           itemName = tableDiv[0].getElementsByTagName('a')[0].innerText;
         } else if (typeof tableDiv[0].getElementsByTagName('span')[0] !== 'undefined') {
@@ -337,6 +388,46 @@ export class HomePage {
       }
     }
     return descriptions;
+  }
+
+  /**
+   * Parse the anchor tag for the title of the item used in the tag,
+   * which can be different from the name of the item.
+   * @param tableDiv the DOM element
+   * @param itemName the item name
+   */
+  getAnchorTitleForBackupTitle(tableDiv: any, itemName: string) {
+    if (typeof tableDiv.getElementsByTagName('a')[0] !== 'undefined') {
+      let titleProp = tableDiv.getElementsByTagName('a')[0].title;
+      let backupLink;
+      let backupTitle;
+      let href:string = tableDiv.getElementsByTagName('a')[0].href;
+      if (href) {
+        let slash = href.lastIndexOf('/');
+        backupLink = href.substr(slash+1,href.length);
+      }
+      if (href.indexOf('index.php') !== -1) {
+        backupTitle = -1; // we have a missing detail page
+      }
+      if (itemName !== titleProp && backupTitle !== -1) {
+        backupTitle = titleProp;
+      }
+      if ((backupTitle !== null) 
+        && (typeof backupTitle !== 'undefined')
+        && (backupTitle !== -1) 
+        && (backupTitle.indexOf('(psychology)') !== -1)) {
+        backupTitle = backupTitle.substr(0,backupTitle.indexOf('('));
+        //compare the names again without the
+        if (backupTitle !== itemName) {
+          backupTitle = null;
+        }
+      }
+      return backupTitle;
+    } else {
+      if (typeof tableDiv.getElementsByTagName('td')[0] !== 'undefined') {
+        return tableDiv.getElementsByTagName('td')[0].innerText();
+      }
+    }
   }
 
   /**

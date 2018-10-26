@@ -240,6 +240,9 @@ Anyhow, time to deploy to the device and see if it works there.
 
 The good news is, it does!  Actually better than the experience in the browser.  As I mentioned before, the spinner disappears after the first list loads, but the user is hanging until the rest are loaded, merged, sorted and the page refreshes. 
 
+This does pose a bit of a problem for development, when we want to look at the log created by refreshing the list.  It will disappear on reload.  Bummer.
+
+
 On the matter of spinners, we still have to fix the infinite spinner by setting the list to something.
 
 ```
@@ -299,6 +302,36 @@ The value there could be used to create yet another re-direct to the *observer-e
 
 First, we need to go back to Conchifolia and fix that re-direct, then eventually come back here to implement the backup title and full re-direct.
 
+That worked out well, but now we have some work to do here.  Namely, introduce the backupTitle concept from Conchifolia.  In the addItems function which comes first in the code, take the backupTitle if it exists and put it on the item model.
+
+But before this happens, the parseSectionList which we call parseList function here needs to add the backup title.  To do this we also need the helper getAnchorTitleForBackupTitle() function.
+
+Then, on navigation we need to determine if this title should be used instead of the normal title.  This is done in the navigateAction() function.
+
+The problem with this last item is how the Ionic app navigates to the detail pages.  In the template we just do this:
+```
+routerLink="/detail/{{ item.sortName }}"
+```
+
+Probably we want to replace this with a programmatic approach and use the navigateAction() function instead.
+
+Since we are using Ionic 4 which can use the Angular router, we should be able to use the entire navigateAction() function here, right?
+
+There is extra baggage with it however.  First we will also need the findQCode() funtion.
+
+We also need to change the listLanguage to langChoice.  Or should we be converting these names so they match Conchifolia exactly?  Good question.  Some here think these differences are obvious to any developer.
+
+Good questions aside, we can change the routerLink to this:
+```
+(click)="navigateAction(item.sortName, i)"
+```
+
+With those changes in place, this is the error that we get:
+```
+ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'detail/actor-observer_bias/en/actor-observer%20bias/null'
+```
+
+Now we also need to add the qCode to the route.
 
 
 ## Manipulating the preamble DOM
