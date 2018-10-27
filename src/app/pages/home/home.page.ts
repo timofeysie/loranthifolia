@@ -70,14 +70,14 @@ export class HomePage {
     if (typeof this.list[i]['backupTitle'] !== 'undefined') {
       let backupTitle = this.list[i]['backupTitle'];
       console.log('1.this.list[i][backupTitle]',backupTitle);
-      this.router.navigate(['detail/'+itemRoute+'/'+this.langChoice+'/'+backupTitle+'/'+qCode]);
+      this.router.navigate(['detail/'+backupTitle+'/'+qCode]);
     } else if (typeof this.list[i]['cognitive_bias'] !== 'undefined') {
       let backupTitle = this.list[i]['cognitive_bias'].replace(/\//g,'*'); 
       console.log('2.this.list[i][cognitive_bias].replace()',backupTitle);
-      this.router.navigate(['detail/'+itemRoute+'/'+this.langChoice+'/'+backupTitle+'/'+qCode]);
+      this.router.navigate(['detail/'+itemRoute+'/'+qCode]);
     } else {
       console.log('3.else sortName',this.list[i].sortName);
-      this.router.navigate(['detail/'+itemRoute+'/'+this.langChoice+'/'+this.list[i].sortName+'/'+qCode]);
+      this.router.navigate(['detail/'+this.list[i].sortName+'/'+qCode]);
     }
   }
 

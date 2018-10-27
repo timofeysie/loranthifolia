@@ -331,7 +331,24 @@ With those changes in place, this is the error that we get:
 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'detail/actor-observer_bias/en/actor-observer%20bias/null'
 ```
 
-Now we also need to add the qCode to the route.
+Now we also need to add the qCode to the route.  Axctually, we will need two routes now:
+```
+  { path: 'detail/:id/:listLanguage/:qCode', loadChildren: './pages/detail/detail.module#DetailPageModule' },
+  { path: 'detail/:id/:listLanguage/:title/:qCode', loadChildren: './pages/detail/detail.module#DetailPageModule' },
+```  
+We don't need the list language in Loranthifolia because the detail page has access to it.  Remember, in Conchifolia the language choice is done on a select on the list page.  The error happens now due to the way the routes are assembled in our function.
+```
+this.router.navigate(['detail/'+itemRoute+'/'+this.langChoice+'/'+this.list[i].sortName+'/'+qCode]);
+```
+
+We used to use the item name, so that should be the default.  We need to get clear on what the role of the navigate action is in Conchifolia.  The notes in the function show:
+```
+1.this.list[i][backupTitle]
+2.this.list[i][cognitive_bias].replace()
+3.else sortName
+```
+
+
 
 
 ## Manipulating the preamble DOM
