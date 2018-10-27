@@ -348,7 +348,15 @@ We used to use the item name, so that should be the default.  We need to get cle
 3.else sortName
 ```
 
+Currently, actor observer bias works.  That's using method 3.  What was the one that started this whole mess?
+'experimenter's'  which should be 'experimenter's bias' that then should redirect to 'observer-expectancy effect' by using the qCode.
 
+That link is still not working. 
+```
+message: "Http failure response for https://radiant-springs-38893.herokuapp.com/api/detail/experimenter's/en/false: 300 Multiple Choices"
+```
+
+It is also using method 3, but it should be using method 1.
 
 
 ## Manipulating the preamble DOM
