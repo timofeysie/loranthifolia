@@ -63,9 +63,16 @@ export class DetailPage implements OnInit, AfterViewChecked {
 
   getDetails() {
     this.itemName = this.route.snapshot.paramMap.get('id');
-    this.wikipediaLink = 'https://en.wikipedia.org/wiki/'+this.itemName.replace(' ','_');
-    this.yourBiasLink = 'https://www.yourbias.is/'+this.itemName.replace(' ','-');
-    const itemNameAgain = encodeURI(this.itemName.replace(' ','_').toLowerCase());
+    let backupTitle = this.route.snapshot.paramMap.get('backupTitle');
+    console.log('backupTitle',backupTitle);
+    let linkTitle;
+    if (backupTitle) {
+      linkTitle = this.itemName.replace(' ','_');
+    } else {
+      linkTitle = this.itemName.replace(' ','_');
+    }
+    this.wikipediaLink = 'https://en.wikipedia.org/wiki/'+linkTitle;
+    const itemNameAgain = encodeURI(linkTitle).toLowerCase();
     this.myDataService.getDetail(itemNameAgain,this.langChoice,false).subscribe(
       data => {
         this.description = data['description'].toString();

@@ -67,8 +67,8 @@ export class HomePage {
     this.list[i].detailState = 'viewed';
     //this.dataService.setItem(this.listLanguage+'-'+this.listName, this.list);
     let itemRoute = item.replace(/\s+/g, '_').toLowerCase();
-    if (typeof this.list[i]['backupTitle'] !== 'undefined') {
-      let backupTitle = this.list[i]['backupTitle'];
+    let backupTitle = this.list[i]['backupTitle'] ;
+    if (typeof backupTitle!== 'undefined' && backupTitle !== null) {
       console.log('1.this.list[i][backupTitle]',backupTitle);
       this.router.navigate(['detail/'+backupTitle+'/'+qCode]);
     } else if (typeof this.list[i]['cognitive_bias'] !== 'undefined') {
@@ -239,7 +239,6 @@ export class HomePage {
         // include those into the list and sort it
         this.addItems(data[0]); // TODO: fix array of dupes
         this.addItems(data[1]); // TODO: fix array of dupes
-        console.log('list',this.list);
         this.list.sort(this.dynamicSort('sortName'));
         this.dataStorageService.setItem(this.langChoice+'-'+this.itemName, this.list);
         // UI doesn't refresh here on a device so this will force the page to reload
@@ -279,8 +278,8 @@ export class HomePage {
       section.forEach((key) => {
         let itemName = key.name;
         let backupTitle;
-        if (typeof key['backupTitle'] !== 'undefined') {
-          backupTitle = key['backupTitle'];
+        if (typeof key.backupTitle !== 'undefined') {
+          backupTitle = key.backupTitle;
           console.log(itemName+' -> '+backupTitle);
         }
         let found = false;
@@ -294,15 +293,12 @@ export class HomePage {
             this.list[j].detailState = 'un-viewed';
             this.list[j].descriptionState = 'un-viewed';
             this.list[j].itemState = 'show';
-            if (backupTitle) {
-              this.list[j].backupTitle = backupTitle;
-            }
-            //console.log('this.list[j].sortName',this.list[j].sortName);
+            this.list[j].backupTitle = backupTitle;
             break;
           }
         }
         if (!found) {
-          let wikiMediaObj:any = this.createItemObject(itemName, key);
+          let wikiMediaObj:any = this.createItemObject(itemName, key, backupTitle);
           this.list.push(wikiMediaObj);
         }
     });
@@ -324,7 +320,7 @@ export class HomePage {
    * @param itemName Name of the item
    * @param key key has desc, and category properties
    */
-  createItemObject(itemName: string, key: any) {
+  createItemObject(itemName: string, key: any, backupTitle: string) {
     let itemObject:any = {};
     itemObject.wikiMedia_label = itemName;
     itemObject.wikiMedia_description = this.removeFootnotes(key.desc).substring(0,82)+'...';
@@ -333,9 +329,7 @@ export class HomePage {
     itemObject.detailState = 'un-viewed';
     itemObject.descriptionState = 'un-viewed';
     itemObject.itemState = 'show';
-    //itemObject.itemOrder;
-    //console.log('itemObject.sortName',itemObject.sortName );
-
+    itemObject.backupTitle = backupTitle;
     return itemObject;
   }
 
@@ -368,7 +362,6 @@ export class HomePage {
           itemDesc = tableDiv[1].innerText;
         }
         let itemName;
-        let backupTitle = this.getAnchorTitleForBackupTitle(tableDiv[0],itemName);
         if (typeof tableDiv[0].getElementsByTagName('a')[0] !== 'undefined') {
           itemName = tableDiv[0].getElementsByTagName('a')[0].innerText;
         } else if (typeof tableDiv[0].getElementsByTagName('span')[0] !== 'undefined') {
@@ -378,11 +371,16 @@ export class HomePage {
         } else {
           console.log('failed to get',tableDiv[0]);
         }
+        let backupTitle = this.getAnchorTitleForBackupTitle(tableDiv[0],itemName);
+        // if (itemName === 'Experimenter\'s') {
+        //   console.log('tableRows',tableRows);
+        // }
         let newItem = {
           'name': itemName,
           'desc': itemDesc,
           'category': category,
-          'sortName': itemName.charAt(0).toUpperCase()+itemName.slice(1)
+          'sortName': itemName.charAt(0).toUpperCase()+itemName.slice(1),
+          'backupTitle': backupTitle
         }
         descriptions.push(newItem);
       }
@@ -422,9 +420,14 @@ export class HomePage {
           backupTitle = null;
         }
       }
+      if (typeof backupTitle !== 'undefined') {
+        console.log('1.found',backupTitle);
+        console.log('tableDiv',tableDiv,'itemName',itemName);
+      }
       return backupTitle;
     } else {
       if (typeof tableDiv.getElementsByTagName('td')[0] !== 'undefined') {
+        console.log('2.found',tableDiv.getElementsByTagName('td')[0].innerText());
         return tableDiv.getElementsByTagName('td')[0].innerText();
       }
     }

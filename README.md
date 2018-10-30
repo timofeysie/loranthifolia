@@ -31,6 +31,7 @@ npx cap update
 ## Table of Contents
 
 1. [Alpha release](#alpha-release)
+1. [The backup title for Loranthifolia](#the-backup-title-for-Loranthifolia)
 1. [Manipulating the preamble DOM](#manipulating-the-preamble-DOM) 
 1. [Adding links](#a-dding-links)
 1. [The options page & i18n](#the-options-page-&-i18n)
@@ -243,6 +244,8 @@ The good news is, it does!  Actually better than the experience in the browser. 
 This does pose a bit of a problem for development, when we want to look at the log created by refreshing the list.  It will disappear on reload.  Bummer.
 
 
+## The backup title for Loranthifolia
+
 On the matter of spinners, we still have to fix the infinite spinner by setting the list to something.
 
 ```
@@ -357,6 +360,40 @@ message: "Http failure response for https://radiant-springs-38893.herokuapp.com/
 ```
 
 It is also using method 3, but it should be using method 1.
+
+Oh, someone forgot to refresh the list!
+
+Now, in the parseList() function, for Experimenter's, we see this table div:
+```
+<td>
+    <a href="/wiki/Experimenter%27s_bias" 
+        class="mw-redirect" 
+        title="Experimenter's bias">Experimenter's</a>
+     or 
+     <a href="/wiki/Expectation_bias" 
+        class="mw-redirect" 
+        title="Expectation bias">expectation bias</a>
+</td>
+```
+
+It looks like we want the second one there.  But how will we decide if there are multiple ones?  A quick look down the list shows that this one also has two options:
+```
+<td>
+    <a href="/wiki/Forer_effect" 
+        class="mw-redirect" 
+        title="Forer effect">Forer effect</a> 
+    or 
+    <a href="/wiki/Barnum_effect" 
+        title="Barnum effect">Barnum effect</a>
+</td>
+```
+
+The only difference there is there is no class on the second anchor.
+
+
+Currently 
+
+home.page.ts:79 3.else sortName experimenter's
 
 
 ## Manipulating the preamble DOM
