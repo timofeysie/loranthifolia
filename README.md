@@ -30,6 +30,7 @@ npx cap update
 
 ## Table of Contents
 
+1. [Fixing the citations](#fixing-the-citations)
 1. [Alpha release](#alpha-release)
 1. [The backup title for Loranthifolia](#the-backup-title-for-Loranthifolia)
 1. [Manipulating the preamble DOM](#manipulating-the-preamble-DOM) 
@@ -49,6 +50,17 @@ npx cap update
 1. [Starting the app and parsing Wikipedia](#Starting-the-app-and-parsing-Wikipedia)
 
 #
+
+## Fixing the citations
+[Issue number 6](https://github.com/timofeysie/loranthifolia/issues/6) on the GitHub logs a problem with the footnotes.  After the second citation, there is extra junk that is not marked up correctly. 
+
+You can see in the markup below after the number 447779 the portion starting with ```.mw-parser-output cite.citation{``` is shown in raw text on the page:
+```
+<li id="cite_note-Sackett-2"><span class="mw-cite-backlink"><b><a href="#cite_ref-Sackett_2-0">^</a></b></span> <span class="reference-text"><cite class="citation journal">Sackett, D. L. (1979). "Bias in analytic research". <i>Journal of Chronic Diseases</i>. <b>32</b> (1–2): 51–63. <a href="https://en.wikipedia.org/wiki/Digital_object_identifier" title="Digital object identifier">doi</a>:<a rel="nofollow" class="external text" href="//doi.org/10.1016%2F0021-9681%2879%2990012-2">10.1016/0021-9681(79)90012-2</a>. <a href="https://en.wikipedia.org/wiki/PubMed_Identifier" class="mw-redirect" title="PubMed Identifier">PMID</a>&#160;<a rel="nofollow" class="external text" href="//www.ncbi.nlm.nih.gov/pubmed/447779">447779</a>.</cite><span title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal&amp;rft.genre=article&amp;rft.jtitle=Journal+of+Chronic+Diseases&amp;rft.atitle=Bias+in+analytic+research&amp;rft.volume=32&amp;rft.issue=1%E2%80%932&amp;rft.pages=51-63&amp;rft.date=1979&amp;rft_id=info%3Adoi%2F10.1016%2F0021-9681%2879%2990012-2&amp;rft_id=info%3Apmid%2F447779&amp;rft.aulast=Sackett&amp;rft.aufirst=D.+L.&amp;rfr_id=info%3Asid%2Fen.wikipedia.org%3AObserver-expectancy+effect" class="Z3988"></span><style data-mw-deduplicate="TemplateStyles:r861714446">.mw-parser-output cite.citation{font-style:inherit}.mw-parser-output q{quotes:"\"""\"""'""'"}.mw-parser-output code.cs1-code{color:inherit;background:inherit;border:inherit;padding:inherit}.mw-parser-output .cs1-lock-free a{background:url("//upload.wikimedia.org/wikipedia/commons/thumb/6/65/Lock-green.svg/9px-Lock-green.svg.png")no-repeat;background-position:right .1em center}.mw-parser-output .cs1-lock-limited a,.mw-parser-output .cs1-lock-registration a{background:url("//upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Lock-gray-alt-2.svg/9px-Lock-gray-alt-2.svg.png")no-repeat;background-position:right .1em center}.mw-parser-output .cs1-lock-subscription a{background:url("//upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Lock-red-alt-2.svg/9px-Lock-red-alt-2.svg.png")no-repeat;background-position:right .1em center}.mw-parser-output .cs1-subscription,.mw-parser-output .cs1-registration{color:#555}.mw-parser-output .cs1-subscription span,.mw-parser-output .cs1-registration span{border-bottom:1px dotted;cursor:help}.mw-parser-output .cs1-hidden-error{display:none;font-size:100%}.mw-parser-output .cs1-visible-error{font-size:100%}.mw-parser-output .cs1-subscription,.mw-parser-output .cs1-registration,.mw-parser-output .cs1-format{font-size:95%}.mw-parser-output .cs1-kern-left,.mw-parser-output .cs1-kern-wl-left{padding-left:0.2em}.mw-parser-output .cs1-kern-right,.mw-parser-output .cs1-kern-wl-right{padding-right:0.2em}</style></span>
+</li>
+```
+
+It looks like we can just remove the style tag there to solve this issue.  This method works fine.  Ideally this would be done with DOM manipulation, when we get back to toggling the preambles using their icons, it can be looked at again then.
 
 
 ## Alpha release
@@ -242,6 +254,10 @@ Anyhow, time to deploy to the device and see if it works there.
 The good news is, it does!  Actually better than the experience in the browser.  As I mentioned before, the spinner disappears after the first list loads, but the user is hanging until the rest are loaded, merged, sorted and the page refreshes. 
 
 This does pose a bit of a problem for development, when we want to look at the log created by refreshing the list.  It will disappear on reload.  Bummer.
+
+This section became too long.  The section below was initially part of this.  Also, fixing some of the issues on the GitHub site we considered and fixed.  More testing needs to be done to make sure there is nothing embarrassing int he app before the first release via the app stores.
+
+The optimism with which this section was started points out the big problems people have with estimating tasks!
 
 
 ## The backup title for Loranthifolia

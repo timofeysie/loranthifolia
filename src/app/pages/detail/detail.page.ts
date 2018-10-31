@@ -78,14 +78,19 @@ export class DetailPage implements OnInit, AfterViewChecked {
         this.description = data['description'].toString();
         this.description = this.description.split('href="/wiki/')
           .join('href="https://'+this.langChoice+'.wikipedia.org/wiki/');
+        
         console.log('description',this.description);
-          let newDOM = this.createElementFromHTML(this.description);
-        console.log('newDOM',newDOM);
-        let mboxText = newDOM.getElementsByClassName('mbox-text');
+        
+        // temporary fix for issue #6.  This should ideally be done with DOM manipulation
+        this.removeStyleTags();        
+        // Preamble toggle work
+        //let newDOM = this.createElementFromHTML(this.description);
+        //console.log('newDOM',newDOM);
+        //let mboxText = newDOM.getElementsByClassName('mbox-text');
         //console.log('mboxText',mboxText.length);
         
         // the exclamation mark icon description, and sub icons and descriptions
-        let preambles = mboxText[0];
+        //let preambles = mboxText[0];
         //this.description = mboxText[0].innerHTML;
 
         //let exclamationMarkDesc = preambles.getElementsByClassName('mw-collapsible');
@@ -121,6 +126,14 @@ export class DetailPage implements OnInit, AfterViewChecked {
         this.description = error.message+' failed.';
       })
       );
+  }
+
+  removeStyleTags() {
+    const style1 = this.description.indexOf('<style');
+    const style2 = this.description.indexOf('</style>');
+    const part1 = this.description.substring(0, style1);
+    const part2 = this.description.substring(style2, this.description.length);
+    this.description = part1+part2;
   }
 
   ngOnInit() {
