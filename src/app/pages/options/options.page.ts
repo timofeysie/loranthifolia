@@ -38,8 +38,6 @@ export class OptionsPage implements OnInit {
     });
     this.customPopoverOptions = {
       header: 'Available languages',
-      subHeader: 'Select',
-      message: 'This will change the list language'
     };
   }
 
