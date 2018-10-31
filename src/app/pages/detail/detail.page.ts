@@ -78,8 +78,9 @@ export class DetailPage implements OnInit, AfterViewChecked {
         this.description = data['description'].toString();
         this.description = this.description.split('href="/wiki/')
           .join('href="https://'+this.langChoice+'.wikipedia.org/wiki/');
-        let newDOM = this.createElementFromHTML(this.description);
-        //console.log('newDOM',newDOM);
+        console.log('description',this.description);
+          let newDOM = this.createElementFromHTML(this.description);
+        console.log('newDOM',newDOM);
         let mboxText = newDOM.getElementsByClassName('mbox-text');
         //console.log('mboxText',mboxText.length);
         

@@ -388,12 +388,9 @@ It looks like we want the second one there.  But how will we decide if there are
 </td>
 ```
 
-The only difference there is there is no class on the second anchor.
+The only difference there is there is no class on the second anchor.  Now the redirects are working.  We should think about using the backup title as the actual title if it exists.
 
 
-Currently 
-
-home.page.ts:79 3.else sortName experimenter's
 
 
 ## Manipulating the preamble DOM
