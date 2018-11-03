@@ -406,7 +406,87 @@ It looks like we want the second one there.  But how will we decide if there are
 
 The only difference there is there is no class on the second anchor.  Now the redirects are working.  We should think about using the backup title as the actual title if it exists.
 
+After a bit of testing on the device, switching to Korean immediately brings up an problem with 3.else sortName 노출 효과
+message: "Http failure response for https://radiant-springs-38893.herokuapp.com/api/detail/%25eb%2585%25b8%25ec%25b6%259c_%25ed%259a%25a8%25ea%25b3%25bc/ko/false: 300 Multiple Choices"
 
+
+[This link works](https://ko.wikipedia.org/wiki/%EB%85%B8%EC%B6%9C_%ED%9A%A8%EA%B3%BC).  The only difference is the route name is encoded with lower case.  Actually no, there is a difference:
+```
+%EB%85%B8%EC%B6%9C_%ED%9A%A8%EA%B3%BC
+%25eb%2585%25b8%25ec%25b6%259c_%25ed%259a%25a8%25ea%25b3%25bc
+```
+
+Remove all the %25s and they are the same, right?  The same thing happens for the peridolia affect.
+```
+2018-11-01T12:08:48.551467+00:00 app[web.1]: singlePageUrl http://ko.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=%25eb%2585%25b8%25ec%25b6%259c_%25ed%259a%25a8%25ea%25b3%25bc
+2018-11-01T12:08:48.625280+00:00 app[web.1]: details simple redirect Url https://ko.wikipedia.org/wiki/%25eb%2585%25b8%25ec%25b6%259c_%25ed%259a%25a8%25ea%25b3%25bc
+2018-11-01T12:08:48.731384+00:00 heroku[router]: at=info method=GET path="/api/detail/%25eb%2585%25b8%25ec%25b6%259c_%25ed%259a%25a8%25ea%25b3%25bc/ko/false" host=radiant-springs-38893.herokuapp.com request_id=9837287f-ade4-4fe2-b402-45470a22034f fwd="49.181.226.52" dyno=web.1 connect=0ms service=179ms status=300 bytes=424 protocol=https
+2018-11-01T12:17:11.177735+00:00 app[web.1]: singlePageUrl http://ko.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=%25ed%258c%258c%25eb%25a0%2588%25ec%259d%25b4%25eb%258f%258c%25eb%25a6%25ac%25ec%2595%2584
+2018-11-01T12:17:11.318543+00:00 app[web.1]: details simple redirect Url https://ko.wikipedia.org/wiki/%25ed%258c%258c%25eb%25a0%2588%25ec%259d%25b4%25eb%258f%258c%25eb%25a6%25ac%25ec%2595%2584
+2018-11-01T12:17:11.414343+00:00 heroku[router]: at=info method=GET path="/api/detail/%25ed%258c%258c%25eb%25a0%2588%25ec%259d%25b4%25eb%258f%258c%25eb%25a6%25ac%25ec%2595%2584/ko/false" host=radiant-springs-38893.herokuapp.com request_id=820947a7-733b-489c-a613-1657a80ecdfd fwd="120.18.228.99" dyno=web.1 connect=0ms service=237ms status=300 bytes=424 protocol=https
+```
+
+The server log is not helpful.  These use to work...  Accoding to [this url endcode reference](https://www.w3schools.com/tags/ref_urlencode.asp), %25 is the code for the actual character %.  So it looks like it's doubly encoded.
+
+There are two places in the app where we can find the encodeURI JavaScript function:
+
+In detail.page.ts right before the call to the backend:
+```
+    const itemNameAgain = encodeURI(linkTitle).toLowerCase();
+    this.myDataService.getDetail(itemNameAgain,this.langChoice,false).subscribe(
+```
+
+And then again in the data service:
+```
+  getDetail(pageName: string, lang: string, leaveCaseAlone: boolean) {
+    const backendDetailUrl = 'https://radiant-springs-38893.herokuapp.com/api/detail/'+pageName+'/'+lang+'/'+leaveCaseAlone;
+    return this.httpClient.get(encodeURI(backendDetailUrl))
+```
+
+Well, there's yr' problem!
+
+Which one makes more sense, the caller or the callee?
+I'm thinking the callee should do what it needs without the caller having to know what that is.
+
+After that, the 노출 효과 redirect works!  
+http://localhost:8100/detail/%EB%85%B8%EC%B6%9C%20%ED%9A%A8%EA%B3%BC/null
+
+The second one seems to time out:
+3.else sortName 호손 효과
+```
+Request URL: https://radiant-springs-38893.herokuapp.com/api/detail/%ED%98%B8%EC%86%90_%ED%9A%A8%EA%B3%BC/ko/false
+```
+
+Another item in the list failes:
+```
+zone.js:2969 GET https://radiant-springs-38893.herokuapp.com/api/detail/%ED%98%84%EC%83%81%EC%9C%A0%EC%A7%80%ED%8E%B8%ED%96%A5/ko/false 500 (Internal Server Error)
+detail.page.ts:123 error from detail 
+HttpErrorResponse {headers: HttpHeaders, status: 500, statusText: "Internal Server Error", url: "https://radiant-springs-38893.herokuapp.com/api/de…3%81%EC%9C%A0%EC%A7%80%ED%8E%B8%ED%96%A5/ko/false", ok: false, …}
+error: "Error code:missingtitle"
+headers: HttpHeaders {normalizedNames: Map(0), lazyUpdate: null, lazyInit: ƒ}
+message: "Http failure response for https://radiant-springs-38893.herokuapp.com/api/detail/%ED%98%84%EC%83%81%EC%9C%A0%EC%A7%80%ED%8E%B8%ED%96%A5/ko/false: 500 Internal Server Error"
+name: "HttpErrorResponse"
+ok: false
+```
+
+What does the server say?
+```
+2018-11-03T05:31:13.971480+00:00 heroku[router]: at=info method=GET path="/api/detail/%ED%98%84%EC%83%81%EC%9C%A0%EC%A7%80%ED%8E%B8%ED%96%A5/ko/false" host=radiant-springs-38893.herokuapp.com request_id=17f9e580-9091-447f-a6a2-553d8a5b252d fwd="49.181.226.52" dyno=web.1 connect=1ms service=359ms status=500 bytes=426 protocol=https
+2018-11-03T05:31:13.963101+00:00 app[web.1]: 2.errData, trying detailsSimpleRedirect missingtitle
+2018-11-03T05:31:13.963996+00:00 app[web.1]: details simple redirect Url https://undefined.wikipedia.org/wiki/%25ED%2598%2584%25EC%2583%2581_%25EC%259C%25A0%25EC%25A7%2580_%25ED%258E%25B8%25ED%2596%25A5
+2018-11-03T05:31:13.967729+00:00 app[web.1]: errors-3: missingtitle
+2018-11-03T05:31:14.072726+00:00 app[web.1]: events.js:183
+2018-11-03T05:31:14.072730+00:00 app[web.1]: throw er; // Unhandled 'error' event
+2018-11-03T05:31:14.072732+00:00 app[web.1]: ^
+2018-11-03T05:31:14.072733+00:00 app[web.1]: 
+2018-11-03T05:31:14.072738+00:00 app[web.1]: Error: getaddrinfo ENOTFOUND undefined.wikipedia.org undefined.wikipedia.org:443
+2018-11-03T05:31:14.072739+00:00 app[web.1]: at errnoException (dns.js:50:10)
+2018-11-03T05:31:14.072741+00:00 app[web.1]: at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:92:26)
+2018-11-03T05:31:14.193322+00:00 heroku[web.1]: State changed from up to crashed
+...
+```
+
+Looks like we didn't get rid of the %25s.
 
 
 ## Manipulating the preamble DOM

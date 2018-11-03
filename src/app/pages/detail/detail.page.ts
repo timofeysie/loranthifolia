@@ -64,22 +64,20 @@ export class DetailPage implements OnInit, AfterViewChecked {
   getDetails() {
     this.itemName = this.route.snapshot.paramMap.get('id');
     let backupTitle = this.route.snapshot.paramMap.get('backupTitle');
-    console.log('backupTitle',backupTitle);
     let linkTitle;
     if (backupTitle) {
-      linkTitle = this.itemName.replace(' ','_');
+      linkTitle = backupTitle.replace(' ','_');
+      console.log('using backup title',backupTitle);
     } else {
       linkTitle = this.itemName.replace(' ','_');
     }
     this.wikipediaLink = 'https://en.wikipedia.org/wiki/'+linkTitle;
-    const itemNameAgain = encodeURI(linkTitle).toLowerCase();
+    const itemNameAgain = linkTitle.toLowerCase();
     this.myDataService.getDetail(itemNameAgain,this.langChoice,false).subscribe(
       data => {
         this.description = data['description'].toString();
         this.description = this.description.split('href="/wiki/')
           .join('href="https://'+this.langChoice+'.wikipedia.org/wiki/');
-        
-        console.log('description',this.description);
         
         // temporary fix for issue #6.  This should ideally be done with DOM manipulation
         this.removeStyleTags();        
