@@ -486,7 +486,7 @@ What does the server say?
 ...
 ```
 
-Looks like we didn't get rid of the %25s.
+Looks like we didn't get rid of the %25s.  The server was calling the detail redirect without the language and leave case alone args, so that was also causing a problem.  Now everything seems to be fine.
 
 
 ## Manipulating the preamble DOM
