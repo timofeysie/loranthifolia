@@ -28,7 +28,7 @@
   </ion-item>
 
   <ion-item>
-    <ion-label>Language</ion-label>
+    <ion-label style="color:black">Language</ion-label>
     <ion-select [interfaceOptions]="customPopoverOptions" 
       interface="popover" 
       placeholder="Select One"
@@ -37,6 +37,15 @@
       <ion-select-option *ngFor="let item of languages"
         value="{{item.lang}}">{{item.name}}</ion-select-option>
     </ion-select>
+  </ion-item>
+
+  <ion-item style="margin-top: 10px;">
+    <ion-label>Legend</ion-label>
+    <ion-list>
+      <div class="legendMargin ion-list__defaultItem">WikiData items</div>
+      <div class="legendMargin list__text-wikimedia">WikiMedia items</div>
+      <div class="legendMarginlist__both">Items on both lists</div>
+      </ion-list>
   </ion-item>
 
 </ion-content>
