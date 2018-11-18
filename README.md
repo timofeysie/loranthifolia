@@ -51,6 +51,16 @@ npx cap update
 
 #
 
+
+## Fixing the labels
+
+We should be using the 
+cognitive_biasLabel
+or the
+wikiMedia_label
+
+Both have proper formatting.
+
 ## Fixing the citations
 [Issue number 6](https://github.com/timofeysie/loranthifolia/issues/6) on the GitHub logs a problem with the footnotes.  After the second citation, there is extra junk that is not marked up correctly. 
 
