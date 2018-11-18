@@ -52,14 +52,18 @@ npx cap update
 #
 
 
-## Fixing the labels
+## Fixing the GitHub issues
 
-We should be using the 
-cognitive_biasLabel
-or the
-wikiMedia_label
+Trying to tie up some loose ends before the MVP release.
 
-Both have proper formatting.
+First up, this one is not an issue, but is an easy win.  We should be using either the *cognitive_biasLabel* or the *wikiMedia_label* for item names.  Both have proper formatting.
+
+Also, on the detail page, issue #8: Forer_effect has underscore in title.  If we pass in the above lables, this issue will also be closed.
+
+Next, another non-issue but something we need.  While waiting for the detail page info to load, we want to see the short description.  Because it is truncated with ellipsis in the list, and we cannot edit it yet, we often don't read it or forget to read it before clicking on the item.
+
+The short description is truncated in the actual code.  It's not ideal.  We either keep a copy of the full version, or use css or a pipe to truncate it in the template.  We actually tried a few things to get the maximum space out of the slide out area, but had great difficulties.
+
 
 ## Fixing the citations
 [Issue number 6](https://github.com/timofeysie/loranthifolia/issues/6) on the GitHub logs a problem with the footnotes.  After the second citation, there is extra junk that is not marked up correctly. 

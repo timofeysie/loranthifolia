@@ -10,6 +10,8 @@ import { DataStorageService } from '../../services/storage/data-storage.service'
   styleUrls: ['./detail.page.scss'],
 })
 export class DetailPage implements OnInit, AfterViewChecked {
+  officialTitle: string;
+  shortDescription: string;
   showPreambles: boolean = false;
   @ViewChild('descriptionhook') descriptionhook: ElementRef;
   itemName: string;
@@ -28,6 +30,11 @@ export class DetailPage implements OnInit, AfterViewChecked {
     renderer: Renderer2) { }
 
     ngAfterViewChecked() {
+      if (this.dataStorageService.sharedAction !== '') {
+        this.shortDescription = this.dataStorageService.sharedAction;
+        console.log('desc',this.shortDescription);
+        this.dataStorageService.sharedAction = '';
+      }
       if (typeof this.descriptionhook !== 'undefined' && !this.showPreambles) {
         
         // texts/outer innner
@@ -64,6 +71,7 @@ export class DetailPage implements OnInit, AfterViewChecked {
   getDetails() {
     this.itemName = this.route.snapshot.paramMap.get('id');
     let backupTitle = this.route.snapshot.paramMap.get('backupTitle');
+    this.officialTitle = this.route.snapshot.paramMap.get('officialTitle');
     let linkTitle;
     if (backupTitle) {
       linkTitle = backupTitle.replace(' ','_');

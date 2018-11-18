@@ -63,21 +63,28 @@ export class HomePage {
    * @param i item index
    */
   navigateAction(item: string, i: number) {
+    this.dataStorageService.sharedAction = this.list[i].wikiMedia_description;
     let qCode = this.findQCode(this.list[i]);
     this.list[i].detailState = 'viewed';
     //this.dataService.setItem(this.listLanguage+'-'+this.listName, this.list);
     let itemRoute = item.replace(/\s+/g, '_').toLowerCase();
     let backupTitle = this.list[i]['backupTitle'] ;
+    let officialTitle;
+    if ( this.list[i].cognitive_biasLabel) {
+      officialTitle =  this.list[i].cognitive_biasLabel;
+    } else {
+      officialTitle =  this.list[i].wikiMedia_label;
+    }
     if (typeof backupTitle!== 'undefined' && backupTitle !== null) {
       console.log('1.this.list[i][backupTitle]',backupTitle);
-      this.router.navigate(['detail/'+backupTitle+'/'+qCode]);
+      this.router.navigate(['detail/'+backupTitle+'/'+qCode+'/'+officialTitle]);
     } else if (typeof this.list[i]['cognitive_bias'] !== 'undefined') {
       let backupTitle = this.list[i]['cognitive_bias'].replace(/\//g,'*'); 
       console.log('2.this.list[i][cognitive_bias].replace()',backupTitle);
-      this.router.navigate(['detail/'+itemRoute+'/'+qCode]);
+      this.router.navigate(['detail/'+itemRoute+'/'+qCode+'/'+officialTitle]);
     } else {
       console.log('3.else sortName',this.list[i].sortName);
-      this.router.navigate(['detail/'+this.list[i].sortName+'/'+qCode]);
+      this.router.navigate(['detail/'+this.list[i].sortName+'/'+qCode+'/'+officialTitle]);
     }
   }
 
