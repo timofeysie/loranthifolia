@@ -91,6 +91,13 @@ The short description is truncated in the actual code.  It's not ideal.  We eith
 
 We want a css only answer to this, but text-overflow has a serious limitation: it only works on a single line of text.  We want two lines.  Three lines and the spacing looks bad.  Adding padding just pushes the third line partially out of the container.  Not good.
 
+Trying out the extremely long example by [Natalia Onischuk](http://hackingui.com/front-end/a-pure-css-solution-for-multiline-text-truncation/), we are getting rid of ```.substring(0,82)+'...'``` from the short description in the JavaScript.  The result doesn't work, but putting the padding at 9px will not show the third line.  The content looks bad at the right, but having the ellipsis appear after 82 characters which is at a different place for each description and wastes valuable real estate was getting very annoying.
+
+The Natalia solution is slightly better.  We will use it for now.  Without it and just the padding, we actually see some of the third line below the box.  Still, there is no promised ellipsis.  There is a solution, but we have other ideas for the short description, so this hack will work for now.
+
+We will move the item component into our fledgling [component library](https://github.com/timofeysie/socius) and create our own item just the way we like it.  The idea right now is icons that show/hide the description with an expanding animation and other icons to change the state of the item.  Until then, the Natalie plus padding will work.
+
+
 ## Fixing the citations
 [Issue number 6](https://github.com/timofeysie/loranthifolia/issues/6) on the GitHub logs a problem with the footnotes.  After the second citation, there is extra junk that is not marked up correctly. 
 

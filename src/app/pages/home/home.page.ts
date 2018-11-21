@@ -296,7 +296,7 @@ export class HomePage {
           if ((typeof this.list[j].sortName !== 'undefined' && typeof itemName !== 'undefined') && this.list[j].sortName.toLocaleUpperCase() === itemName.toLocaleUpperCase()) {
             found = true;
             this.list[j].wikiMedia_label = itemName;
-            this.list[j].wikiMedia_description = this.removeFootnotes(key.desc).substring(0,82)+'...';
+            this.list[j].wikiMedia_description = this.removeFootnotes(key.desc);
             this.list[j].wikiMedia_category = key.category;
             this.list[j].sortName = itemName.toLowerCase();
             this.list[j].detailState = 'un-viewed';
@@ -332,7 +332,7 @@ export class HomePage {
   createItemObject(itemName: string, key: any, backupTitle: string) {
     let itemObject:any = {};
     itemObject.wikiMedia_label = itemName;
-    itemObject.wikiMedia_description = this.removeFootnotes(key.desc).substring(0,82)+'...';
+    itemObject.wikiMedia_description = this.removeFootnotes(key.desc);
     itemObject.wikiMedia_category = key.category;
     itemObject.sortName = itemName.toLowerCase();
     itemObject.detailState = 'un-viewed';
