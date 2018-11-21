@@ -31,8 +31,10 @@
 								'list__both': item.cognitive_biasLabel && item.wikiMedia_label, 
 								'list__text-wikimedia': !item.cognitive_biasLabel,
 								'list__item--viewed': item.detailState ==='viewed'}">
-							<span *ngIf="item.cognitive_biasLabel">{{item.cognitive_biasLabel}}</span>
-							<span *ngIf="!item.cognitive_biasLabel">{{item.wikiMedia_label}}</span>
+							<span class="list__text" 
+								*ngIf="item.cognitive_biasLabel">{{item.cognitive_biasLabel}}</span>
+							<span class="list__text" 
+								*ngIf="!item.cognitive_biasLabel">{{item.wikiMedia_label}}</span>
 						</span>
 					</div>
 				</ion-item> 

@@ -58,12 +58,38 @@ Trying to tie up some loose ends before the MVP release.
 
 First up, this one is not an issue, but is an easy win.  We should be using either the *cognitive_biasLabel* or the *wikiMedia_label* for item names.  Both have proper formatting.
 
-Also, on the detail page, issue #8: Forer_effect has underscore in title.  If we pass in the above lables, this issue will also be closed.
+Also, on the detail page, issue #8: Forer_effect has underscore in title.  If we pass in the above labels, this issue will also be closed.
+
+An official title was created from either of the above labels.  Passing that also to the detail page works for most things except for example titles with the word 'of' in them.  As we all know in English, 'of' should never be capitalized in a title.  A mistake here looks bad for the whole crew.  So things like 'Curse Of Knowledge' look bad.  People, we can all do better with grammar and spelling.
+
+If we remove the ```text-transform: capitalize;``` from the item list and the detail title, we get most of what we want.  Someone thinks that only capitalizes the first letter of a sentence.  But actually it capitalizes the first letter of each word in the selected text.  Really?  Who created that little gem?  Didn't they know?
+
+Still, the 'spiral of silence' stands out with no first letter capitalized.  Actually, we don't need to go that far down the list, 'affect heuristic' is the same.  This should be working:
+```
+.list__text::first-letter {
+    text-transform: uppercase !important;
+}
+```
+But it's not.  It shows up in the inspector like this:
+```
+.list__text[_ngcontent-c0]::first-letter {
+    text-transform: uppercase !important;
+}
+```
+
+But in the calculated styles shows:
+```
+text-transform: none;
+none.item-md
+```
+
+Not sure why, but that item-md must be making life difficult, as if it were not difficult enough.  Going to leave this for now.  We don't want to have to capitalize the first letter of the actual strings, as these are used for the links which as we have learned, are case sensitive.
 
 Next, another non-issue but something we need.  While waiting for the detail page info to load, we want to see the short description.  Because it is truncated with ellipsis in the list, and we cannot edit it yet, we often don't read it or forget to read it before clicking on the item.
 
 The short description is truncated in the actual code.  It's not ideal.  We either keep a copy of the full version, or use css or a pipe to truncate it in the template.  We actually tried a few things to get the maximum space out of the slide out area, but had great difficulties.
 
+We want a css only answer to this, but text-overflow has a serious limitation: it only works on a single line of text.  We want two lines.  Three lines and the spacing looks bad.  Adding padding just pushes the third line partially out of the container.  Not good.
 
 ## Fixing the citations
 [Issue number 6](https://github.com/timofeysie/loranthifolia/issues/6) on the GitHub logs a problem with the footnotes.  After the second citation, there is extra junk that is not marked up correctly. 

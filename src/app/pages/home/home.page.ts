@@ -75,6 +75,7 @@ export class HomePage {
     } else {
       officialTitle =  this.list[i].wikiMedia_label;
     }
+    console.log('item',this.list[i]);
     if (typeof backupTitle!== 'undefined' && backupTitle !== null) {
       console.log('1.this.list[i][backupTitle]',backupTitle);
       this.router.navigate(['detail/'+backupTitle+'/'+qCode+'/'+officialTitle]);

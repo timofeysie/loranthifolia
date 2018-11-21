@@ -23,12 +23,12 @@ ion-item-options {
 }
 
 .list__text::first-letter {
-    text-transform: capitalize;
+    text-transform: uppercase;
 }
+    
 .ion-list__defaultItem {
     list-style-type: none;
     color: green;
-    text-transform: capitalize;
 }
 .list__both {
     color: black;
