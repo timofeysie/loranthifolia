@@ -52,6 +52,53 @@ npx cap update
 #
 
 
+## Google Playstore Relesase
+
+After creating a build for version 0.5.15, and using the Android Studio to do the .apk signing, the upload to the google Play Console failed with the following message:
+```
+You uploaded an APK with an invalid signature. Error from apksigner: ERROR: JAR_SIG_NO_SIGNATURES: No JAR signatures
+```
+
+In the past I have done this on the command line using the Java keytool and a keystore with an alias and then the Java zipalign tool.  These are the commands used:
+```
+keytool -genkey -v -keystore my-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias my-alias
+```
+
+This creates a release apk like this:
+
+app-release.apk platforms/android/build/outputs/apk/android-release-unsigned-aligned.apk
+
+That then creates the my-app-release.apk in the current directory.  The zipalign that file:
+```
+/Users/timcurchod/Library/Android/sdk/build-tools/25.0.2/zipalign -v -p 4 my-app-release.apk my-app-release-aligned.apk
+```
+
+After this, if the version is greater that any previous version of the upload, it should be usable for a release.
+
+Using Android Studio, in the Build/Generate Signed APK... option, you can create a new keystore (release-key.jks file) and alias and generate the singed APK automatically.  There is an option for 'Signature Versions: V2 (Full APK Signature) which I checked.  This generates a app-release.apk.  The signature process ensures that only the person who knows the password to the key and alias can update the app, as we as attaching meta data about a person responsible.
+
+But since just doing this with the Android Studio failed, it's time to read the docs to find out what has to happen, or just go back to the beautifully unweildy command line.
+
+[The docs](https://developer.android.com/studio/publish/app-signing) say *Android requires that all APKs be digitally signed with a certificate before they can be installed. And you need to sign your Android App Bundle before you can upload it to the Play Console.*  We did that, no?
+
+When creating an alpha release, I agreed to something about signing which I thought was a new terms and conditions document, but this may have been the mistake.  Now, the alpha release shows a section that says *App signing by Google Play Enabled*.  So maybe we are meant to upload an unsigned version now and the Play Console manages the signing?  There seems to be no way to disable this now.  To test this out create a regular debug apk and see what it says when that is uploaded.
+
+This process creates *three* files now:
+```
+app-debug.apk
+lor-app-debug.apk
+output.json
+```
+
+OK, only two apks, but what is the point of two?
+
+Uploading app-debug.apk shows the following message:
+*You uploaded a debuggable APK or Android App Bundle. For security reasons you need to disable debugging before it can be published in Google Play. Find out more about debuggable APKs or Android App Bundles. You uploaded an APK or Android App Bundle that was signed in debug mode. You need to sign your APK or Android App Bundle in release mode. Find out more about signing.*
+
+Uploading lor-app-debug.apk shows the same message.  Reading a bit more of the docs mentioned above, it says this about the Google signing process: *When you opt in to use App Signing by Google Play, you export and encrypt your app signing key using the Play Encrypt Private Key tool provided by Google Play, and then upload it to Google's infrastructure.*  Can I opt out? 
+
+
+
 ## Fixing the GitHub issues
 
 Trying to tie up some loose ends before the MVP release.
