@@ -95,7 +95,58 @@ OK, only two apks, but what is the point of two?
 Uploading app-debug.apk shows the following message:
 *You uploaded a debuggable APK or Android App Bundle. For security reasons you need to disable debugging before it can be published in Google Play. Find out more about debuggable APKs or Android App Bundles. You uploaded an APK or Android App Bundle that was signed in debug mode. You need to sign your APK or Android App Bundle in release mode. Find out more about signing.*
 
-Uploading lor-app-debug.apk shows the same message.  Reading a bit more of the docs mentioned above, it says this about the Google signing process: *When you opt in to use App Signing by Google Play, you export and encrypt your app signing key using the Play Encrypt Private Key tool provided by Google Play, and then upload it to Google's infrastructure.*  Can I opt out? 
+Uploading lor-app-debug.apk shows the same message.  Reading a bit more of the docs mentioned above, it says this about the Google signing process: *When you opt in to use App Signing by Google Play, you export and encrypt your app signing key using the Play Encrypt Private Key tool provided by Google Play, and then upload it to Google's infrastructure.*
+
+May as well use the Google solution.  Render onto Cesar.  If this hard drive crashed right now and we had already launched the app, it would be orphaned without the possibility of update.  The docs keep mentioning an *App Bundle* which turns out is a build with filles but defers APK generation and signing to Google Play which generates and serves optimized APKs for each user’s device configuration.
+
+After reading a bit more about the first error above, it turns out that you just have to also click the V1 as well as the V2 build option.  It's not one or the other.  After that the build is accepted, but upton review there are other errors and warnings:
+```
+Error
+Your app has an APK with version code 1 that requests the following permission(s): android.permission.CAMERA. Apps using these permissions in an APK are required to have a privacy policy set.
+
+Warning
+This release will not be available to any users because you haven't specified any testers for it yet. Tip: Configure your testing track to ensure that the release is available to your testers.
+```
+
+So we don't use the camera, and if we can configure users do we need a privacy policy? Doing a global search for the string 'camera' returns no results in VSCode.  One comment on [a StackOverflow issue](https://stackoverflow.com/questions/41234205/warnings-your-apk-is-using-permissions-that-require-a-privacy-policy-android-p) said this: *Because of AdMob. Their current version 12.0.0 requests READ_PHONE_STATE (bug), even if your app doesn't has it in the manifest. So that's it. They said they will release an update to 12.0.1 soon.*
+
+The next answer says you can remove requirments from
+
+```
+<uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove" />
+```
+
+Also add attribute 
+```
+xmlns:tools="http://schemas.android.com/tools"
+```
+To the <manifest> tag to define namespace tools.
+
+This is tailored for a different error, but we could probably just change that to *android.permission.CAMERA*.  Now where is the manifest file?  It's not in the Ionic project anywhere.
+
+Searching Google for *ionic remove requirements from manifest* [this is the first thing that comes up](https://ionicframework.com/docs/native/android-permissions/).  It's an Ionic Native plugin *designed to support Android new permissions checking mechanism*.  When did this new permissions checking system start?  It doesn't say.
+
+The example:
+```
+this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
+  result => console.log('Has permission?',result.hasPermission),
+  err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
+);
+```
+
+So that's not going to help us get thru the Play Store.  It does clarify lower on the page: *Android 26 and above: due to Android 26's changes to permissions handling (permissions are requested at time of use rather than at runtime)*.
+
+Looking at the [second answer for this question](https://stackoverflow.com/questions/41618453/how-to-remove-unnecessary-uses-permission-from-android-platform-build) I checked all the plugin.xml files inside each plugin directory inside the main plugins directory and found now permission entries.
+
+I removed the Android platform which I had added by mistake out of habit fogetting one day that this project uses Capacitor, not Cordova.  Upgraded Ionic after seeing this message:
+```
+Update available 4.3.1 → 4.5.0
+Run npm i -g ionic to update 
+```
+
+That didn't help.  Someone here pointed out that we will be needing a privacy policy sooner or later (when we collect emails for login and store preferences and item state for example).  So now we are following [this gist](https://gist.github.com/alphamu/c42f6c3fce530ca5e804e672fed70d78) and creating a document for the project to use as a link for th app stores.
+
+
 
 
 

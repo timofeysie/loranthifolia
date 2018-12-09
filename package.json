@@ -32,7 +32,6 @@
     "@ionic/schematics-angular": "1.0.0-rc.9",
     "@ionic/storage": "^2.1.3",
     "art-curator": "^1.2.9",
-    "cordova-android": "7.0.0",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-ionic-keyboard": "^2.0.5",
     "cordova-plugin-ionic-webview": "^1.1.19",
@@ -84,8 +83,6 @@
       "cordova-plugin-whitelist": {},
       "cordova-plugin-nativestorage": {}
     },
-    "platforms": [
-      "android"
-    ]
+    "platforms": []
   }
 }
