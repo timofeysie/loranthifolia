@@ -1,4 +1,4 @@
-# A WikiData List app with Ionic 4 alpha 7 
+# A WikiData List app with Ionic 4
 
 Using the latest alpha for Ionic 4, this project is to create a simple demo app to compare with a React Native app.  The app will parse WikiData and Wikipedia for a list of content and provide a master detail view of the results.
 
@@ -50,6 +50,87 @@ npx cap update
 1. [Starting the app and parsing Wikipedia](#Starting-the-app-and-parsing-Wikipedia)
 
 #
+
+
+## Sprint 1: AWS
+
+The preference related planned features are:
+
+1. language change option
+2. save named list changes in local storage
+3. create a new category
+
+However, we will also need to store an email and possibly other user info to accomplish these.  Combine hosting, OAuth and a backend including lambda hosted endpoints and you have a pretty powerful mix.  Include a CLI like Amplify and it looks like a better choice than to solve all those issues including user management and a database separately.
+
+The [Amplify docs](https://blog.ionicframework.com/adding-aws-amplify-to-an-ionic-4-app/) for Ionic have come and gone and come back again, so with an AWS account in hand, here we go.  
+
+We probably need to start with an Ionic update.  This project was started with Ionic 4 alpha 7.  Now it's at beta 15.  Where is the changelog and update guide?
+
+We will be starting with a blank app and building the todo list to start from a working model as we introduce the list, details and option pages.  So maybe we don't need to do an upgrade at all.
+
+Here is the outline for the next few sprints:
+
+1. Create the ToDo model and UI
+1. Define the data model
+1. Create a list component
+1. Create module definition
+1. Add your route
+1. Add a new tab
+1. Add an authorization service
+1. Add buttons to the homepage
+1. Add auth service and list module to tabs module
+1. Run and test your app
+1. Implementing CRUD functionality
+1. Create a modal
+1. Define modal in your list module
+1. Import the modal in your list page
+1. Test CRUD functionality
+1. Part 2: Working with Amplify CLI
+1. Install and Configure AWS Amplify
+1. Creating AWS Resources with the CLI
+1. Add Global Shim
+1. Adding Analytics to your Ionic app
+1. Part 3: Adding Authorization
+1. Enable auth UI
+1. Using auth UI components
+1. Enable Styling
+1. Enable components in home module
+1. Run and test your app
+1. Part 4: Enabling the Cloud Backend
+1. Enable Cloud Database
+1. Add columns
+1. Enable Cloud API
+1. Adding CRUD Functionality to Your App
+
+That's a lot to cover, but with Amplify, each step should be really short.  Then we can implement our new component library to show the list and detail pages and save the item states in the cloud protected by OAuth.  But we don't want to do too much until we find out how much this could run per month.  
+
+## Apple App Store Release
+
+The first issue with Apple is this:
+```
+Your Developer Program Membership has expired.
+Renew your membership to keep your access to Apple Developer Program benefits and services. Once renewed, be sure to agree to your Paid App Agreement in the Agreements, Tax and Banking section of App Store Connect.
+```
+
+This will set us back Australian $149.00.  You might be able to understand why it was allowed to expire.
+
+Another issue of the many to come is this:
+```
+$ npx cap open ios
+[error] ios" platform has not been created. Use "capacitor add ios" to add the platform project.
+QuinquenniumF:loranthifolia tim$ capacitor add ios
+-bash: capacitor: command not found
+QuinquenniumF:loranthifolia tim$ npx capacitor add ios
+[error] cocoapods is not installed. For information: https://guides.cocoapods.org/using/getting-started.html#installation
+```
+
+Another (big) problem is that this mac seems to be orphaned from the App Store.  It wont update due to what it says is a problem with the developer account.
+The Mac OS is stuck on Yosemite 10.10.5 (14F2511).
+Xcode is stuck on 6.1.1.
+
+Trying to fix the problem seems impossible because it wants a 6 digit verification code from a trusted device we don't have.  Logging on to the developer portal is OK.  It send the code to the Android device.  But the system preferences doesn't.  
+
+If you say you don't have access to a trusted device, you have to basically say you forgot your password and even wait a week for them to unlock the account again.
 
 
 ## Google Playstore Relesase
@@ -146,6 +227,45 @@ Run npm i -g ionic to update
 
 That didn't help.  Someone here pointed out that we will be needing a privacy policy sooner or later (when we collect emails for login and store preferences and item state for example).  So now we are following [this gist](https://gist.github.com/alphamu/c42f6c3fce530ca5e804e672fed70d78) and creating a document for the project to use as a link for th app stores.
 
+### Store listing assets
+
+Uploading screenshots of Chrome emulating a Galaxy S5 results in these messages:
+```
+You need to resize your screenshot. Min length for any side: 320px. Max length for any side: 3840px. Max aspect ratio: 2:1.
+```
+
+Looking at the size of the screenshots from the S5 we have:
+```
+width: 302
+height: 528
+```
+
+So our length is too short.  Abandoning the emulation mode and resizing to look about the same ratio, getting some shots at 326 by 611 works.
+
+After the screen shots, there are the promo shots that all have to be particular sizes.
+
+Hi-res icon: 512 x 512
+Feature graphic: 1024 w x 500 h
+Promo Graphic 180 w x 120 h
+TV Banner 1280 w x 720 h
+
+Is it just me or doesn't that tv size seem too small for the standard of flatscreen size these days?
+
+We could also have a video.  Anyone?  Eventually we should do this.  But for now, it's time to start incremental development.  That means one feature per release.  Set a sprint period of about three to four weeks due to the amount of free time available to the project.  We should be able to plow through our features list.
+
+But that's another story.
+
+### Release
+
+One thing I have a problem understanding are the meaning of rollout and release on the Google Play Store console.
+```
+Release:	0.5.15 Edit
+seconds ago: Full roll-out.
+RELEASE TO PRODUCTION
+Roll-out history seconds ago: Full roll-out.
+```
+
+This info includes the text 'full roll-out' and a button 'release to production.  Since this is an alpha release to internal testers only, does releasing that to (alpha) production, or is that a promotion of the release to the public store?
 
 
 
