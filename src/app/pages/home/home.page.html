@@ -17,8 +17,8 @@
 		name="lines"
 		class="center"></ion-spinner>
 	<ion-list no-lines class="list">
-		<ion-item-sliding *ngFor="let item of list; let i = index">
-			<div *ngIf="item.sortName">
+		<ion-item-sliding #item *ngFor="let item of list; let i = index">
+			<div *ngIf="item.sortName" [ngClass]="{'list__item--viewed': item.detailState ==='viewed'}">
 				<ion-item slot="start"
 					(click)="setStateViewed(i)"
 					tappable 
@@ -29,8 +29,7 @@
 						<span class="ion-list__defaultItem"
 							[ngClass]="{
 								'list__both': item.cognitive_biasLabel && item.wikiMedia_label, 
-								'list__text-wikimedia': !item.cognitive_biasLabel,
-								'list__item--viewed': item.detailState ==='viewed'}">
+								'list__text-wikimedia': !item.cognitive_biasLabel}">
 							<span class="list__text" 
 								*ngIf="item.cognitive_biasLabel">{{item.cognitive_biasLabel}}</span>
 							<span class="list__text" 
@@ -39,12 +38,11 @@
 					</div>
 				</ion-item> 
 				<ion-item-options padding-start
+					(ionSwipe)="viewShortDescription(item)"
 					*ngIf="item.wikiMedia_description"
 					#itemSliding
 					slot="left"
 					class="shortDescription">
-					<!-- <div *ngIf="item.cognitive_biasDescription">
-						{{ item.cognitive_biasDescription | slice:0:132 }}</div> -->
 					<div *ngIf="item.wikiMedia_description">
 						{{ item.wikiMedia_description }}</div>
 				</ion-item-options>

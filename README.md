@@ -104,6 +104,21 @@ Here is the outline for the next few sprints:
 
 That's a lot to cover, but with Amplify, each step should be really short.  Then we can implement our new component library to show the list and detail pages and save the item states in the cloud protected by OAuth.  But we don't want to do too much until we find out how much this could run per month.  
 
+The first two attempts to set up an Amplify demo app have failed.  Probably that should be a separate project for now.  This project can continue improvements from the list that do not include login (OAuth) and saved preferences option (db).
+
+One of those improvements is new styles for the item state.  This needs to be created as an API for the Stencil component library to implement.  Sounds exciting exclaimation mark.
+
+
+core.js:1521 ERROR Error: Uncaught (in promise): Error: Template parse errors:
+Parser Error: Unexpected token 'Lexer Error: Unterminated quote at column 27 in expression [viewShortDescription(item)']' at column 28 in [viewShortDescription(item)'] in ng:///HomePageModule/HomePage.html@41:5 ("
+				</ion-item> 
+				<ion-item-options padding-start
+					[ERROR ->](ionSwipe)="viewShortDescription(item)'"
+
+
+
+
+
 ## Apple App Store Release
 
 The first issue with Apple is this:
@@ -131,6 +146,44 @@ Xcode is stuck on 6.1.1.
 Trying to fix the problem seems impossible because it wants a 6 digit verification code from a trusted device we don't have.  Logging on to the developer portal is OK.  It send the code to the Android device.  But the system preferences doesn't.  
 
 If you say you don't have access to a trusted device, you have to basically say you forgot your password and even wait a week for them to unlock the account again.
+
+After two calls and an hour an a half later, I was able to login by getting a code from the developer website but not using it there and using it instead on the iCloud login.  Then for the app store I had to create a new admin user to then update to Mohave and then throw away and download a new version of Xcode because the old one wouldn't update.
+
+*Then* this problem shows up:
+```
+QuinquenniumF:loranthifolia tim$ npx capacitor add ios
+[error] cocoapods is not installed. For information: https://guides.cocoapods.org/using/getting-started.html#installation
+QuinquenniumF:loranthifolia tim$ shttps://guides.cocoapods.org/using/getting-started.html#installation
+```
+
+Cocoa pods usesd to exists.  Maybe with the OS upgrade... anyhow:
+```
+QuinquenniumF:loranthifolia tim$ sudo gem install cocoapods
+Password:
+Fetching: concurrent-ruby-1.1.4.gem (100%)
+...
+✖ Updating iOS native dependencies: 
+✖ update ios: 
+[error] Analyzing dependencies
+Fetching podspec for `Capacitor` from `../../node_modules/@capacitor/ios`
+Fetching podspec for `CapacitorCordova` from `../../node_modules/@capacitor/ios`
+Fetching podspec for `CordovaPlugins` from `../../node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins`
+Setting up CocoaPods master repo
+  $ /usr/local/bin/git clone https://github.com/CocoaPods/Specs.git master --progress
+[!] Unable to add a source with url `https://github.com/CocoaPods/Specs.git` named `master`.
+You can try adding it manually in `~/.cocoapods/repos` or via `pod repo add`.
+  Cloning into 'master'...
+  remote: Enumerating objects: 386, done.        
+  remote: Counting objects: 100% (386/386), done.        
+  remote: Compressing objects: 100% (291/291), done.        
+  error: RPC failed; curl 56 LibreSSL SSL_read: SSL_ERROR_SYSCALL, errno 54
+  fatal: The remote end hung up unexpectedly
+  fatal: early EOF
+  fatal: index-pack failed
+```
+
+Despite the error, was able to run ```npx cap add ios & npx cap open ios```.
+
 
 
 ## Google Playstore Relesase

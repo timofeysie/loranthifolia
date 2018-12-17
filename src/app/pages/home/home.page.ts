@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { MyDataService } from '../../services/api/my-data.service';
 import { CONSTANTS } from '../../constants';
 import { DataStorageService } from '../../services/storage/data-storage.service';
@@ -19,6 +19,7 @@ export class HomePage {
   version: string;
   langChoice: string = 'en';
   options: any;
+  @ViewChild('item') private item: ElementRef;	
   @ViewChild('itemSliding', { read: ItemSliding }) private itemSliding: ItemSliding;
   constructor(
     private myDataService: MyDataService, 
@@ -55,7 +56,10 @@ export class HomePage {
   ionViewWillEnter() {
     //console.log('this.itemSliding',this.itemSliding);
   }
-
+  
+  viewShortDescription(item) {
+    console.log('swipe');
+  }
   /**
    * Go to the detail page.  If an item has a backup title, add that to the route.
    * @param item Set state as viewed, get language setting, create list name, and/or title
