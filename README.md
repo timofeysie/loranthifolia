@@ -184,6 +184,35 @@ You can try adding it manually in `~/.cocoapods/repos` or via `pod repo add`.
 
 Despite the error, was able to run ```npx cap add ios & npx cap open ios```.
 
+The system is lagging badly now.  Lots os spinning rainbows of death, taking hours to empty the trash, Xcode busy installing dependcenies... seems like we might need a new system.  Bummer.  Xcode had been indexing for the past 40 minutes.  Everything sees OK in the system monitor.  This 
+
+More errors with Xcode:
+```
+diff: /Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/ios/App/./Podfile.lock: No such file or directory
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+```
+
+
+```
+$ pod install
+Showing Recent Messages
+:-1: /Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/ios/App/Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig: unable to open file (in target "App" in project "App") (in target 'App')
+```
+
+Made the change from this:
+```
+diff "${PODS_PODFILE_DIR_PATH}/Podfile.lock" "${PODS_ROOT}/Manifest.lock" > /dev/null
+```
+To this:
+```
+diff "${SRCROOT}/Podfile.lock" "${SRCROOT}/Pods/Manifest.lock" > /dev/null
+```
+in the build phases/[CP]Embed Pods Frameworks 
+
+The solution apparently however is to just update pods:
+```
+$ sudo gem install cocoapods
+```
 
 
 ## Google Playstore Relesase
