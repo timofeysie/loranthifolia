@@ -214,8 +214,67 @@ The solution apparently however is to just update pods:
 $ sudo gem install cocoapods
 ```
 
+This didn't help.  The style WIP changes were reverted so that we could do another deployment build.  Have to make a release branch out of it before moving on.  Anyhow, there error is still:
+```
 
-## Google Playstore Relesase
+Showing Recent Messages
+:-1: /Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/ios/App/Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig: unable to open file (in target "App" in project "App") (in target 'App')
+```
+
+Tried going into the ios directory to run the install command out of desperation:
+```
+$ pod install
+[!] No `Podfile' found in the project directory.
+QuinquenniumF:loranthifolia tim$ cd ios/App/
+QuinquenniumF:App tim$ ls
+App		App.xcodeproj	App.xcworkspace	Podfile		public
+QuinquenniumF:App tim$ pod install
+Analyzing dependencies
+...
+```
+
+drwxr-xr-x  8 tim  staff  256 19 Dec 07:56 App
+
+```
+CocoaPods 1.6.0.beta.2 is available.
+To update use: `sudo gem install cocoapods --pre`
+[!] This is a test version we'd love you to try.
+
+For more information, see https://blog.cocoapods.org and the CHANGELOG for this version at https://github.com/CocoaPods/CocoaPods/releases/tag/1.6.0.beta.2
+
+Setup completed
+[!] CocoaPods could not find compatible versions for pod "Capacitor":
+  In Podfile:
+    Capacitor (from `../../node_modules/@capacitor/ios`)
+
+Specs satisfying the `Capacitor (from `../../node_modules/@capacitor/ios`)` dependency were found, but they required a higher minimum deployment target.
+```
+
+After this the same error with the build:
+```
+
+Showing Recent Messages
+:-1: /Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/ios/App/Pods/Target Support Files/Pods-App/Pods-App.debug.xcconfig: unable to open file (in target "App" in project "App") (in target 'App')
+```
+
+Following some mis-spelled advice [here](https://stackoverflow.com/questions/53117077/unable-to-open-file-in-target-xcode-10), using the legacy build system setting.  With Ionic Cordova, it can be done with a flag in the build command, but with Capacitor, this is a way to get around the Xcode 10 block.  However, that error and others still show up:
+```
+diff: /Podfile.lock: No such file or directory
+diff: /Manifest.lock: No such file or directory
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+```
+
+Trying out a comment from the above answer.  Change to the ios/App directory again and run:
+```
+1) pod repo remove master 
+2) pod setup 
+3) pod install 
+```
+
+The second command took about 20 minutes to complete.  Still waiting now.
+
+
+## Google Playstore Release
 
 After creating a build for version 0.5.15, and using the Android Studio to do the .apk signing, the upload to the google Play Console failed with the following message:
 ```
