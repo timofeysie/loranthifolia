@@ -273,6 +273,62 @@ Trying out a comment from the above answer.  Change to the ios/App directory aga
 
 The second command took about 20 minutes to complete.  Still waiting now.
 
+Then, much later, running:
+```
+$ pod install 
+Analyzing dependencies
+Fetching podspec for `Capacitor` from `../../node_modules/@capacitor/ios`
+Fetching podspec for `CapacitorCordova` from `../../node_modules/@capacitor/ios`
+Fetching podspec for `CordovaPlugins` from `../../node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins`
+[!] CocoaPods could not find compatible versions for pod "Capacitor":
+  In Podfile:
+    Capacitor (from `../../node_modules/@capacitor/ios`)
+
+Specs satisfying the `Capacitor (from `../../node_modules/@capacitor/ios`)` dependency were found, but they required a higher minimum deployment target.
+```
+
+Next, start over:
+```
+rm -r iOS
+npx cap add ios
+npx cap sync
+```
+
+During the add command, saw this:
+```
+  Found 4 Cordova plugins for ios
+    CordovaPluginDevice (2.0.2)
+    CordovaPluginIonicKeyboard (2.1.2)
+    CordovaPluginNativestorage (2.3.2)
+    CordovaSqliteStorage (2.4.0)
+✖ Updating iOS native dependencies: 
+✖ update ios: 
+[error] Analyzing dependencies
+Fetching podspec for `Capacitor` from `../../node_modules/@capacitor/ios`
+Fetching podspec for `CapacitorCordova` from `../../node_modules/@capacitor/ios`
+Fetching podspec for `CordovaPlugins` from `../../node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins`
+[!] CocoaPods could not find compatible versions for pod "Capacitor":
+  In Podfile:
+    Capacitor (from `../../node_modules/@capacitor/ios`)
+
+Specs satisfying the `Capacitor (from `../../node_modules/@capacitor/ios`)` dependency were found, but they required a higher minimum deployment target.
+```
+
+Skipping that, the build still gives this error:
+```
+diff: /Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/ios/App/./Podfile.lock: No such file or directory
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+```
+But as you know, the pod install shows the error above.
+
+[This](https://forum.ionicframework.com/t/ionic-4-capacitor-cocoapods-not-working/148553) being the only discussion found regarding this relatively new subject of errors with Capacitor recommends at some point version incompatibilities with version of Capacitor.  Time to try some versions!
+```
+npm install --save @capacitor/android@latest
++ @capacitor/android@1.0.0-beta.13
+```
+Also did ```$ sudo npm install -g npm``` to get the latest just for good measure.  Then start over again.
+
+
 
 ## Google Playstore Release
 
