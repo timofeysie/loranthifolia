@@ -326,7 +326,92 @@ But as you know, the pod install shows the error above.
 npm install --save @capacitor/android@latest
 + @capacitor/android@1.0.0-beta.13
 ```
-Also did ```$ sudo npm install -g npm``` to get the latest just for good measure.  Then start over again.
+Also did ```$ sudo npm install -g npm``` to get the latest just for good measure.  Then start over again.   
+
+The result is the same: *The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.*
+
+So it's back to [the only StackOverflow question](https://stackoverflow.com/questions/21366549/errorthe-sandbox-is-not-in-sync-with-the-podfile-lock-after-installing-res) that deals with this.  The accepted question deals with doing this in Xcode: *Build Phases > Link Binary With Libraries*.
+
+However, in that section there is only one item: Pods_App.framework.  The answer states that you need to *Remove all libPods*.a* there.  Should I remove the .framework file?  Why not.  But the going to the iOS/App directory and running *pod install* turns up the same error:
+```
+[!] CocoaPods could not find compatible versions for pod "Capacitor":
+  In Podfile:
+    Capacitor (from `../../node_modules/@capacitor/ios`)
+Specs satisfying the `Capacitor (from `../../node_modules/@capacitor/ios`)` dependency were found, but they required a higher minimum deployment target.
+```
+
+Feels like we are going around in circles here.  As another test, try adding the platform using Cordova, the old un-faithful build system.
+
+```
+$ ionic cordova platform add ios
+> cordova platform add ios --save
+Using cordova-fetch for ios
+Adding ios project...
+Unable to load PlatformApi from platform. Error [ERR_UNHANDLED_ERROR]: Unhandled error. (Does not appear to implement platform Api.)
+(node:16169) UnhandledPromiseRejectionWarning: Error [ERR_UNHANDLED_ERROR]: Unhandled error. (The platform "ios" does not appear to be a valid cordova platform. It is missing API.js. ios not supported.)
+    at EventEmitter.emit (events.js:169:17)
+    ...
+    at process._tickCallback (internal/process/next_tick.js:176:11)
+(node:16169) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). (rejection id: 1)
+(node:16169) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+```
+
+[This question](https://stackoverflow.com/questions/44042641/cordova-error-your-ios-platform-does-not-have-api-js) had an accepted answer where the the person just upgraded their node.  So did ```nvm install 10``` and ```nvm use 10``` and then adding the platform worked. 
+
+But then this:
+```
+$ ionic cordova platform add ios
+-bash: ionic: command not found
+QuinquenniumF:App tim$ npm i ionic
++ ionic@4.6.0
+updated 1 package and audited 33224 packages in 184.097s
+found 20 vulnerabilities (1 low, 14 moderate, 5 high)
+  run `npm audit fix` to fix them, or `npm audit` for details
+QuinquenniumF:App tim$ ionic cordova build ios
+-bash: ionic: command not found
+```
+
+Did this:
+```
+$ npm i -g cordova
+/Users/tim/.nvm/versions/node/v10.14.2/bin/cordova -> /Users/tim/.nvm/versions/node/v10.14.2/lib/node_modules/cordova/bin/cordova
++ cordova@8.1.2
+added 594 packages from 523 contributors in 376.416s
+```
+
+That's a lot of dependencies!  But after all that, still getting the error  ***Unable to load PlatformApi from platform. Error [ERR_UNHANDLED_ERROR]: Unhandled error. (Does not appear to implement platform Api.)  Unhandled error. (The platform "ios" does not appear to be a valid cordova platform. It is missing API.js. ios not supported.)***
+
+Do the platform shuffle again.  But with the add, we get this error:
+```
+> cordova platform add ios --save
+Error: npm: Command failed with exit code 235 Error output:
+npm ERR! addLocal Could not install /Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/ios
+npm ERR! Darwin 18.2.0
+npm ERR! argv "/Users/tim/.nvm/versions/node/v6.9.2/bin/node" "/Users/tim/.nvm/versions/node/v6.9.2/bin/npm" "install" "/Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/ios" "--save"
+npm ERR! node v6.9.2
+npm ERR! npm  v3.10.9
+npm ERR! code EISDIR
+npm ERR! errno -21
+npm ERR! syscall read
+npm ERR! eisdir EISDIR: illegal operation on a directory, read
+```
+
+So, looks like we are in for the long haul on the ios side of the bed.  I would recommend creating a vanilla project from the current rc1 beta release and trying to deploy it to a device.  *If* that works, migrate the entire project to that so that we can start with something that actually works.  Bummer.
+
+But following the Capacitor instructions from this project, the vanilla app can be built and deployed to the app store.  These are the steps starting from scratch:
+```
+ionic start loranthifolia blank --type=angular
+cd loranthifolia
+ionic build
+npm install --save @capacitor/core @capacitor/cli
+npx cap init
+npx cap add ios
+ionic build
+npx cap copy
+npx cap open ios
+```
+
+Now it's time to replace the current project with the new project files and copy over the classes, assets and files needed for our project and do a proper deployment.  As it's Christmas tomorrow, not sure how much of that is going to get done.
 
 
 
