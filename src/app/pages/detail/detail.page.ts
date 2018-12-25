@@ -130,6 +130,15 @@ export class DetailPage implements OnInit, AfterViewChecked {
       },((error: any) => {
         console.log('error from detail',error);
         this.description = error.message+' failed.';
+        if (typeof error.url !== 'undefined') {
+          if (error.url === null) {
+            alert('Your device appears to be offline');
+          } else if (typeof error.message !== 'undefined') {
+            alert('Network error: '+error.message);
+          } else {
+            alert('Error getting '+itemNameAgain+' details');
+          }
+        }
       })
       );
   }

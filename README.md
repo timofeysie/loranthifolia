@@ -689,9 +689,35 @@ Then, we still get a failed build:
 [ng] ERROR in src/app/pages/home/home.page.ts(6,10): error TS2305: Module '"/Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/node_modules/@ionic/angular/dist/index"' has no exported member 'ItemSliding'. 
 ```
 
+
 Then, after saving a file to force a re-build, and refreshing the browser, we have our list with the serif font.  But there are only 190 biases now.  Since the beginning there have been 191.  Which one has been lost?
 
+The build warnings we see are:
+```
+[ng] WARNING in ./src/app/pages/home/home.page.ts 474:41-52
+[ng] "export 'ItemSliding' was not found in '@ionic/angular'
+[ng] WARNING in ./src/app/pages/home/home.page.ts 475:54-65
+[ng] "export 'ItemSliding' was not found in '@ionic/angular'
+[ng] WARNING in ./src/app/pages/home/home.page.ts 475:85-96
+[ng] "export 'ItemSliding' was not found in '@ionic/angular'
+```
 
+That feature was not working anyhow.  Remember we were trying to programattically listen for the item sliding event, but failing.  We will need to solve that problem at some point.  We also plan to use our component library for the items in the list, so that functionality will actually be moved there.  For now, all we want is our MVP iOS release.  So just comment out that import as a reminder for later and move on.  
+
+When we are offline, we get this message:
+```
+HttpErrorResponse {headers: HttpHeaders, status: 0, statusText: "Unknown Error", url: null, ok: false, …}
+error: ProgressEvent {isTrusted: true, lengthComputable: false, loaded: 0, total: 0, type: "error", …}
+headers: HttpHeaders {normalizedNames: Map(0), lazyUpdate: null, headers: Map(0)}
+message: "Http failure response for (unknown url): 0 Unknown Error"
+name: "HttpErrorResponse"
+ok: false
+status: 0
+statusText: "Unknown Error"
+url: null
+```
+
+The app should show an alert saying the app is offline.
 
 ## Google Playstore Release
 

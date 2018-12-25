@@ -3,7 +3,7 @@ import { MyDataService } from '../../services/api/my-data.service';
 import { CONSTANTS } from '../../constants';
 import { DataStorageService } from '../../services/storage/data-storage.service';
 import { Events } from '@ionic/angular';
-import { ItemSliding } from '@ionic/angular';
+//import { ItemSliding } from '@ionic/angular';
 import { Router, NavigationEnd} from '@angular/router';
 import { DetailModel } from '../../models/detail-model';
 
@@ -20,7 +20,7 @@ export class HomePage {
   langChoice: string = 'en';
   options: any;
   @ViewChild('item') private item: ElementRef;	
-  @ViewChild('itemSliding', { read: ItemSliding }) private itemSliding: ItemSliding;
+  //@ViewChild('itemSliding', { read: ItemSliding }) private itemSliding: ItemSliding;
   constructor(
     private myDataService: MyDataService, 
     private dataStorageService: DataStorageService,
