@@ -411,7 +411,174 @@ npx cap copy
 npx cap open ios
 ```
 
-Now it's time to replace the current project with the new project files and copy over the classes, assets and files needed for our project and do a proper deployment.  As it's Christmas tomorrow, not sure how much of that is going to get done.
+Now it's time to replace the current project with the new project files and copy over the classes, assets and files needed for our project and do a proper deployment.  As it's Christmas tomorrow, not sure how much of that is going to get done.  
+
+Merry Christmas.  The vanilla project on server has the following console log error after running ```ionic serve```:
+```
+Failed to load resource: net::ERR_CONTENT_LENGTH_MISMATCH
+```
+
+Saved the module file again and reloaded the page and it ran.  Thanks.
+Next, we will need to install some dependencies such as this:
+```
+ionic cordova plugin add cordova-plugin-nativestorage
+```
+
+Got this:
+```
+Cannot find module '@ionic/storage'
+```
+
+Tried this:
+```
+npm install @ionic/storage
+```
+
+After that we are getting this:
+```
+[ng] ERROR in src/app/app.module.ts(14,31): error TS2307: Cannot find module '@ionic-native/native-storage/ngx'.
+[ng] src/app/pages/home/home.page.ts(6,10): error TS2305: Module '"/Users/tim/ionic4/loranthifolia/node_modules/@ionic/angular/dist/index"' has no exported member 'ItemSliding'.
+[ng] src/app/services/storage/data-storage.service.ts(3,31): error TS2307: Cannot find module '@ionic-native/native-storage/ngx'.
+```
+
+Following some advice from [this post](https://forum.ionicframework.com/t/v4-and-native-storage-error/139609/10), tried these:
+```
+npm install @ionic-native/native-storage@beta --save
+npm install @ionic-native/core@beta --save
+```
+
+
+```
+$ npm install @ionic/storage
+loranthifolia@0.0.1 /Users/tim/ionic4/loranthifolia
+├── UNMET PEER DEPENDENCY @ionic-native/core@5.0.0-beta.21
+├─┬ @ionic/storage@2.2.0 
+│ ├── localforage@1.7.1 
+│ └── localforage-cordovasqlitedriver@1.7.0 
+├── UNMET PEER DEPENDENCY cordova-plugin-ionic@^5.0.0
+└── UNMET PEER DEPENDENCY rxjs@6.3.3
+
+npm WARN @ionic-native/native-storage@4.18.0 requires a peer of @ionic-native/core@^4.11.0 but none was installed.
+npm WARN @ionic-native/native-storage@4.18.0 requires a peer of rxjs@^5.5.11 but none was installed.
+npm WARN @ionic/pro@2.0.4 requires a peer of cordova-plugin-ionic@^5.0.0 but none was installed.
+QuinquenniumF:loranthifolia tim$ npm install @ionic-native/core@beta --save
+loranthifolia@0.0.1 /Users/tim/ionic4/loranthifolia
+├── UNMET PEER DEPENDENCY @ionic-native/core@5.0.0-beta.22
+├── UNMET PEER DEPENDENCY cordova-plugin-ionic@^5.0.0
+└── UNMET PEER DEPENDENCY rxjs@6.3.3
+
+npm WARN @ionic-native/native-storage@4.18.0 requires a peer of @ionic-native/core@^4.11.0 but none was installed.
+npm WARN @ionic-native/native-storage@4.18.0 requires a peer of rxjs@^5.5.11 but none was installed.
+npm WARN @ionic-native/splash-screen@5.0.0-beta.21 requires a peer of @ionic-native/core@5.0.0-beta.21 but none was installed.
+npm WARN @ionic-native/status-bar@5.0.0-beta.21 requires a peer of @ionic-native/core@5.0.0-beta.21 but none was installed.
+npm WARN @ionic/pro@2.0.4 requires a peer of cordova-plugin-ionic@^5.0.0 but none was installed.
+npm ERR! code 1
+$ npm install @ionic-native/native-storage@beta --save
+loranthifolia@0.0.1 /Users/tim/ionic4/loranthifolia
+├── UNMET PEER DEPENDENCY @ionic-native/core@5.0.0-beta.22
+├── @ionic-native/native-storage@5.0.0-beta.22 
+└── UNMET PEER DEPENDENCY cordova-plugin-ionic@^5.0.0
+
+npm WARN @ionic-native/splash-screen@5.0.0-beta.21 requires a peer of @ionic-native/core@5.0.0-beta.21 but none was installed.
+npm WARN @ionic-native/status-bar@5.0.0-beta.21 requires a peer of @ionic-native/core@5.0.0-beta.21 but none was installed.
+npm WARN @ionic/pro@2.0.4 requires a peer of cordova-plugin-ionic@^5.0.0 but none was installed.
+```
+
+Despite all the warnings and errors, after refreshing, the app is working, somewhat.
+The font is different, and the detail pages don't route.  But we have a list.  There does appear to be a problem with the sliding component:
+```
+[ng] ERROR in src/app/pages/home/home.page.ts(6,10): error TS2305: Module '"/Users/tim/ionic4/loranthifolia/node_modules/@ionic/angular/dist/index"' has no exported member 'ItemSliding'.
+[ng] ℹ ｢wdm｣: Failed to compile.
+```
+
+In the browser we see:
+```
+Cannot GET /
+```
+
+IN the console, we see:
+```
+localhost/:1 Failed to load resource: the server responded with a status of 404 (Not Found)
+```
+
+To be safe, deleted thoe old www directory and restarted the server to get those messages.  Was it a dream or was there a list in the browser just a minute ago?  A good guess is that there have been some breaking changes from when we started with Ionic 4 alpha 7.
+
+Saving a file and forcing a compile and reloading the page after shows our list with a different font and broken links again.  This shows up in the console:
+```
+(anonymous) @ pages-detail-detail-module.js:1
+detail.page.ts:35 desc undefined
+```
+
+It's worth noting the method used for this change.  First, after getting the vanilla project to run with a fresh Ionic 4 rc 0 app and adding Capacitor to build a working iOS project, the src directory from the working Ionic project with Capacitory and a working Android distribution was pasted into the vanilla app, replacing the directory.  Then the above npm installs and issues until at least the list is showing.  Git looks like this:
+```
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+  modified:   ionic.config.json
+  modified:   package-lock.json
+  modified:   package.json
+  modified:   src/app/app-routing.module.ts
+  modified:   src/app/app.component.spec.ts
+  modified:   src/app/app.component.ts
+  modified:   src/app/app.module.ts
+  deleted:    src/app/home/home.module.ts
+  deleted:    src/app/home/home.page.html
+  deleted:    src/app/home/home.page.scss
+  deleted:    src/app/home/home.page.spec.ts
+  deleted:    src/app/home/home.page.ts
+  deleted:    src/assets/shapes.svg
+  modified:   src/environments/environment.ts
+  modified:   src/global.scss
+  modified:   src/index.html
+  modified:   src/karma.conf.js
+  modified:   src/polyfills.ts
+  modified:   src/theme/variables.scss
+  modified:   src/tsconfig.app.json
+  modified:   src/tsconfig.spec.json
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+
+  LICENSE
+  PRIVACY_POLICY.md
+  README.md
+  config.xml
+  privacy_policy.html
+  resources/
+  src/app/components/
+  src/app/constants.ts
+  src/app/interfaces/
+  src/app/models/
+  src/app/pages/
+  src/app/services/
+  ```
+
+It's interesting to note that the pages directory is abscent from the vanilla project.  This was something weired we noticed when trying out the AWS Amplify samples.  Anyhow, with a somewhat working app now I'm still not sure it's time to move this somewhat working app back into the old project and try to fix it there.  I just noticed also that the list has dividing lines bewteen the items, which the original app didn't have.  What's going on with these differences?
+
+Let's look at the font first of all:
+```
+:host {
+...
+    font-size: 16px;
+    font-weight: 400;
+...
+
+    font-family: var(--ion-font-family,inherit);
+```
+
+Inhereted stuff, so makes sense if we never set it ourselves.  We liked the old sans serif font better so what was that?
+
+The font from the original was inherited from the .item-md lcass:
+```
+    font-family: Roboto,"Helvetica Neue",sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    ...
+    -webkit-font-smoothing: antialiased;
+```
+
+So if that's what we like we should make it official.
 
 
 
