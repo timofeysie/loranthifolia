@@ -422,6 +422,7 @@ Saved the module file again and reloaded the page and it ran.  Thanks.
 Next, we will need to install some dependencies such as this:
 ```
 ionic cordova plugin add cordova-plugin-nativestorage
+npm i --save art-curator
 ```
 
 Got this:
@@ -579,6 +580,116 @@ The font from the original was inherited from the .item-md lcass:
 ```
 
 So if that's what we like we should make it official.
+
+I would also like to characterize the changes that happened from the alpha release to the RC0.
+In the capacitor.config.json file, ```"allowMixedContent": true``` was added.
+
+An ionic.starter.json file was added that looks like this:
+```
+  "name": "Blank Starter",
+  "baseref": "master",
+  "tarignore": [
+    "node_modules",
+    "package-lock.json",
+    "www"
+  ],
+  "scripts": {
+    "test": "npm run lint && npm run ng -- build --configuration=ci && npm run ng -- build --prod --progress=false && npm run ng -- test --configuration=ci && npm run ng -- e2e --configuration=ci && npm run ng -- g pg my-page --dry-run && npm run ng -- g c my-component --dry-run"
+  }
+```
+
+ionic serve/build are replaced by ng serve/build in the package.json
+We went from "@angular/core": "6.0.6", to "~7.1.4".
+The @ionic/angular packages of course went from alpha.7 to rc.0.
+
+We only have the "cordova-plugin-nativestorage": "2.3.2", plugin now.  The original package.json had had in addition these:
+```
+    "cordova-plugin-device": "^2.0.2",
+    "cordova-plugin-ionic-keyboard": "^2.0.5",
+    "cordova-plugin-ionic-webview": "^1.1.19",
+    "cordova-plugin-splashscreen": "^5.0.2",
+    "cordova-plugin-whitelist": "^1.3.3",
+    "cordova-sqlite-storage": "^2.4.0",
+```
+
+Wasn't there a security alert for sqlite-storage last week?
+```
+    "ionic": "^4.6.0",
+    "ionic-native": "^2.9.0",
+    "ios": "0.0.1",
+    "parse5": "^5.0.0",
+    ...
+    "rxjs-compat": "^6.2.1",
+    "stream": "0.0.2",
+    "wikidata-sdk": "^5.11.2",
+```
+
+In the   "devDependencies" section these were added:
+```
+    "@angular-devkit/architect": "~0.11.4",
+    "@angular-devkit/build-angular": "~0.11.4",
+    "@angular-devkit/core": "~7.1.4",
+    "@angular-devkit/schematics": "~7.1.4",
+```
+
+We're now using these version:
+```
+"@types/node": "~10.12.0",
+"typescript": "~3.1.6"
+```
+
+The tsconfig.json file has some changes:
+```
+   "baseUrl": "./",
+    ...
+    "module": "es2015",
+    ...
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+```
+
+The app.po.ts (page object) file used for the tests, we see this:
+```
+  getParagraphText() {
+    return element(by.css('app-root ion-content')).getText();
+  }
+```
+replaced by this:
+```
+return element(by.deepCss('app-root ion-content')).getText();
+```
+
+Deep css, fantastic!
+
+capacitor-cordova-ios-plugins was added to the git ignore file.
+
+In the Podfile, this was added:
+```
+pod 'CordovaPlugins', :path => '../../node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins'
+```
+
+I wonder if that would have fixed our pod issues in the old project?  Anyhow, an update was required.
+
+
+After merging the new project with the old src files, on first re-build we get the usual:
+```
+[ng] ERROR in ./src/global.scss (./node_modules/@angular-devkit/build-angular/src/angular-cli-files/plugins/raw-css-loader.js!./node_modules/postcss-loader/src??embedded!./node_modules/sass-loader/lib/loader.js??ref--14-3!./src/global.scss)
+[ng] Module build failed (from ./node_modules/sass-loader/lib/loader.js):
+...
+[ng] Run `npm rebuild node-sass` to download the binding for your current environment.
+```
+
+So as the message says, running ```npm rebuild node-sass``` will fix that.
+
+Then, we still get a failed build:
+```
+[ng] ERROR in src/app/pages/home/home.page.ts(6,10): error TS2305: Module '"/Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/node_modules/@ionic/angular/dist/index"' has no exported member 'ItemSliding'. 
+```
+
+Then, after saving a file to force a re-build, and refreshing the browser, we have our list with the serif font.  But there are only 190 biases now.  Since the beginning there have been 191.  Which one has been lost?
 
 
 

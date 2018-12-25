@@ -1,23 +1,4 @@
 <?xml version='1.0' encoding='utf-8'?>
   <widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   
-  <feature name="Device">
-    <param name="ios-package" value="CDVDevice"/>
-  </feature>
-
-
-  <feature name="Keyboard">
-    <param name="ios-package" value="CDVIonicKeyboard" onload="true"/>
-  </feature>
-
-
-  <feature name="NativeStorage">
-    <param name="ios-package" value="NativeStorage"/>
-  </feature>
-
-
-  <feature name="SQLitePlugin">
-    <param name="ios-package" value="SQLitePlugin"/>
-  </feature>
-
   </widget>
