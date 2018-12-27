@@ -18,7 +18,7 @@ npx cap copy
 npx cap open (android/ios)
 ```
 
-This will ask you what kind of project you want to work with, for example, Android.  You could also choose iOS, Electron, or a PWA.  This will open the appropriate IDE such as Android Studio or Xcode after returning you to the prompt.  You can then build and deploy the project from there.
+If you don't choose a platform it will ask you what kind of project you want to work with, for example, Android.  You could also choose iOS, Electron, or a PWA.  This will open the appropriate IDE such as Android Studio or Xcode after returning you to the prompt.  You can then build and deploy the project from there using the native platform tools.
 
 To add a plugin and update dependencies:
 ```
@@ -26,10 +26,16 @@ npm install totally-cool-plugin-baby
 npx cap update
 ```
 
+
 #
 
 ## Table of Contents
 
+1. [Planned features](#planned-features)
+1. [AWS Amplify](#aws-amplify)
+1. [Apple App Store Release](#apple-App-Store-Release)
+1. [Google Playstore Release](#google-Playstore-Release)
+1. [Fixing the GitHub issues](#fixing-the-GitHub-issues)
 1. [Fixing the citations](#fixing-the-citations)
 1. [Alpha release](#alpha-release)
 1. [The backup title for Loranthifolia](#the-backup-title-for-Loranthifolia)
@@ -52,7 +58,27 @@ npx cap update
 #
 
 
-## Sprint 1: AWS
+## Planned features
+
+Planned features include:
+
+1. Language change for app labels
+1. Bookmark the last viewed item
+1. Let the user build a short description
+1. Swipe up/down on the short description to send the item to the top/bottom of the list
+1. Swipe right to remove it from the list
+1. Metrics for the list (number of removed items out of total items, descriptions viewed, etc)
+1. Detail page metrics (number of preambles, expand/contract preambles, footnotes)
+1. Create a new category (list of fallacies)
+1. Component style library shared by all the apps
+1. Capture link title and create an 'also known as' section from other sources.
+1. Export xAPI actions.
+1. Add options for the list colors.
+1. Compare lists when refreshed and alert user of deletions/additions.
+1. Free version bundled with a static list and detail content.
+
+
+## AWS Amplify
 
 The preference related planned features are:
 
@@ -108,14 +134,17 @@ The first two attempts to set up an Amplify demo app have failed.  Probably that
 
 One of those improvements is new styles for the item state.  This needs to be created as an API for the Stencil component library to implement.  Sounds exciting exclaimation mark.
 
-
 core.js:1521 ERROR Error: Uncaught (in promise): Error: Template parse errors:
 Parser Error: Unexpected token 'Lexer Error: Unterminated quote at column 27 in expression [viewShortDescription(item)']' at column 28 in [viewShortDescription(item)'] in ng:///HomePageModule/HomePage.html@41:5 ("
 				</ion-item> 
 				<ion-item-options padding-start
 					[ERROR ->](ionSwipe)="viewShortDescription(item)'"
 
+After two attempts to get a working sample of the todo code working, using Auth0 with Heroku (both free) is looking like a better bet.  Still, if lots of people start using the app, then we will definitely be paying money to those two, which means then having a paid version.  The free version could just be a static list that is bundled with the install so that no server interactions are needed.
 
+This version will have to be made soon.  Probably the first full release should include this version, and the one that relies on a live list and user login to support user options and all our other planned features.  If we release a free version that includes server interactions, and someone writes an article on the app, and suddenly there are a million users, we will be screwed paying for all those free users.
+
+Another thing about this fabled free version, is that we will need to scrape the detail pages from Wikipedia and save them in json files to be bundled with the app.  Another item for the proposed features list.  Copied the proposed features list from Conchifolia here to keep up with pruning the list easier.
 
 
 
@@ -690,7 +719,10 @@ Then, we still get a failed build:
 ```
 
 
-Then, after saving a file to force a re-build, and refreshing the browser, we have our list with the serif font.  But there are only 190 biases now.  Since the beginning there have been 191.  Which one has been lost?
+Then, after saving a file to force a re-build, and refreshing the browser, we have our list with the serif font.  But there are only 190 biases now.  Since the beginning there have been 191.  Which one has been lost?  Doing a quick comparison of the list on our test device and the currently running local app, it appears the the Bystander effect has gone missing.  It is an orange item.  That means it's a WikiMedia (Wikipedia) item.  We can look at the change log for that page and find the discussion as to while it was removed.
+
+Isn't there a to do item to compare lists and look for changes?  It has been thought about but it's not there I think.  What it should be is, when the user chooses to refresh the list and there is an existing list, a copy is made of the old list and compared with the new list.  An alert can then be shown that indicates additions or deletions to the list.  That sounds like value for the user, right?
+
 
 The build warnings we see are:
 ```
@@ -702,7 +734,7 @@ The build warnings we see are:
 [ng] "export 'ItemSliding' was not found in '@ionic/angular'
 ```
 
-That feature was not working anyhow.  Remember we were trying to programattically listen for the item sliding event, but failing.  We will need to solve that problem at some point.  We also plan to use our component library for the items in the list, so that functionality will actually be moved there.  For now, all we want is our MVP iOS release.  So just comment out that import as a reminder for later and move on.  
+That feature was not working anyhow.  Remember we were trying to programmatically listen for the item sliding event, but failing.  We will need to solve that problem at some point.  We also plan to use our component library for the items in the list, so that functionality will actually be moved there.  For now, all we want is our MVP iOS release.  So just comment out that import as a reminder for later and move on.  
 
 When we are offline, we get this message:
 ```
@@ -718,6 +750,86 @@ url: null
 ```
 
 The app should show an alert saying the app is offline.
+
+Next routing.  Why is it not working?  Also noticed that the refresh list button is blank.  What's up with that?
+
+
+Changed this:
+```
+this.router.navigate(['detail/'+itemRoute+'/'+qCode+'/'+officialTitle]);
+```
+
+to this:
+```
+const url = 'detail/'+itemRoute+'/'+qCode+'/'+officialTitle;
+this.router.navigateByUrl(url);
+```
+
+And got this error:
+```
+core.js:14597 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'detail/acquiescence_bias'
+Error: Cannot match any routes. URL Segment: 'detail/acquiescence_bias'
+```
+
+Not sure why there aren't more parts to the route there.
+
+The url in the browser does change, but the list is still there staring at us.  Created a new route for just two items like this:
+```
+{ path: 'detail/:id', loadChildren: './pages/detail/detail.module#DetailPageModule' },
+```
+
+Add this to the two previously working routes:
+```
+{ path: 'detail/:id/:officialTitle', loadChildren: './pages/detail/detail.module#DetailPageModule' },
+{ path: 'detail/:id/:qCode/:officialTitle', loadChildren: './pages/detail/detail.module#DetailPageModule' },
+```
+
+Still, the page does not change.  The network tab shows that the call has returned.
+
+queryParams was replaced by queryParamMap.
+
+Should I try this instead of loadChildren in the routing module?
+```
+    { path: 'options', component: OptionsPageModule },
+```
+
+Trying that out on the options page causes this error:
+```
+core.js:14597 ERROR Error: Uncaught (in promise): Error: No component factory found for OptionsPageModule. Did you add it to @NgModule.entryComponents?
+Error: No component factory found for OptionsPageModule. Did you add it to @NgModule.entryComponents?
+    at noComponentFactoryError (core.js:9659)
+```
+
+What about using the OptionsPage instead of the module?  Trying that will cause this error:
+```
+compiler.js:25807 Uncaught Error: Component OptionsPage is not part of any NgModule or the module has not been imported into your module.
+    at JitCompiler.push../node_modules/@angular/compiler/fesm5/compiler.js.JitCompiler._createCompiledHostTemplate (compiler.js:25807)
+```
+
+But including the module in the app module will defeat the lazy module loading feature, wont it?  And why did this used to work, and now doesn't?  This iOS hole is going deeper than anyone thought possible.  We are working on including tabs in our component library which would make routing obsolete, but that's a long way off from being ready to deploy.
+
+Just as an experiment, adding the options module to the app.modules to see what happens.
+
+It compiles, but then trying to navigate to the details page causes this error:
+```
+core.js:14597 ERROR Error: Uncaught (in promise): Error: No component factory found for OptionsPageModule. Did you add it to @NgModule.entryComponents?
+Error: No component factory found for OptionsPageModule. Did you add it to @NgModule.entryComponents?
+    at noComponentFactoryError (core.js:9659)
+```
+
+Adding the options module to the entry components array (which is empty) will cause this compile time error:
+```
+[ng] ERROR in OptionsPageModule cannot be used as an entry component.
+```
+
+So the wrong direction is definitely the wrong direction.
+
+But what is the right direction?  Google didn't turn up much on router.navigate not working search.  The only idea right now is to go back to a vanilla app and implement routing to see what will work out fo the box, then add that solution here.  There must be some breaking change with the router between the alpha and rc releases.  It might also be worth going thru all the change logs to see what breaking changes are listed.
+
+That will have to wait as were in the car on the road to Canberra right now, so it's a good time to switch back to the component library which wont require any network activity to work on.
+
+
+
 
 ## Google Playstore Release
 

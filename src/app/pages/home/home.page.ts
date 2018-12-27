@@ -67,6 +67,7 @@ export class HomePage {
    * @param i item index
    */
   navigateAction(item: string, i: number) {
+    console.log('item',item);
     this.dataStorageService.sharedAction = this.list[i].wikiMedia_description;
     let qCode = this.findQCode(this.list[i]);
     this.list[i].detailState = 'viewed';
@@ -85,8 +86,15 @@ export class HomePage {
       this.router.navigate(['detail/'+backupTitle+'/'+qCode+'/'+officialTitle]);
     } else if (typeof this.list[i]['cognitive_bias'] !== 'undefined') {
       let backupTitle = this.list[i]['cognitive_bias'].replace(/\//g,'*'); 
+      const url = '../detail/'+itemRoute+'/'+qCode+'/'+officialTitle;
+      console.log('url',url);
       console.log('2.this.list[i][cognitive_bias].replace()',backupTitle);
-      this.router.navigate(['detail/'+itemRoute+'/'+qCode+'/'+officialTitle]);
+      console.log('this.router.url === ',this.router.url === '/home');
+      console.log('this.router.url === ',this.router.url === '/detail');
+      this.router.navigateByUrl(url);
+      console.log('this.router.url === ',this.router.url === '/home');
+      console.log('this.router.url === ',this.router.url === '/detail');
+      console.log(this.router.isActive('detail/',true));
     } else {
       console.log('3.else sortName',this.list[i].sortName);
       this.router.navigate(['detail/'+this.list[i].sortName+'/'+qCode+'/'+officialTitle]);
