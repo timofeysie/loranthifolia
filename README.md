@@ -826,7 +826,122 @@ So the wrong direction is definitely the wrong direction.
 
 But what is the right direction?  Google didn't turn up much on router.navigate not working search.  The only idea right now is to go back to a vanilla app and implement routing to see what will work out fo the box, then add that solution here.  There must be some breaking change with the router between the alpha and rc releases.  It might also be worth going thru all the change logs to see what breaking changes are listed.
 
-That will have to wait as were in the car on the road to Canberra right now, so it's a good time to switch back to the component library which wont require any network activity to work on.
+That will have to wait as were in the car on the road to Canberra right now, so it's a good time to switch back to the component library which won't require any network activity to work on.
+
+At the hotel started an app the same as we started this project:
+```
+ionic start myVanillaApp blank --type=angular
+```
+
+Following the [tut here](https://shermandigital.com/blog/configure-routing-in-an-angular-cli-project/) to quickly setup some test routes.
+```
+ng g module app-routing
+```
+
+Using three variations to the routes:
+```
+const routes: Routes = [
+  { path: 'home', component: HomePage}, 
+  { path: 'dashboard', component: DashboardComponent },
+];
+```
+```
+const routes: Routes = [
+  { path: '', component: HomePage }, 
+  { path: 'home', component: HomePage }, 
+  { path: 'dashboard', component: DashboardComponent },
+];
+```
+```
+const routes: Routes = [
+  { path: '', component: HomePage, pathMatch: 'full' }, 
+  { path: 'home', component: HomePage, pathMatch: 'full' }, 
+  { path: 'dashboard', component: DashboardComponent, pathMatch: 'full' },
+];
+```
+
+Also trying the lazy loading modules approach:
+```
+const routes: Routes = [
+  { path: '', loadChildren: '../home/home.page', pathMatch: 'full' }, 
+  { path: 'home', loadChildren: '../home/home.page', pathMatch: 'full' }, 
+  { path: 'dashboard', loadChildren: '../dashboard/dashboard.component', pathMatch: 'full' },
+];
+```
+
+All these give this error:
+```
+core.js:14597 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'dashboard'
+Error: Cannot match any routes. URL Segment: 'dashboard'
+    at 
+```
+
+How do you turn on enableTracing on the route?  In the app-routing.module, after defining the routes, add this:
+```
+RouterModule.forRoot(routes, {
+    enableTracing: /localhost/.test(document.location.host)
+});
+```
+
+But the error is still the same.  Shouldn't there be extra information available now?
+
+Also tried putting a relative path on both the path: './dashboard' and this.router.navigate(['./dashboard'])
+
+And using ```this.router.navigateByUrl('dashboard')``` and ```this.router.navigateByUrl('./dashboard')```.
+
+Also tried links in the template liek this:
+```
+  <a routerLink="/dashboard">Heroes</a>
+```
+
+This is the same usage from the [Tour of Heroes Angular docs](https://angular.io/tutorial/toh-pt5).  In the section on implementing routing, it shows this configuration:
+```
+const routes: Routes = [
+  { path: 'heroes', component: HeroesComponent }
+];
+```
+
+So no slash in the class config, and a slash in the template router link.  Still, this doesn't work for us.  Triggering the template router link will also trigger the class router.navigate function for some reason.  Interestingly, the error messages are slightly different:
+```
+core.js:14597 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'home/dashboard'
+Error: Cannot match any routes. URL Segment: 'home/dashboard'
+    at 
+```
+
+The second error is like this:
+```
+core.js:14597 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'dashboard'
+Error: Cannot match any routes. URL Segment: 'dashboard'
+at ApplyRedirects.push../node_modules/@angular/router/fesm5/router.js.ApplyRedirects.noMatchError (router.js:2469)
+```
+
+So change the router path to 'home/dashboard' and maybe that will make a difference?
+```
+ path: 'home/dashboard'
+```
+
+And in the template:
+```
+<a routerLink="/dashboard">
+```
+
+```
+ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'home/dashboard'
+Error: Cannot match any routes. URL Segment: 'home/dashboard'
+    at 
+```
+
+Tried the reverse config:
+```
+<a routerLink="/home/dashboard">
+```
+
+And:
+```
+path: 'dashboard', loadChildren: '../dashboard/dashboard.component'
+```
+
+The error is identical.  Time to give up and ask StackOverflow.
 
 
 
