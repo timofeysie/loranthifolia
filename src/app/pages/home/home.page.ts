@@ -71,7 +71,6 @@ export class HomePage {
     this.dataStorageService.sharedAction = this.list[i].wikiMedia_description;
     let qCode = this.findQCode(this.list[i]);
     this.list[i].detailState = 'viewed';
-    //this.dataService.setItem(this.listLanguage+'-'+this.listName, this.list);
     let itemRoute = item.replace(/\s+/g, '_').toLowerCase();
     let backupTitle = this.list[i]['backupTitle'] ;
     let officialTitle;
@@ -85,16 +84,10 @@ export class HomePage {
       console.log('1.this.list[i][backupTitle]',backupTitle);
       this.router.navigate(['detail/'+backupTitle+'/'+qCode+'/'+officialTitle]);
     } else if (typeof this.list[i]['cognitive_bias'] !== 'undefined') {
-      let backupTitle = this.list[i]['cognitive_bias'].replace(/\//g,'*'); 
-      const url = '../detail/'+itemRoute+'/'+qCode+'/'+officialTitle;
+      console.log('2.this.list[i][cognitive_bias] !== undefined');
+      const url = 'detail/'+itemRoute+'/'+qCode+'/'+officialTitle;
       console.log('url',url);
-      console.log('2.this.list[i][cognitive_bias].replace()',backupTitle);
-      console.log('this.router.url === ',this.router.url === '/home');
-      console.log('this.router.url === ',this.router.url === '/detail');
       this.router.navigateByUrl(url);
-      console.log('this.router.url === ',this.router.url === '/home');
-      console.log('this.router.url === ',this.router.url === '/detail');
-      console.log(this.router.isActive('detail/',true));
     } else {
       console.log('3.else sortName',this.list[i].sortName);
       this.router.navigate(['detail/'+this.list[i].sortName+'/'+qCode+'/'+officialTitle]);
@@ -111,6 +104,12 @@ export class HomePage {
       // item has a q-code
       let lastSlash = item['cognitive_bias'].lastIndexOf('/');
       qCode = item.cognitive_bias.substr(lastSlash,item.cognitive_bias.length);
+      // after upgrading to Ionic 4 rc 0, this started returning a slash at
+      // the start of the code
+      let slash = qCode.indexOf('/');
+      if (slash !== -1) {
+        qCode = qCode.substr(slash+1,qCode.length);
+      } 
     } else {
       // no q-code
       qCode = null;

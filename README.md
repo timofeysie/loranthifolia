@@ -941,7 +941,74 @@ And:
 path: 'dashboard', loadChildren: '../dashboard/dashboard.component'
 ```
 
-The error is identical.  Time to give up and ask StackOverflow.
+The error is identical.  Time for the docs.
+
+Ionic has its own router outlet implementation called <ion-router-outlet> which is an outlet wherever you want the component for the active route to be displayed. The same as Angular’s <router-outlet> except that it will automatically apply the screen transition animations.
+
+The Angular example paths are:
+```
+const routes: Routes = [
+  { path: 'login', component: LoginPage },
+  { path: 'home', component: HomePage },
+  { path: 'detail/:id', component: DetailPage },
+  { path: '', redirectTo: '/login', pathMatch: 'full'}
+];
+```
+
+The outlet created by Ionic is in the app.component.html template:
+```
+<ion-app>
+  <ion-router-outlet></ion-router-outlet>
+</ion-app>
+```
+
+To show that routing does work with the current Ionic release, we can do this experiment.
+```
+ionic start routingVanillaApp blank --type=angular
+```
+
+Without adding any routing, we can add a page like this:
+```
+$ ionic generate
+? What would you like to generate? page
+? Name/path of page: two
+> ng generate page two
+CREATE src/app/two/two.module.ts (528 bytes)
+CREATE src/app/two/two.page.scss (0 bytes)
+CREATE src/app/two/two.page.html (130 bytes)
+CREATE src/app/two/two.page.spec.ts (670 bytes)
+CREATE src/app/two/two.page.ts (244 bytes)
+UPDATE src/app/app-routing.module.ts (439 bytes)
+[OK] Generated page!
+```
+
+The routes will be configured for us:
+```
+const routes: Routes = [
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', loadChildren: './home/home.module#HomePageModule' },
+  { path: 'two', loadChildren: './two/two.module#TwoPageModule' },
+];
+```
+
+These three methods of navigation work fine.  Two programmatic methods:
+```
+this.router.navigateByUrl('two')
+this.router.navigate(['./two']);
+```
+
+One template method:
+```
+<a routerLink="/two">Template link</a>
+```
+
+So we can now safely say the problem is not with the framework, but with our code (as is usually the case).
+
+If we look at the link we are creating:
+
+home.page.ts:90 url ../detail/acquiescence_bias//Q420693/Acquiescence bias
+
+See, there is part of the route that is missing.  It appears as if the qCode has an extra slash attached to it.   But even after removing that, the error is gone but the page still does not transition to the detail page.  The url changes, yes, but the app goes no where.
 
 
 
