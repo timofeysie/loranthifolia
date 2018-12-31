@@ -18,7 +18,7 @@ npx cap copy
 npx cap open (android/ios)
 ```
 
-This will ask you what kind of project you want to work with, for example, Android.  You could also choose iOS, Electron, or a PWA.  This will open the appropriate IDE such as Android Studio or Xcode after returning you to the prompt.  You can then build and deploy the project from there.
+If you don't choose a platform it will ask you what kind of project you want to work with, for example, Android.  You could also choose iOS, Electron, or a PWA.  This will open the appropriate IDE such as Android Studio or Xcode after returning you to the prompt.  You can then build and deploy the project from there using the native platform tools.
 
 To add a plugin and update dependencies:
 ```
@@ -26,10 +26,16 @@ npm install totally-cool-plugin-baby
 npx cap update
 ```
 
+
 #
 
 ## Table of Contents
 
+1. [Planned features](#planned-features)
+1. [AWS Amplify](#aws-amplify)
+1. [Apple App Store Release](#apple-App-Store-Release)
+1. [Google Playstore Release](#google-Playstore-Release)
+1. [Fixing the GitHub issues](#fixing-the-GitHub-issues)
 1. [Fixing the citations](#fixing-the-citations)
 1. [Alpha release](#alpha-release)
 1. [The backup title for Loranthifolia](#the-backup-title-for-Loranthifolia)
@@ -52,7 +58,27 @@ npx cap update
 #
 
 
-## Sprint 1: AWS
+## Planned features
+
+Planned features include:
+
+1. Language change for app labels
+1. Bookmark the last viewed item
+1. Let the user build a short description
+1. Swipe up/down on the short description to send the item to the top/bottom of the list
+1. Swipe right to remove it from the list
+1. Metrics for the list (number of removed items out of total items, descriptions viewed, etc)
+1. Detail page metrics (number of preambles, expand/contract preambles, footnotes)
+1. Create a new category (list of fallacies)
+1. Component style library shared by all the apps
+1. Capture link title and create an 'also known as' section from other sources.
+1. Export xAPI actions.
+1. Add options for the list colors.
+1. Compare lists when refreshed and alert user of deletions/additions.
+1. Free version bundled with a static list and detail content.
+
+
+## AWS Amplify
 
 The preference related planned features are:
 
@@ -108,14 +134,17 @@ The first two attempts to set up an Amplify demo app have failed.  Probably that
 
 One of those improvements is new styles for the item state.  This needs to be created as an API for the Stencil component library to implement.  Sounds exciting exclaimation mark.
 
-
 core.js:1521 ERROR Error: Uncaught (in promise): Error: Template parse errors:
 Parser Error: Unexpected token 'Lexer Error: Unterminated quote at column 27 in expression [viewShortDescription(item)']' at column 28 in [viewShortDescription(item)'] in ng:///HomePageModule/HomePage.html@41:5 ("
 				</ion-item> 
 				<ion-item-options padding-start
 					[ERROR ->](ionSwipe)="viewShortDescription(item)'"
 
+After two attempts to get a working sample of the todo code working, using Auth0 with Heroku (both free) is looking like a better bet.  Still, if lots of people start using the app, then we will definitely be paying money to those two, which means then having a paid version.  The free version could just be a static list that is bundled with the install so that no server interactions are needed.
 
+This version will have to be made soon.  Probably the first full release should include this version, and the one that relies on a live list and user login to support user options and all our other planned features.  If we release a free version that includes server interactions, and someone writes an article on the app, and suddenly there are a million users, we will be screwed paying for all those free users.
+
+Another thing about this fabled free version, is that we will need to scrape the detail pages from Wikipedia and save them in json files to be bundled with the app.  Another item for the proposed features list.  Copied the proposed features list from Conchifolia here to keep up with pruning the list easier.
 
 
 
@@ -422,6 +451,7 @@ Saved the module file again and reloaded the page and it ran.  Thanks.
 Next, we will need to install some dependencies such as this:
 ```
 ionic cordova plugin add cordova-plugin-nativestorage
+npm i --save art-curator
 ```
 
 Got this:
@@ -579,6 +609,407 @@ The font from the original was inherited from the .item-md lcass:
 ```
 
 So if that's what we like we should make it official.
+
+I would also like to characterize the changes that happened from the alpha release to the RC0.
+In the capacitor.config.json file, ```"allowMixedContent": true``` was added.
+
+An ionic.starter.json file was added that looks like this:
+```
+  "name": "Blank Starter",
+  "baseref": "master",
+  "tarignore": [
+    "node_modules",
+    "package-lock.json",
+    "www"
+  ],
+  "scripts": {
+    "test": "npm run lint && npm run ng -- build --configuration=ci && npm run ng -- build --prod --progress=false && npm run ng -- test --configuration=ci && npm run ng -- e2e --configuration=ci && npm run ng -- g pg my-page --dry-run && npm run ng -- g c my-component --dry-run"
+  }
+```
+
+ionic serve/build are replaced by ng serve/build in the package.json
+We went from "@angular/core": "6.0.6", to "~7.1.4".
+The @ionic/angular packages of course went from alpha.7 to rc.0.
+
+We only have the "cordova-plugin-nativestorage": "2.3.2", plugin now.  The original package.json had had in addition these:
+```
+    "cordova-plugin-device": "^2.0.2",
+    "cordova-plugin-ionic-keyboard": "^2.0.5",
+    "cordova-plugin-ionic-webview": "^1.1.19",
+    "cordova-plugin-splashscreen": "^5.0.2",
+    "cordova-plugin-whitelist": "^1.3.3",
+    "cordova-sqlite-storage": "^2.4.0",
+```
+
+Wasn't there a security alert for sqlite-storage last week?
+```
+    "ionic": "^4.6.0",
+    "ionic-native": "^2.9.0",
+    "ios": "0.0.1",
+    "parse5": "^5.0.0",
+    ...
+    "rxjs-compat": "^6.2.1",
+    "stream": "0.0.2",
+    "wikidata-sdk": "^5.11.2",
+```
+
+In the   "devDependencies" section these were added:
+```
+    "@angular-devkit/architect": "~0.11.4",
+    "@angular-devkit/build-angular": "~0.11.4",
+    "@angular-devkit/core": "~7.1.4",
+    "@angular-devkit/schematics": "~7.1.4",
+```
+
+We're now using these version:
+```
+"@types/node": "~10.12.0",
+"typescript": "~3.1.6"
+```
+
+The tsconfig.json file has some changes:
+```
+   "baseUrl": "./",
+    ...
+    "module": "es2015",
+    ...
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+```
+
+The app.po.ts (page object) file used for the tests, we see this:
+```
+  getParagraphText() {
+    return element(by.css('app-root ion-content')).getText();
+  }
+```
+replaced by this:
+```
+return element(by.deepCss('app-root ion-content')).getText();
+```
+
+Deep css, fantastic!
+
+capacitor-cordova-ios-plugins was added to the git ignore file.
+
+In the Podfile, this was added:
+```
+pod 'CordovaPlugins', :path => '../../node_modules/@capacitor/cli/assets/capacitor-cordova-ios-plugins'
+```
+
+I wonder if that would have fixed our pod issues in the old project?  Anyhow, an update was required.
+
+
+After merging the new project with the old src files, on first re-build we get the usual:
+```
+[ng] ERROR in ./src/global.scss (./node_modules/@angular-devkit/build-angular/src/angular-cli-files/plugins/raw-css-loader.js!./node_modules/postcss-loader/src??embedded!./node_modules/sass-loader/lib/loader.js??ref--14-3!./src/global.scss)
+[ng] Module build failed (from ./node_modules/sass-loader/lib/loader.js):
+...
+[ng] Run `npm rebuild node-sass` to download the binding for your current environment.
+```
+
+So as the message says, running ```npm rebuild node-sass``` will fix that.
+
+Then, we still get a failed build:
+```
+[ng] ERROR in src/app/pages/home/home.page.ts(6,10): error TS2305: Module '"/Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/node_modules/@ionic/angular/dist/index"' has no exported member 'ItemSliding'. 
+```
+
+
+Then, after saving a file to force a re-build, and refreshing the browser, we have our list with the serif font.  But there are only 190 biases now.  Since the beginning there have been 191.  Which one has been lost?  Doing a quick comparison of the list on our test device and the currently running local app, it appears the the Bystander effect has gone missing.  It is an orange item.  That means it's a WikiMedia (Wikipedia) item.  We can look at the change log for that page and find the discussion as to while it was removed.
+
+Isn't there a to do item to compare lists and look for changes?  It has been thought about but it's not there I think.  What it should be is, when the user chooses to refresh the list and there is an existing list, a copy is made of the old list and compared with the new list.  An alert can then be shown that indicates additions or deletions to the list.  That sounds like value for the user, right?
+
+
+The build warnings we see are:
+```
+[ng] WARNING in ./src/app/pages/home/home.page.ts 474:41-52
+[ng] "export 'ItemSliding' was not found in '@ionic/angular'
+[ng] WARNING in ./src/app/pages/home/home.page.ts 475:54-65
+[ng] "export 'ItemSliding' was not found in '@ionic/angular'
+[ng] WARNING in ./src/app/pages/home/home.page.ts 475:85-96
+[ng] "export 'ItemSliding' was not found in '@ionic/angular'
+```
+
+That feature was not working anyhow.  Remember we were trying to programmatically listen for the item sliding event, but failing.  We will need to solve that problem at some point.  We also plan to use our component library for the items in the list, so that functionality will actually be moved there.  For now, all we want is our MVP iOS release.  So just comment out that import as a reminder for later and move on.  
+
+When we are offline, we get this message:
+```
+HttpErrorResponse {headers: HttpHeaders, status: 0, statusText: "Unknown Error", url: null, ok: false, …}
+error: ProgressEvent {isTrusted: true, lengthComputable: false, loaded: 0, total: 0, type: "error", …}
+headers: HttpHeaders {normalizedNames: Map(0), lazyUpdate: null, headers: Map(0)}
+message: "Http failure response for (unknown url): 0 Unknown Error"
+name: "HttpErrorResponse"
+ok: false
+status: 0
+statusText: "Unknown Error"
+url: null
+```
+
+The app should show an alert saying the app is offline.
+
+Next routing.  Why is it not working?  Also noticed that the refresh list button is blank.  What's up with that?
+
+
+Changed this:
+```
+this.router.navigate(['detail/'+itemRoute+'/'+qCode+'/'+officialTitle]);
+```
+
+to this:
+```
+const url = 'detail/'+itemRoute+'/'+qCode+'/'+officialTitle;
+this.router.navigateByUrl(url);
+```
+
+And got this error:
+```
+core.js:14597 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'detail/acquiescence_bias'
+Error: Cannot match any routes. URL Segment: 'detail/acquiescence_bias'
+```
+
+Not sure why there aren't more parts to the route there.
+
+The url in the browser does change, but the list is still there staring at us.  Created a new route for just two items like this:
+```
+{ path: 'detail/:id', loadChildren: './pages/detail/detail.module#DetailPageModule' },
+```
+
+Add this to the two previously working routes:
+```
+{ path: 'detail/:id/:officialTitle', loadChildren: './pages/detail/detail.module#DetailPageModule' },
+{ path: 'detail/:id/:qCode/:officialTitle', loadChildren: './pages/detail/detail.module#DetailPageModule' },
+```
+
+Still, the page does not change.  The network tab shows that the call has returned.
+
+queryParams was replaced by queryParamMap.
+
+Should I try this instead of loadChildren in the routing module?
+```
+    { path: 'options', component: OptionsPageModule },
+```
+
+Trying that out on the options page causes this error:
+```
+core.js:14597 ERROR Error: Uncaught (in promise): Error: No component factory found for OptionsPageModule. Did you add it to @NgModule.entryComponents?
+Error: No component factory found for OptionsPageModule. Did you add it to @NgModule.entryComponents?
+    at noComponentFactoryError (core.js:9659)
+```
+
+What about using the OptionsPage instead of the module?  Trying that will cause this error:
+```
+compiler.js:25807 Uncaught Error: Component OptionsPage is not part of any NgModule or the module has not been imported into your module.
+    at JitCompiler.push../node_modules/@angular/compiler/fesm5/compiler.js.JitCompiler._createCompiledHostTemplate (compiler.js:25807)
+```
+
+But including the module in the app module will defeat the lazy module loading feature, wont it?  And why did this used to work, and now doesn't?  This iOS hole is going deeper than anyone thought possible.  We are working on including tabs in our component library which would make routing obsolete, but that's a long way off from being ready to deploy.
+
+Just as an experiment, adding the options module to the app.modules to see what happens.
+
+It compiles, but then trying to navigate to the details page causes this error:
+```
+core.js:14597 ERROR Error: Uncaught (in promise): Error: No component factory found for OptionsPageModule. Did you add it to @NgModule.entryComponents?
+Error: No component factory found for OptionsPageModule. Did you add it to @NgModule.entryComponents?
+    at noComponentFactoryError (core.js:9659)
+```
+
+Adding the options module to the entry components array (which is empty) will cause this compile time error:
+```
+[ng] ERROR in OptionsPageModule cannot be used as an entry component.
+```
+
+So the wrong direction is definitely the wrong direction.
+
+But what is the right direction?  Google didn't turn up much on router.navigate not working search.  The only idea right now is to go back to a vanilla app and implement routing to see what will work out fo the box, then add that solution here.  There must be some breaking change with the router between the alpha and rc releases.  It might also be worth going thru all the change logs to see what breaking changes are listed.
+
+That will have to wait as were in the car on the road to Canberra right now, so it's a good time to switch back to the component library which won't require any network activity to work on.
+
+At the hotel started an app the same as we started this project:
+```
+ionic start myVanillaApp blank --type=angular
+```
+
+Following the [tut here](https://shermandigital.com/blog/configure-routing-in-an-angular-cli-project/) to quickly setup some test routes.
+```
+ng g module app-routing
+```
+
+Using three variations to the routes:
+```
+const routes: Routes = [
+  { path: 'home', component: HomePage}, 
+  { path: 'dashboard', component: DashboardComponent },
+];
+```
+```
+const routes: Routes = [
+  { path: '', component: HomePage }, 
+  { path: 'home', component: HomePage }, 
+  { path: 'dashboard', component: DashboardComponent },
+];
+```
+```
+const routes: Routes = [
+  { path: '', component: HomePage, pathMatch: 'full' }, 
+  { path: 'home', component: HomePage, pathMatch: 'full' }, 
+  { path: 'dashboard', component: DashboardComponent, pathMatch: 'full' },
+];
+```
+
+Also trying the lazy loading modules approach:
+```
+const routes: Routes = [
+  { path: '', loadChildren: '../home/home.page', pathMatch: 'full' }, 
+  { path: 'home', loadChildren: '../home/home.page', pathMatch: 'full' }, 
+  { path: 'dashboard', loadChildren: '../dashboard/dashboard.component', pathMatch: 'full' },
+];
+```
+
+All these give this error:
+```
+core.js:14597 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'dashboard'
+Error: Cannot match any routes. URL Segment: 'dashboard'
+    at 
+```
+
+How do you turn on enableTracing on the route?  In the app-routing.module, after defining the routes, add this:
+```
+RouterModule.forRoot(routes, {
+    enableTracing: /localhost/.test(document.location.host)
+});
+```
+
+But the error is still the same.  Shouldn't there be extra information available now?
+
+Also tried putting a relative path on both the path: './dashboard' and this.router.navigate(['./dashboard'])
+
+And using ```this.router.navigateByUrl('dashboard')``` and ```this.router.navigateByUrl('./dashboard')```.
+
+Also tried links in the template liek this:
+```
+  <a routerLink="/dashboard">Heroes</a>
+```
+
+This is the same usage from the [Tour of Heroes Angular docs](https://angular.io/tutorial/toh-pt5).  In the section on implementing routing, it shows this configuration:
+```
+const routes: Routes = [
+  { path: 'heroes', component: HeroesComponent }
+];
+```
+
+So no slash in the class config, and a slash in the template router link.  Still, this doesn't work for us.  Triggering the template router link will also trigger the class router.navigate function for some reason.  Interestingly, the error messages are slightly different:
+```
+core.js:14597 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'home/dashboard'
+Error: Cannot match any routes. URL Segment: 'home/dashboard'
+    at 
+```
+
+The second error is like this:
+```
+core.js:14597 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'dashboard'
+Error: Cannot match any routes. URL Segment: 'dashboard'
+at ApplyRedirects.push../node_modules/@angular/router/fesm5/router.js.ApplyRedirects.noMatchError (router.js:2469)
+```
+
+So change the router path to 'home/dashboard' and maybe that will make a difference?
+```
+ path: 'home/dashboard'
+```
+
+And in the template:
+```
+<a routerLink="/dashboard">
+```
+
+```
+ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'home/dashboard'
+Error: Cannot match any routes. URL Segment: 'home/dashboard'
+    at 
+```
+
+Tried the reverse config:
+```
+<a routerLink="/home/dashboard">
+```
+
+And:
+```
+path: 'dashboard', loadChildren: '../dashboard/dashboard.component'
+```
+
+The error is identical.  Time for the docs.
+
+Ionic has its own router outlet implementation called <ion-router-outlet> which is an outlet wherever you want the component for the active route to be displayed. The same as Angular’s <router-outlet> except that it will automatically apply the screen transition animations.
+
+The Angular example paths are:
+```
+const routes: Routes = [
+  { path: 'login', component: LoginPage },
+  { path: 'home', component: HomePage },
+  { path: 'detail/:id', component: DetailPage },
+  { path: '', redirectTo: '/login', pathMatch: 'full'}
+];
+```
+
+The outlet created by Ionic is in the app.component.html template:
+```
+<ion-app>
+  <ion-router-outlet></ion-router-outlet>
+</ion-app>
+```
+
+To show that routing does work with the current Ionic release, we can do this experiment.
+```
+ionic start routingVanillaApp blank --type=angular
+```
+
+Without adding any routing, we can add a page like this:
+```
+$ ionic generate
+? What would you like to generate? page
+? Name/path of page: two
+> ng generate page two
+CREATE src/app/two/two.module.ts (528 bytes)
+CREATE src/app/two/two.page.scss (0 bytes)
+CREATE src/app/two/two.page.html (130 bytes)
+CREATE src/app/two/two.page.spec.ts (670 bytes)
+CREATE src/app/two/two.page.ts (244 bytes)
+UPDATE src/app/app-routing.module.ts (439 bytes)
+[OK] Generated page!
+```
+
+The routes will be configured for us:
+```
+const routes: Routes = [
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', loadChildren: './home/home.module#HomePageModule' },
+  { path: 'two', loadChildren: './two/two.module#TwoPageModule' },
+];
+```
+
+These three methods of navigation work fine.  Two programmatic methods:
+```
+this.router.navigateByUrl('two')
+this.router.navigate(['./two']);
+```
+
+One template method:
+```
+<a routerLink="/two">Template link</a>
+```
+
+So we can now safely say the problem is not with the framework, but with our code (as is usually the case).
+
+If we look at the link we are creating:
+
+home.page.ts:90 url ../detail/acquiescence_bias//Q420693/Acquiescence bias
+
+See, there is part of the route that is missing.  It appears as if the qCode has an extra slash attached to it.   But even after removing that, the error is gone but the page still does not transition to the detail page.  The url changes, yes, but the app goes no where.
+
 
 
 

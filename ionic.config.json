@@ -1,7 +1,7 @@
 {
-  "name": "myApp",
-  "type": "angular",
+  "name": "loranthifolia",
   "integrations": {
     "cordova": {}
-  }
+  },
+  "type": "angular"
 }

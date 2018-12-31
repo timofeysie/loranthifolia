@@ -3,7 +3,7 @@ import { MyDataService } from '../../services/api/my-data.service';
 import { CONSTANTS } from '../../constants';
 import { DataStorageService } from '../../services/storage/data-storage.service';
 import { Events } from '@ionic/angular';
-import { ItemSliding } from '@ionic/angular';
+//import { ItemSliding } from '@ionic/angular';
 import { Router, NavigationEnd} from '@angular/router';
 import { DetailModel } from '../../models/detail-model';
 
@@ -20,7 +20,7 @@ export class HomePage {
   langChoice: string = 'en';
   options: any;
   @ViewChild('item') private item: ElementRef;	
-  @ViewChild('itemSliding', { read: ItemSliding }) private itemSliding: ItemSliding;
+  //@ViewChild('itemSliding', { read: ItemSliding }) private itemSliding: ItemSliding;
   constructor(
     private myDataService: MyDataService, 
     private dataStorageService: DataStorageService,
@@ -67,10 +67,10 @@ export class HomePage {
    * @param i item index
    */
   navigateAction(item: string, i: number) {
+    console.log('item',item);
     this.dataStorageService.sharedAction = this.list[i].wikiMedia_description;
     let qCode = this.findQCode(this.list[i]);
     this.list[i].detailState = 'viewed';
-    //this.dataService.setItem(this.listLanguage+'-'+this.listName, this.list);
     let itemRoute = item.replace(/\s+/g, '_').toLowerCase();
     let backupTitle = this.list[i]['backupTitle'] ;
     let officialTitle;
@@ -84,9 +84,10 @@ export class HomePage {
       console.log('1.this.list[i][backupTitle]',backupTitle);
       this.router.navigate(['detail/'+backupTitle+'/'+qCode+'/'+officialTitle]);
     } else if (typeof this.list[i]['cognitive_bias'] !== 'undefined') {
-      let backupTitle = this.list[i]['cognitive_bias'].replace(/\//g,'*'); 
-      console.log('2.this.list[i][cognitive_bias].replace()',backupTitle);
-      this.router.navigate(['detail/'+itemRoute+'/'+qCode+'/'+officialTitle]);
+      console.log('2.this.list[i][cognitive_bias] !== undefined');
+      const url = 'detail/'+itemRoute+'/'+qCode+'/'+officialTitle;
+      console.log('url',url);
+      this.router.navigateByUrl(url);
     } else {
       console.log('3.else sortName',this.list[i].sortName);
       this.router.navigate(['detail/'+this.list[i].sortName+'/'+qCode+'/'+officialTitle]);
@@ -103,6 +104,12 @@ export class HomePage {
       // item has a q-code
       let lastSlash = item['cognitive_bias'].lastIndexOf('/');
       qCode = item.cognitive_bias.substr(lastSlash,item.cognitive_bias.length);
+      // after upgrading to Ionic 4 rc 0, this started returning a slash at
+      // the start of the code
+      let slash = qCode.indexOf('/');
+      if (slash !== -1) {
+        qCode = qCode.substr(slash+1,qCode.length);
+      } 
     } else {
       // no q-code
       qCode = null;

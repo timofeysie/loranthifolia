@@ -2,6 +2,5 @@
   "appId": "com.curchod.loranthifolia",
   "appName": "loranthifolia",
   "bundledWebRuntime": false,
-  "webDir": "www",
-  "allowMixedContent": true
+  "webDir": "www"
 }
