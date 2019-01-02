@@ -13,6 +13,10 @@ import { DetailModel } from '../../models/detail-model';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
+	// shared list/detail members
+	backupTitle: string;
+
+  view: string = 'list';
   itemName: string = 'list';
   list: any;
   mediaSections = 3;
@@ -21,6 +25,20 @@ export class HomePage {
   options: any;
   @ViewChild('item') private item: ElementRef;	
   //@ViewChild('itemSliding', { read: ItemSliding }) private itemSliding: ItemSliding;
+
+  // detail view members
+  officialTitle: string;
+  shortDescription: string;
+  showPreambles: boolean = false;
+  @ViewChild('descriptionhook') descriptionhook: ElementRef;
+  //itemName: string;
+  description:any;
+  wikiMediaCategory: string;
+  //langChoice: string;
+  //options: any;
+  wikipediaLink: string;
+  yourBiasLink: string;
+  preamblesBackup: any [];
   constructor(
     private myDataService: MyDataService, 
     private dataStorageService: DataStorageService,
@@ -53,6 +71,164 @@ export class HomePage {
     });
   }
 
+  // detail page functions ====================
+  detailNgAfterViewChecked() {
+    if (this.dataStorageService.sharedAction !== '') {
+      this.shortDescription = this.dataStorageService.sharedAction;
+      console.log('A.desc',this.shortDescription);
+      this.dataStorageService.sharedAction = '';
+    }
+    if (typeof this.descriptionhook !== 'undefined' && !this.showPreambles) {
+      console.log('B');
+      // texts/outer innner
+      let texts = this.descriptionhook.nativeElement.getElementsByClassName('mbox-text');
+      this.preamblesBackup = texts.innerHTML;
+      if (texts.length > 0) {
+        let exclamationMarkDesc = texts[0].getElementsByClassName('mw-collapsible');
+        if (exclamationMarkDesc.length > 0) {
+          exclamationMarkDesc[0].innerHTML = '';
+        }
+      }
+      for (let i = 1; i < texts.length; i++) {
+        texts[i].innerHTML = '';
+      };
+      
+      // (learn how and when ...)
+      let smalls = this.descriptionhook.nativeElement.getElementsByClassName('hide-when-compact');
+      for (let a = 0; a < smalls.length; a++) {
+        smalls[a].innerHTML = '';
+      }
+      
+      let images = this.descriptionhook.nativeElement.getElementsByClassName('ambox');
+      if (images.length > 0) {
+        images[0].innerHTML = '';
+      }
+
+      let preambleTable = this.descriptionhook.nativeElement.getElementsByClassName('nowraplinks');
+      if (preambleTable.length > 0) {
+        preambleTable[0].innerHTML = '';
+      }
+  	} 
+	console.log('C');
+	this.detailNgOnInit();
+  }
+
+getDetails() {
+  //this.itemName = this.route.snapshot.paramMap.get('id');
+  //let backupTitle = this.route.snapshot.paramMap.get('backupTitle');
+  //this.officialTitle = this.route.snapshot.paramMap.get('officialTitle');
+  let linkTitle;
+  if (this.backupTitle) {
+	console.log('F3');
+    linkTitle = this.backupTitle.replace(' ','_');
+    console.log('using backup title',this.backupTitle);
+  } else {
+	linkTitle = this.itemName.replace(' ','_');
+	console.log('G');	
+  }
+  this.wikipediaLink = 'https://en.wikipedia.org/wiki/'+linkTitle;
+  const itemNameAgain = linkTitle.toLowerCase();
+  this.myDataService.getDetail(itemNameAgain,this.langChoice,false).subscribe(
+    data => {
+		console.log('H');
+      this.description = data['description'].toString();
+      this.description = this.description.split('href="/wiki/')
+        .join('href="https://'+this.langChoice+'.wikipedia.org/wiki/');
+      
+      // temporary fix for issue #6.  This should ideally be done with DOM manipulation
+	  this.removeStyleTags();
+	  console.log('I',this.description);   
+      // Preamble toggle work
+      //let newDOM = this.createElementFromHTML(this.description);
+      //console.log('newDOM',newDOM);
+      //let mboxText = newDOM.getElementsByClassName('mbox-text');
+      //console.log('mboxText',mboxText.length);
+      
+      // the exclamation mark icon description, and sub icons and descriptions
+      //let preambles = mboxText[0];
+      //this.description = mboxText[0].innerHTML;
+
+      //let exclamationMarkDesc = preambles.getElementsByClassName('mw-collapsible');
+      //this.description = exclamationMarkDesc[0].innerHTML;
+
+      // this article includes a list of references but...
+      //this.description = mboxText[1].innerHTML;
+
+      // this article may have to be rewritten entirely to comply ...
+      //this.description = mboxText[2].innerHTML;
+
+      // the exclamation mark icon description, and sub icons and descriptions        
+      // let exclamationMarkDesc = newDOM.getElementsByClassName('mw-collapsible');
+      // console.log('exclamationMarkDesc',exclamationMarkDesc[0]);
+      // this.description = exclamationMarkDesc[0].innerHTML;
+
+      // Please help to improve this article ...
+      //let smalls = preambles.getElementsByClassName('hide-when-compact');
+
+      // this is an array of the specific preambles including icons and descriptions
+      //let images = preambles.getElementsByClassName('ambox');
+      //console.log('images',images.length);
+      
+      // EXAMPLES
+      // This article includes a list of references ...
+      //this.description = images[0].innerHTML;
+      
+      // this article may have to be rewritten entirely to comply ...
+	  //this.description = images[1].innerHTML;
+	  
+    },((error: any) => {
+      console.log('error from detail',error);
+      this.description = error.message+' failed.';
+      if (typeof error.url !== 'undefined') {
+        if (error.url === null) {
+          alert('Your device appears to be offline');
+        } else if (typeof error.message !== 'undefined') {
+          alert('Network error: '+error.message);
+        } else {
+          alert('Error getting '+itemNameAgain+' details');
+        }
+      }
+	})
+    );
+}
+
+removeStyleTags() {
+  const style1 = this.description.indexOf('<style');
+  const style2 = this.description.indexOf('</style>');
+  const part1 = this.description.substring(0, style1);
+  const part2 = this.description.substring(style2, this.description.length);
+  this.description = part1+part2;
+}
+
+detailNgOnInit() {
+  this.dataStorageService.getItemViaNativeStorage(CONSTANTS.OPTIONS_NAME).then((result) => {
+	console.log('D');
+    if (result) {
+	  this.options = result;
+      console.log('E');	  
+      if (this.langChoice !== this.options['language']) {
+		this.langChoice = this.options['language'];  
+		console.log('F1');		
+        this.getDetails();
+      } else {
+		console.log('langChoice',this.langChoice)
+		console.log('options lang',this.options['language']);
+		this.getDetails();
+		console.log('F2');	
+	  }
+    }
+  });
+}
+
+createElementFromHTML2(htmlString) {
+  var div = document.createElement('div');
+  let page = '<div>'+htmlString+'</div>';
+  div.innerHTML = page.trim();
+  return div; 
+}
+
+  // list page functions ========================
+
   ionViewWillEnter() {
     //console.log('this.itemSliding',this.itemSliding);
   }
@@ -67,31 +243,32 @@ export class HomePage {
    * @param i item index
    */
   navigateAction(item: string, i: number) {
-    console.log('item',item);
     this.dataStorageService.sharedAction = this.list[i].wikiMedia_description;
     let qCode = this.findQCode(this.list[i]);
     this.list[i].detailState = 'viewed';
     let itemRoute = item.replace(/\s+/g, '_').toLowerCase();
-    let backupTitle = this.list[i]['backupTitle'] ;
+    this.backupTitle = this.list[i]['backupTitle'] ;
     let officialTitle;
     if ( this.list[i].cognitive_biasLabel) {
       officialTitle =  this.list[i].cognitive_biasLabel;
     } else {
       officialTitle =  this.list[i].wikiMedia_label;
     }
-    console.log('item',this.list[i]);
-    if (typeof backupTitle!== 'undefined' && backupTitle !== null) {
-      console.log('1.this.list[i][backupTitle]',backupTitle);
-      this.router.navigate(['detail/'+backupTitle+'/'+qCode+'/'+officialTitle]);
+    if (typeof this.backupTitle!== 'undefined' && this.backupTitle !== null) {
+      console.log('1.this.list[i][backupTitle]',this.backupTitle);
+      //this.router.navigate(['detail/'+this.backupTitle+'/'+qCode+'/'+officialTitle]);
     } else if (typeof this.list[i]['cognitive_bias'] !== 'undefined') {
-      console.log('2.this.list[i][cognitive_bias] !== undefined');
+      console.log('2.this.list[i][cognitive_bias] !== undefined.');
       const url = 'detail/'+itemRoute+'/'+qCode+'/'+officialTitle;
-      console.log('url',url);
-      this.router.navigateByUrl(url);
+      //this.router.navigate([url]);
     } else {
       console.log('3.else sortName',this.list[i].sortName);
-      this.router.navigate(['detail/'+this.list[i].sortName+'/'+qCode+'/'+officialTitle]);
-    }
+      //this.router.navigate(['detail/'+this.list[i].sortName+'/'+qCode+'/'+officialTitle]);
+	}
+	this.view = 'detail';
+	console.log('start ======');
+	this.description = null;
+	this.detailNgAfterViewChecked();
   }
 
   /**

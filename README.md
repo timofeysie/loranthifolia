@@ -1008,8 +1008,11 @@ If we look at the link we are creating:
 
 home.page.ts:90 url ../detail/acquiescence_bias//Q420693/Acquiescence bias
 
-See, there is part of the route that is missing.  It appears as if the qCode has an extra slash attached to it.   But even after removing that, the error is gone but the page still does not transition to the detail page.  The url changes, yes, but the app goes no where.
+See, there is part of the route that is missing.  It appears as if the qCode has an extra slash attached to it.   But even after removing that, the error is gone but the page still does not transition to the detail page.  The url changes, yes, but the app goes no where.  The detail page is activate, as we can see a comment coming out in the log from that page.
 
+[This is the merge request](https://github.com/timofeysie/loranthifolia/commit/f29dc44c4e24b237fe6776a3091f77e06a0c7af0) where the new branch replaced the master branch after starting a new project with release candidate 0 which can actually be build for iOS distribution.
+
+Science itself does not filter out any knowledge, and indeed the book mentioned can be included in the subject of science.  The book does bring up a sociological aspect of reporting about the influence of the dominant ideas of a time period on scientific research.  When it comes to dating archeological remains, later results are more reliable than earlier ones often done by amateurs, but these finds are in no way forbidden.
 
 
 

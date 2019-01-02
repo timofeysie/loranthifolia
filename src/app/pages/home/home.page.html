@@ -13,41 +13,73 @@
 </ion-header>
 
 <ion-content padding>
-	<ion-spinner *ngIf="!list" 
-		name="lines"
-		class="center"></ion-spinner>
-	<ion-list no-lines class="list">
-		<ion-item-sliding *ngFor="let item of list; let i = index">
-			<div *ngIf="item.sortName">
-				<ion-item slot="start"
-					(click)="setStateViewed(i)"
-					tappable 
-					(click)="navigateAction(item.sortName, i)"
-					routerDirection="forward"
-					detail="true">
-					<div *ngIf="item">
-						<span class="ion-list__defaultItem"
-							[ngClass]="{
-								'list__both': item.cognitive_biasLabel && item.wikiMedia_label, 
-								'list__text-wikimedia': !item.cognitive_biasLabel,
-								'list__item--viewed': item.detailState ==='viewed'}">
-							<span class="list__text" 
-								*ngIf="item.cognitive_biasLabel">{{item.cognitive_biasLabel}}</span>
-							<span class="list__text" 
-								*ngIf="!item.cognitive_biasLabel">{{item.wikiMedia_label}}</span>
-						</span>
+	<div *ngIf="view === 'list'">
+		<ion-spinner *ngIf="!list" 
+			name="lines"
+			class="center"></ion-spinner>
+		<ion-list no-lines class="list">
+			<ion-item-sliding *ngFor="let item of list; let i = index">
+				<div *ngIf="item.sortName">
+					<ion-item slot="start"
+						routerLink="/detail/{{item.sortName}}"
+						(click)="setStateViewed(i)"
+						tappable 
+						(click)="navigateAction(item.sortName, i)"
+						routerDirection="forward"
+						detail="true">
+						<div *ngIf="item">
+							<span class="ion-list__defaultItem"
+								[ngClass]="{
+									'list__both': item.cognitive_biasLabel && item.wikiMedia_label, 
+									'list__text-wikimedia': !item.cognitive_biasLabel,
+									'list__item--viewed': item.detailState ==='viewed'}">
+								<span class="list__text" 
+									*ngIf="item.cognitive_biasLabel">{{item.cognitive_biasLabel}}</span>
+								<span class="list__text" 
+									*ngIf="!item.cognitive_biasLabel">{{item.wikiMedia_label}}</span>
+							</span>
+						</div>
+					</ion-item> 
+					<ion-item-options padding-start
+						(ionSwipe)="viewShortDescription(item)"
+						*ngIf="item.wikiMedia_description"
+						#itemSliding
+						slot="left"
+						class="shortDescription">
+						<div *ngIf="item.wikiMedia_description">
+							{{ item.wikiMedia_description }}</div>
+					</ion-item-options>
+				</div>
+			</ion-item-sliding>
+		</ion-list>
+	</div>
+
+	<div *ngIf="view === 'detail'">
+		<ion-card>
+			<ion-card-header>
+				<b>Wikipedia description <span *ngIf="description === null"> loading ...</span></b>
+				</ion-card-header>
+				<ion-card-content>
+					<div *ngIf="description === null"
+						class="spinner">
+						<ion-spinner name="lines"></ion-spinner>
 					</div>
-				</ion-item> 
-				<ion-item-options padding-start
-					(ionSwipe)="viewShortDescription(item)"
-					*ngIf="item.wikiMedia_description"
-					#itemSliding
-					slot="left"
-					class="shortDescription">
-					<div *ngIf="item.wikiMedia_description">
-						{{ item.wikiMedia_description }}</div>
-				</ion-item-options>
-			</div>
-		</ion-item-sliding>
-	</ion-list>
+					<div *ngIf="description" 
+						(click)="descriptionOnClick()"
+						#descriptionhook 
+						[innerHTML]="description">
+					</div>
+			</ion-card-content>
+		</ion-card>
+		<ion-card *ngIf="wikiMediaCategory">
+			<ion-card-content>
+				Category: {{wikiMediaCategory}}
+			</ion-card-content>
+		</ion-card>
+		<ion-card>
+			<ion-card-content>
+				<p>Wikipedia page for <a href="{{wikipediaLink}}">{{itemName}}</a></p>
+			</ion-card-content>
+		</ion-card>
+	</div>
 </ion-content>
