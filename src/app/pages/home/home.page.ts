@@ -13,6 +13,7 @@
         styleUrls: ['home.page.scss'],
     })
     export class HomePage {
+        previousView: string;
         // shared list/detail members
         backupTitle: string;
 
@@ -25,6 +26,14 @@
     options: any;
     @ViewChild('item') private item: ElementRef;	
     //@ViewChild('itemSliding', { read: ItemSliding }) private itemSliding: ItemSliding;
+
+    // option view members
+    //version: string;
+    optionsName = 'options';
+    languages: string [];
+    //langChoice: string;
+    //options: any;
+    customPopoverOptions: any
 
     // detail view members
     officialTitle: string;
@@ -70,6 +79,46 @@
             this.getList();
         }
         });
+    }
+
+    gotoOptions() {
+        this.previousView = this.view;
+        this.view = 'options';
+    }
+
+    // option page functions ====================
+    /**
+     * Get options from the native storage or create them if they don't exist.
+     */
+    ngOnInit() { 
+        this.dataStorageService.getItemViaNativeStorage(this.optionsName).then((result) => {
+        if (result) {
+            this.options = result;
+            this.languages = this.options['languages'];
+            this.langChoice = this.options['language'];
+        }
+        });
+        this.customPopoverOptions = {
+        header: 'Available languages',
+        };
+    }
+
+    optionsRefreshList() {
+        console.log('refreshList');
+        this.dataStorageService.sharedAction = 'reset-list';
+        this.goBack();
+        
+    }
+
+    changeLang(event: any) {
+        this.langChoice = event;
+        this.options['language'] = event;
+        this.dataStorageService.setItem(this.optionsName,this.options);
+        this.goBack();
+    }
+
+    goBack() {
+        this.view = this.previousView;
     }
 
     // detail page functions ====================

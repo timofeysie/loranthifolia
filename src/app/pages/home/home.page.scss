@@ -1,3 +1,26 @@
+/*--- option page styles ---*/
+.back_arrow {
+    font-size: 1.5em !important;
+}
+.back_button {
+    background-color: transparent;
+    position: relative;
+    top: 2px;
+}
+.legendMargin {
+    margin: 5px;
+}
+.ion-list__defaultItem {
+    list-style-type: none;
+    color: green;
+}
+.list__both {
+    color: black;
+}
+.list__text-wikimedia {
+    color: LightSalmon;
+}
+
 /*--- detail page styles ---*/
 .back_arrow {
     font-size: 1.5em !important;
@@ -47,7 +70,9 @@ ion-item-options {
     background-color: bisque;
 }
 .version_text {
-    font-size: 0.4em;
+    font-size: 0.6em;
+    position: relative;
+    left: 83%;
 }
 
 .list__text::first-letter {

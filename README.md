@@ -75,7 +75,8 @@ Planned features include:
 1. Export xAPI actions.
 1. Add options for the list colors.
 1. Compare lists when refreshed and alert user of deletions/additions.
-1. Free version bundled with a static list and detail content.
+1. Free version bundled with a static list and detail content (what are the legal issues?).
+1. Breadcrumbs for navigation history
 
 
 ## AWS Amplify
