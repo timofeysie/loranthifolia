@@ -1,14 +1,42 @@
-.shortDescription {
-    margin-top: -5px;
+/*--- detail page styles ---*/
+.back_arrow {
+    font-size: 1.5em !important;
 }
+.turn_off {
+    visibility: hidden !important;
+}
+.detail_title {
+    position: relative;
+    left: 22px;
+}
+.back_button {
+    background-color: transparent;
+    position: relative;
+    top: 26px;
+    border: none;
+    outline: none;
+}
+.spinner {
+    margin: auto;
+    width: 50%;
+    position: relative;
+    left: 9%;
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+/*--- list page styles -----*/
 .small_arrow {
     font-size: 1em;
 }
 .optionsIcon {
     position: absolute;
     right: 6%;
+    top: 15px;
     font-size: 1.7em;
     color: lightgray;
+    border: none;
+    outline: none;
 }
 .refreshIcon {
     position: relative;
@@ -39,8 +67,10 @@ ion-item-options {
 .list__item--viewed {
     opacity: 0.5;
 }
-/* styles for '...' */ 
 .shortDescription {
+    margin-top: -5px;
+
+    /* styles for '...' */    
     padding: 9px;
     /* hide text if it more than N lines  */
     overflow: hidden;
@@ -55,9 +85,8 @@ ion-item-options {
     /* place for '...' */
     margin-right: -1em;
     padding-right: 1em;
-  }
-  /* create the ... */
-  .shortDescription {
+    
+    /* create the ... */
     /* points in the end */
     content: '...';
     /* absolute position */
@@ -65,9 +94,9 @@ ion-item-options {
     /* set position to right bottom corner of block */
     right: 0;
     bottom: 0;
-  }
-  /* hide ... if we have text, which is less than or equal to max lines */
-  .shortDescription:after {
+}
+/* hide ... if we have text, which is less than or equal to max lines */
+.shortDescription:after {
     /* points in the end */
     content: '';
     /* absolute position */
@@ -80,7 +109,7 @@ ion-item-options {
     margin-top: 0.2em;
     /* bg color = bg color under block */
     background: white;
-  }
+}
 ion-icon {
     outline: none;
 }

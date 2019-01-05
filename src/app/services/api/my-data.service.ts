@@ -15,6 +15,12 @@ export class MyDataService {
   constructor(private http: Http,private  httpClient:  HttpClient) {
   }
 
+  getLocalDetail(lang: string, name: string) {
+      this.http.get('assets/data/aquiescence_bias.json').subscribe(data => {
+        console.log('data',data);
+      });
+  }
+
   /**
    * /api/list
    * @param lang 

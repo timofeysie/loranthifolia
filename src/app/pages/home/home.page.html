@@ -1,14 +1,28 @@
 <ion-header>
-  <ion-toolbar color="medium">
-    <ion-title slot="start">
-		<span *ngIf="list">{{list.length}}</span> 
-			Cognitive Biases 
-	</ion-title>
-		<!-- <span class="version_text">version: {{version}}</span> -->
-	<ion-icon name="settings" 
-		slot="end"
-		class="optionsIcon"
-		routerLink="/options" ></ion-icon>
+  	<ion-toolbar color="medium">
+		<div *ngIf="view === 'list'">
+			<ion-title slot="start">
+				<span *ngIf="list">{{list.length}}</span> 
+					Cognitive Biases 
+			</ion-title>
+				<!-- <span class="version_text">version: {{version}}</span> -->
+			<ion-icon name="settings" 
+				slot="end"
+				class="optionsIcon"
+				routerLink="/options" ></ion-icon>
+		</div>
+		<div *ngIf="view === 'detail'">
+			<button ion-button 
+				icon-only 
+				tappable
+				slot="left"
+				(click)="backToList()"
+				class="back_button">
+				  <ion-icon name="arrow-back"
+					class="back_arrow"></ion-icon>
+			  </button>
+			  <ion-title slot="center" class="detail_title">{{officialTitle}}</ion-title>
+		</div>
   </ion-toolbar>
 </ion-header>
 
@@ -21,7 +35,6 @@
 			<ion-item-sliding *ngFor="let item of list; let i = index">
 				<div *ngIf="item.sortName">
 					<ion-item slot="start"
-						routerLink="/detail/{{item.sortName}}"
 						(click)="setStateViewed(i)"
 						tappable 
 						(click)="navigateAction(item.sortName, i)"

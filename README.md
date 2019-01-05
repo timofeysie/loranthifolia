@@ -1012,8 +1012,23 @@ See, there is part of the route that is missing.  It appears as if the qCode has
 
 [This is the merge request](https://github.com/timofeysie/loranthifolia/commit/f29dc44c4e24b237fe6776a3091f77e06a0c7af0) where the new branch replaced the master branch after starting a new project with release candidate 0 which can actually be build for iOS distribution.
 
-Science itself does not filter out any knowledge, and indeed the book mentioned can be included in the subject of science.  The book does bring up a sociological aspect of reporting about the influence of the dominant ideas of a time period on scientific research.  When it comes to dating archeological remains, later results are more reliable than earlier ones often done by amateurs, but these finds are in no way forbidden.
+Despite fixing the the double slash in the url problem,  the routing didn't work.  To move things along we put the detail functionality into the list page.  Not ideal but it fits in with our plan to use the tabs from the component library for switching views and not rely on the framework router.
 
+But for some reason the item name is coming out as 'list'.  It was a hastily done refactor which I hope no one looks at closely.  All the functions from getting the lists and merging them to dealing with the possible re-directs to get the details need to be looked and thoroughly and moved into appropriate classes.  Most of it should go into the component library which exists only to support this project anyway.  It's probably something that's not going to be used for other purposes, as it's not being designed for that.  And it has to be constantly remembered that this is just to get the MVP release over the line which will enable use to get feedback from actual users as the re-design is underway.
+
+So after fixing the item name, we still have to deal with the return to list feature, and the to and back from the options page.  Actually, there is more than that.  The detail page relied on life cycle hooks to do it's thing, so these need to be manually triggered now.  Just had a terrible infinite loop which crashed the browser and finally restarted the computer to get back to work.  Part of the problem is this old MacBook Pro from 2014.
+
+We actually need a checklist now.
+```
+change the header for details.
+merge the two style sheets
+the return to list from detail.
+to and back from the options page.
+remove the preambles again.
+deploy to TestFlight.
+```
+
+Wow.  We were almost done with this a month ago after uploading to the Play Store.  What a bummer developing can be sometimes!
 
 
 ## Google Playstore Release
@@ -1298,7 +1313,7 @@ overflow: hidden;
 text-overflow: ellipsis;
 ```
 
-The only problem with this is it gives us only one one.  If it will get us to our first release and doesn't look bad, it's in.  I was about to tick this one off, but on testing a device view, it's just not enough information to be helpful without two lines, so we're not out of the woods yet.
+The only problem with this is it gives us only one line.  If it will get us to our first release and doesn't look bad, it's in.  I was about to tick this one off, but on testing a device view, it's just not enough information to be helpful without two lines, so we're not out of the woods yet.
 
 [This SO question](https://stackoverflow.com/questions/48047524/dynamically-styling-ionic-ion-item-sliding-items-with-ngstyle) is 9 months old.  I'm thinking now this is a shadow DOM issue, so let's find out what properties are exposed in this Ionic component before settling for less.  As a bonus we will be able to answer that question on SO and get some brownie points.
 
