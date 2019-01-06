@@ -76,7 +76,25 @@ Planned features include:
 1. Add options for the list colors.
 1. Compare lists when refreshed and alert user of deletions/additions.
 1. Free version bundled with a static list and detail content (what are the legal issues?).
-1. Breadcrumbs for navigation history
+1. Breadcrumbs for navigation history.
+
+
+## The free version of the app
+
+Because the server is involved in getting content from Wikipedia, using it in a free app has financial consequences.  Saving all the detail pages and bundling them with the distribution has legal consequences, because there are multiple authors of the content, and the material is protected by licenses.
+
+Luckily, [Wikipedia has reuse info](https://en.wikipedia.org/wiki/Wikipedia:FAQ/Copyright#Can_I_reuse_Wikipedia's_content_somewhere_else?) which is pretty straight forward to read.  It looks like the free app would also have to be released  under the Creative Commons Attribution/Share-Alike License or the GFDL.  This states that we have to attribute the authors and allow others to freely copy the app.  Since it's already an open source project on GitHub, we have that going for it.
+
+It might actually be a lot of work however to attribute authors.  As the linked document above states:
+*Some text has been imported only under CC-BY-SA and CC-BY-SA-compatible licenses and cannot be reused under GFDL; such text will be identified either on the page footer, in the page history or the discussion page of the article that utilizes the text. All text published before June 15th, 2009 on Wikipedia was released under the GFDL, and you may also use the page history to retrieve content published before that date to ensure GFDL compatibility.*
+
+So looks like we would have to do some more parsing of the detail pages to capture this info.  So, for now, that is not going to happen.  It's worth keeping in mind as we continue development hoping that the app doesn't get too much exposure and start costing us money for hosting the server.
+
+Originally we intended the app to be self reliant but if you read older entries, you would find out that getting around the CORS issues failed.  Recently, I learned that [it might be due to](https://www.joshmorony.com/dealing-with-cors-cross-origin-resource-sharing-in-ionic-applications/) upgrading from UIWebView to WKWebView.
+
+It seems we should be able to proxy requests through native code using the HTTP Ionic Native plugin.  However, this may not work with Ionic4/Capacitor.  At least someone pointed this out two months ago in the comments of the blog above and has not been answered.  Not sure what Josh is doing, but it might be worth asking him this directly, as I have talked with him by email before.
+
+Anyhow, the verdict is still out on this method, but it's worth trying again.  Keep in mind that the proxy server we are currently using and hosted on Heroku does quite a bit of work which would all need to then be done on the client, so this method also is not a quick fix to this problem.
 
 
 ## AWS Amplify
