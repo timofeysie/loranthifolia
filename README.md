@@ -1049,6 +1049,27 @@ deploy to TestFlight.
 
 Wow.  We were almost done with this a month ago after uploading to the Play Store.  What a bummer developing can be sometimes!
 
+To add to this, git stopped working to push to GitHub.  The closer you get to deployment, the more errors seems to crop up.  This actually a cognitive bias at work.  Anyway, had to run this line:
+```
+git config --global core.askpass "git-gui--askpass"
+```
+
+And then enter the credentials (even the username was treated to the password * for some reason) and the push worked.  Strange.  In all our years of working with Git (since 2012), never had to do that before!
+
+Let's check out burndown now:
+```
+done - change the header for details.
+done - merge the two style sheets
+done - the return to list from detail.
+done - to and back from the options page.
+done - refresh the list function
+change the language
+remove the preambles again.
+deploy to TestFlight.
+```
+
+The change the language function was working for a minute, now it's not after implementing the refresh list.
+
 
 ## Google Playstore Release
 

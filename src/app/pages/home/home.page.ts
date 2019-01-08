@@ -54,30 +54,19 @@
         public events: Events,
         private router:Router,
         private zone: NgZone) {
-        this.router.events.forEach((event) => {
-            if (event instanceof NavigationEnd && this.router.url === '/home') {
-            // reload list with the new options if they have changed
-            this.checkForUpdateOptions();
-            /* Since a back(params) is not available, we need a way to tell the
-            app to refresh the list when coming back from the options page.*/
-            if (this.dataStorageService.sharedAction === 'reset-list') {
-                this.dataStorageService.sharedAction = 'none';
-                this.refreshList();
-            }
-            }
-        });
         this.version = CONSTANTS.VERSION;
         events.subscribe('ionDrag', (what) => {
             // user and time are the same arguments passed in `events.publish(user, time)`
             console.log('Welcome', what);
         });
+
         this.dataStorageService.getItemViaNativeStorage(CONSTANTS.OPTIONS_NAME).then((result) => {
-        if (result) {
-            this.options = result;
-            this.langChoice = this.options['language'];
-            // kick off the action
-            this.getList();
-        }
+            if (result) {
+                this.options = result;
+                this.langChoice = this.options['language'];
+                // kick off the action
+                this.getList();
+            }
         });
     }
 
@@ -103,18 +92,15 @@
         };
     }
 
-    optionsRefreshList() {
-        console.log('refreshList');
-        this.dataStorageService.sharedAction = 'reset-list';
-        this.goBack();
-        
-    }
-
     changeLang(event: any) {
+        console.log('event',event);
         this.langChoice = event;
         this.options['language'] = event;
         this.dataStorageService.setItem(this.optionsName,this.options);
-        this.goBack();
+        this.langChoice = this.options['language'];
+        this.getList();
+        this.view = 'list';
+        //this.content.refresh;
     }
 
     goBack() {
@@ -127,6 +113,7 @@
         this.description = null;
         this.backupTitle = null;
     }
+
     detailNgAfterViewChecked() {
         if (this.dataStorageService.sharedAction !== '') {
             this.shortDescription = this.dataStorageService.sharedAction;
@@ -359,6 +346,7 @@
     refreshList() {
         this.list = null;
         this.getListFromStorageOrServer();
+        this.view = 'list';
     }
 
     /**

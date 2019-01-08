@@ -110,7 +110,8 @@
 				<p>Wikipedia page for <a href="{{wikipediaLink}}">{{itemName}}</a></p>
 			</ion-card-content>
 		</ion-card>
-	</div>
+    </div>
+    
 	<div *ngIf="view === 'options'">
 		<ion-item>
 			<ion-label>Refresh list</ion-label>
@@ -118,7 +119,8 @@
 				<p>Warning: this will clear the item states.</p>
 			</ion-label>
 				<ion-button (click)="refreshList()"
-					color="secondary">Refresh now</ion-button> 
+					color="secondary"
+                    class="refeshList__button">Refresh now</ion-button> 
 		</ion-item>
 				
 		<ion-item>
