@@ -32,8 +32,8 @@ npx cap update
 ## Table of Contents
 
 1. [Planned features](#planned-features)
-1. [AWS Amplify](#aws-amplify)
 1. [Apple App Store Release](#apple-App-Store-Release)
+1. [AWS Amplify](#aws-amplify)
 1. [Google Playstore Release](#google-Playstore-Release)
 1. [Fixing the GitHub issues](#fixing-the-GitHub-issues)
 1. [Fixing the citations](#fixing-the-citations)
@@ -95,76 +95,6 @@ Originally we intended the app to be self reliant but if you read older entries,
 It seems we should be able to proxy requests through native code using the HTTP Ionic Native plugin.  However, this may not work with Ionic4/Capacitor.  At least someone pointed this out two months ago in the comments of the blog above and has not been answered.  Not sure what Josh is doing, but it might be worth asking him this directly, as I have talked with him by email before.
 
 Anyhow, the verdict is still out on this method, but it's worth trying again.  Keep in mind that the proxy server we are currently using and hosted on Heroku does quite a bit of work which would all need to then be done on the client, so this method also is not a quick fix to this problem.
-
-
-## AWS Amplify
-
-The preference related planned features are:
-
-1. language change option
-2. save named list changes in local storage
-3. create a new category
-
-However, we will also need to store an email and possibly other user info to accomplish these.  Combine hosting, OAuth and a backend including lambda hosted endpoints and you have a pretty powerful mix.  Include a CLI like Amplify and it looks like a better choice than to solve all those issues including user management and a database separately.
-
-The [Amplify docs](https://blog.ionicframework.com/adding-aws-amplify-to-an-ionic-4-app/) for Ionic have come and gone and come back again, so with an AWS account in hand, here we go.  
-
-We probably need to start with an Ionic update.  This project was started with Ionic 4 alpha 7.  Now it's at beta 15.  Where is the changelog and update guide?
-
-We will be starting with a blank app and building the todo list to start from a working model as we introduce the list, details and option pages.  So maybe we don't need to do an upgrade at all.
-
-Here is the outline for the next few sprints:
-
-1. Create the ToDo model and UI
-1. Define the data model
-1. Create a list component
-1. Create module definition
-1. Add your route
-1. Add a new tab
-1. Add an authorization service
-1. Add buttons to the homepage
-1. Add auth service and list module to tabs module
-1. Run and test your app
-1. Implementing CRUD functionality
-1. Create a modal
-1. Define modal in your list module
-1. Import the modal in your list page
-1. Test CRUD functionality
-1. Part 2: Working with Amplify CLI
-1. Install and Configure AWS Amplify
-1. Creating AWS Resources with the CLI
-1. Add Global Shim
-1. Adding Analytics to your Ionic app
-1. Part 3: Adding Authorization
-1. Enable auth UI
-1. Using auth UI components
-1. Enable Styling
-1. Enable components in home module
-1. Run and test your app
-1. Part 4: Enabling the Cloud Backend
-1. Enable Cloud Database
-1. Add columns
-1. Enable Cloud API
-1. Adding CRUD Functionality to Your App
-
-That's a lot to cover, but with Amplify, each step should be really short.  Then we can implement our new component library to show the list and detail pages and save the item states in the cloud protected by OAuth.  But we don't want to do too much until we find out how much this could run per month.  
-
-The first two attempts to set up an Amplify demo app have failed.  Probably that should be a separate project for now.  This project can continue improvements from the list that do not include login (OAuth) and saved preferences option (db).
-
-One of those improvements is new styles for the item state.  This needs to be created as an API for the Stencil component library to implement.  Sounds exciting exclaimation mark.
-
-core.js:1521 ERROR Error: Uncaught (in promise): Error: Template parse errors:
-Parser Error: Unexpected token 'Lexer Error: Unterminated quote at column 27 in expression [viewShortDescription(item)']' at column 28 in [viewShortDescription(item)'] in ng:///HomePageModule/HomePage.html@41:5 ("
-				</ion-item> 
-				<ion-item-options padding-start
-					[ERROR ->](ionSwipe)="viewShortDescription(item)'"
-
-After two attempts to get a working sample of the todo code working, using Auth0 with Heroku (both free) is looking like a better bet.  Still, if lots of people start using the app, then we will definitely be paying money to those two, which means then having a paid version.  The free version could just be a static list that is bundled with the install so that no server interactions are needed.
-
-This version will have to be made soon.  Probably the first full release should include this version, and the one that relies on a live list and user login to support user options and all our other planned features.  If we release a free version that includes server interactions, and someone writes an article on the app, and suddenly there are a million users, we will be screwed paying for all those free users.
-
-Another thing about this fabled free version, is that we will need to scrape the detail pages from Wikipedia and save them in json files to be bundled with the app.  Another item for the proposed features list.  Copied the proposed features list from Conchifolia here to keep up with pruning the list easier.
-
 
 
 ## Apple App Store Release
@@ -1085,6 +1015,80 @@ Version number too far to the right
 Also,
 Link to license in the options page.  We have been using the GNU GENERAL PUBLIC LICENSE so far, but we should change to be in line with the Creative Commons license used by Wikipedia.  Or just put a link to it in the options page: https://creativecommons.org/licenses/by/4.0/
 
+Or is it OK to have the code under the GNU license, and the content under the CC license?  Have to ask a professional.
+
+Anyhow, first on the list is the assets for iOS.  If you remember, the [Morony link](https://www.joshmorony.com/adding-icons-splash-screens-launch-images-to-capacitor-projects/) provides all the details we need to generate the assets for the iOS release.  Since Capacitor is hands-off on the native projects side, I suppose we will have to do something like copying and renaming the assets created with the ```ionic cordova assets ios``` command, but it might be different.  Have to re-read that now with iOS in mind.
+
+
+## AWS Amplify
+
+The preference related planned features are:
+
+1. language change option
+2. save named list changes in local storage
+3. create a new category
+
+However, we will also need to store an email and possibly other user info to accomplish these.  Combine hosting, OAuth and a backend including lambda hosted endpoints and you have a pretty powerful mix.  Include a CLI like Amplify and it looks like a better choice than to solve all those issues including user management and a database separately.
+
+The [Amplify docs](https://blog.ionicframework.com/adding-aws-amplify-to-an-ionic-4-app/) for Ionic have come and gone and come back again, so with an AWS account in hand, here we go.  
+
+We probably need to start with an Ionic update.  This project was started with Ionic 4 alpha 7.  Now it's at beta 15.  Where is the changelog and update guide?
+
+We will be starting with a blank app and building the todo list to start from a working model as we introduce the list, details and option pages.  So maybe we don't need to do an upgrade at all.
+
+Here is the outline for the next few sprints:
+
+1. Create the ToDo model and UI
+1. Define the data model
+1. Create a list component
+1. Create module definition
+1. Add your route
+1. Add a new tab
+1. Add an authorization service
+1. Add buttons to the homepage
+1. Add auth service and list module to tabs module
+1. Run and test your app
+1. Implementing CRUD functionality
+1. Create a modal
+1. Define modal in your list module
+1. Import the modal in your list page
+1. Test CRUD functionality
+1. Part 2: Working with Amplify CLI
+1. Install and Configure AWS Amplify
+1. Creating AWS Resources with the CLI
+1. Add Global Shim
+1. Adding Analytics to your Ionic app
+1. Part 3: Adding Authorization
+1. Enable auth UI
+1. Using auth UI components
+1. Enable Styling
+1. Enable components in home module
+1. Run and test your app
+1. Part 4: Enabling the Cloud Backend
+1. Enable Cloud Database
+1. Add columns
+1. Enable Cloud API
+1. Adding CRUD Functionality to Your App
+
+That's a lot to cover, but with Amplify, each step should be really short.  Then we can implement our new component library to show the list and detail pages and save the item states in the cloud protected by OAuth.  But we don't want to do too much until we find out how much this could run per month.  
+
+The first two attempts to set up an Amplify demo app have failed.  Probably that should be a separate project for now.  This project can continue improvements from the list that do not include login (OAuth) and saved preferences option (db).
+
+One of those improvements is new styles for the item state.  This needs to be created as an API for the Stencil component library to implement.  Sounds exciting exclaimation mark.
+
+core.js:1521 ERROR Error: Uncaught (in promise): Error: Template parse errors:
+Parser Error: Unexpected token 'Lexer Error: Unterminated quote at column 27 in expression [viewShortDescription(item)']' at column 28 in [viewShortDescription(item)'] in ng:///HomePageModule/HomePage.html@41:5 ("
+				</ion-item> 
+				<ion-item-options padding-start
+					[ERROR ->](ionSwipe)="viewShortDescription(item)'"
+
+After two attempts to get a working sample of the todo code working, using Auth0 with Heroku (both free) is looking like a better bet.  Still, if lots of people start using the app, then we will definitely be paying money to those two, which means then having a paid version.  The free version could just be a static list that is bundled with the install so that no server interactions are needed.
+
+This version will have to be made soon.  Probably the first full release should include this version, and the one that relies on a live list and user login to support user options and all our other planned features.  If we release a free version that includes server interactions, and someone writes an article on the app, and suddenly there are a million users, we will be screwed paying for all those free users.
+
+Another thing about this fabled free version, is that we will need to scrape the detail pages from Wikipedia and save them in json files to be bundled with the app.  Another item for the proposed features list.  Copied the proposed features list from Conchifolia here to keep up with pruning the list easier.
+
+After all the issues with iOS, and the failed attempts with AWS, we have re-considered this idea.  We assumed the iOS release would happen right after the Android and be painless.  After more than a month with all the pain and refactoring, all deals are off right now.
 
 
 ## Google Playstore Release
