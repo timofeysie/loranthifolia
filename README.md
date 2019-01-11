@@ -1063,12 +1063,28 @@ done - merge the two style sheets
 done - the return to list from detail.
 done - to and back from the options page.
 done - refresh the list function
-change the language
+seems done - change the language
 remove the preambles again.
 deploy to TestFlight.
 ```
 
-The change the language function was working for a minute, now it's not after implementing the refresh list.
+The change the language function was working for a minute, now it's not after implementing the refresh list.  After trying a content refresh trick, that failed but the list refreshed, so not sure why it wasn't working before that except that maybe the server wasn't compiling the files?
+
+The only other thing then is to remove the preambles again.  We have a function for that so it's a matter of finding out why it's not working now.  Who knows, maybe something on Wikipedia has changed.  We really need to do a better job of working with WikiPedia and WikiDate.  Actually WikiData is OK as it has a query language.  WikiMedia seems less organized.
+
+First, lets try a deployment to a test device to see how it's looking.  After this (a week later), here are the iOS issues:
+```
+Splash screen and icon are stock
+List title too close to the time (it is correctly centered however)
+Detail page title not centered (it is at the right height however)
+Back from detail button hard to press
+No available languages in the select
+Version number too far to the right
+```
+
+Also,
+Link to license in the options page.  We have been using the GNU GENERAL PUBLIC LICENSE so far, but we should change to be in line with the Creative Commons license used by Wikipedia.  Or just put a link to it in the options page: https://creativecommons.org/licenses/by/4.0/
+
 
 
 ## Google Playstore Release
