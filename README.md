@@ -1010,14 +1010,323 @@ Detail page title not centered (it is at the right height however)
 Back from detail button hard to press
 No available languages in the select
 Version number too far to the right
+(remove the static offline detail demo code)
 ```
 
-Also,
-Link to license in the options page.  We have been using the GNU GENERAL PUBLIC LICENSE so far, but we should change to be in line with the Creative Commons license used by Wikipedia.  Or just put a link to it in the options page: https://creativecommons.org/licenses/by/4.0/
+Also, link to license in the options page.  We have been using the GNU GENERAL PUBLIC LICENSE so far, but we should change to be in line with the Creative Commons license used by Wikipedia.  Or just put a link to it in the options page: https://creativecommons.org/licenses/by/4.0/
 
 Or is it OK to have the code under the GNU license, and the content under the CC license?  Have to ask a professional.
 
 Anyhow, first on the list is the assets for iOS.  If you remember, the [Morony link](https://www.joshmorony.com/adding-icons-splash-screens-launch-images-to-capacitor-projects/) provides all the details we need to generate the assets for the iOS release.  Since Capacitor is hands-off on the native projects side, I suppose we will have to do something like copying and renaming the assets created with the ```ionic cordova assets ios``` command, but it might be different.  Have to re-read that now with iOS in mind.
+
+Here are the assets created with the Ionic command:
+```
+Icons
+icon-1024.png (98%)
+icon-40.png (99%)
+icon-40@2x.png (99%)
+icon-40@3x.png (99%)
+icon-50.png (99%)
+icon-50@2x.png (99%)
+icon-60.png (99%)
+icon-60@2x.png (99%)
+icon-60@3x.png (99%)
+icon-72.png (99%)
+icon-72@2x.png (99%)
+icon-76.png (99%)
+icon-76@2x.png (99%)
+icon-83.5@2x.png (99%)
+icon-small.png (99%)
+icon-small@2x.png (99%)
+icon-small@3x.png (99%)
+icon.png (99%)
+icon@2x.png (99%)
+
+Splash screens
+Default-568h@2x~iphone.png (99%)
+Default-667h.png (99%)
+Default-736h.png (97%)
+Default-Landscape-736h.png (98%)
+Default-Landscape@2x~ipad.png (98%)
+Default-Landscape@~ipadpro.png (99%)
+Default-Landscape~ipad.png (99%)
+Default-Portrait@2x~ipad.png (99%)
+Default-Portrait@~ipadpro.png (99%)
+Default-Portrait~ipad.png (98%)
+Default@2x~iphone.png (98%)
+Default@2x~universal~anyany.png (99%)
+Default~iphone.png (99%)
+ ```
+
+Here are the stock images in the Xcode project > App > App > Assets.xcassets:
+```
+AppIcon-20x20@1x.png
+AppIcon-20x20@2x-1.png
+AppIcon-20x20@2x.png
+AppIcon-20x20@3x.png
+AppIcon-29x29@1x.png
+AppIcon-29x29@2x-1.png
+AppIcon-29x29@2x.png
+AppIcon-29x29@3x.png
+AppIcon-40x40@1x.png
+AppIcon-40x40@2x-1.png
+AppIcon-40x40@2x.png
+AppIcon-40x40@3x.png
+AppIcon-60x60@2x.png
+AppIcon-60x60@3x.png
+AppIcon-76x76@1x.png
+AppIcon-76x76@2x.png
+AppIcon-83.5x83.5@2x.png
+AppIcon-512@2x.png
+```
+
+The naming is completely different.
+
+We could guess that icon-small@2x.png = AppIcon-20x20@1x.png, but we would have to check that manually.  Is there a conversion table online?
+
+There is a [link](https://developer.apple.com/design/human-interface-guidelines/ios/icons-and-images/app-icon/) with details for the icons:
+Device or context - Icon size
+```
+iPhone	180px × 180px (60pt × 60pt @3x)
+120px × 120px (60pt × 60pt @2x)
+iPad Pro	167px × 167px (83.5pt × 83.5pt @2x)
+iPad, iPad mini	152px × 152px (76pt × 76pt @2x)
+App Store	1024px × 1024px (1024pt × 1024pt @1x)
+```
+
+Device	Spotlight icon size
+```
+iPhone	120px × 120px (40pt × 40pt @3x)
+80px × 80px (40pt × 40pt @2x)
+iPad Pro, iPad, iPad mini	80px × 80px (40pt × 40pt @2x)
+```
+
+Device	Settings icon size
+```
+iPhone	87px × 87px (29pt × 29pt @3x)
+58px × 58px (29pt × 29pt @2x)
+iPad Pro, iPad, iPad mini	58px × 58px (29pt × 29pt @2x)
+```
+
+Device	Notification icon size
+```
+iPhone	60px × 60px (20pt × 20pt @3x)
+40px × 40px (20pt × 20pt @2x)
+iPad Pro, iPad, iPad mini	40px × 40px (20pt × 20pt @2x)
+```
+
+We don't really care about what they are for, we just want to cover all the bases.  So lets create our own list without the types.
+
+Icon sizes
+```
+180px × 180px (60pt × 60pt @3x)
+120px × 120px (60pt × 60pt @2x)
+167px × 167px (83.5pt × 83.5pt @2x)
+152px × 152px (76pt × 76pt @2x)
+1024px × 1024px (1024pt × 1024pt @1x)
+120px × 120px (40pt × 40pt @3x)
+80px × 80px (40pt × 40pt @2x)
+80px × 80px (40pt × 40pt @2x)
+87px × 87px (29pt × 29pt @3x)
+58px × 58px (29pt × 29pt @2x)
+58px × 58px (29pt × 29pt @2x)
+60px × 60px (20pt × 20pt @3x)
+40px × 40px (20pt × 20pt @2x)
+40px × 40px (20pt × 20pt @2x)
+```
+
+Now a chart to convert our names.
+
+Xcode:
+```
+AppIcon-20x20@1x.png
+AppIcon-20x20@2x-1.png
+AppIcon-20x20@2x.png
+AppIcon-20x20@3x.png
+AppIcon-29x29@1x.png
+AppIcon-29x29@2x-1.png
+AppIcon-29x29@2x.png
+AppIcon-29x29@3x.png
+AppIcon-40x40@1x.png
+AppIcon-40x40@2x-1.png
+AppIcon-40x40@2x.png
+AppIcon-40x40@3x.png
+AppIcon-60x60@2x.png
+AppIcon-60x60@3x.png
+AppIcon-76x76@1x.png
+AppIcon-76x76@2x.png
+AppIcon-83.5x83.5@2x.png
+AppIcon-512@2x.png
+```
+
+Cordova:
+```
+icon-1024.png (98%)
+icon-40.png (99%)
+icon-40@2x.png (99%)
+icon-40@3x.png (99%)
+icon-50.png (99%)
+icon-50@2x.png (99%)
+icon-60.png (99%)
+icon-60@2x.png (99%)
+icon-60@3x.png (99%)
+icon-72.png (99%)
+icon-72@2x.png (99%)
+icon-76.png (99%)
+icon-76@2x.png (99%)
+icon-83.5@2x.png (99%)
+icon-small.png (99%)
+icon-small@2x.png (99%)
+icon-small@3x.png (99%)
+icon.png (99%)
+```
+
+Working on the small size.  How do we correlate these?
+iOS size: icon@2x.png (99%) 40px × 40px (20pt × 20pt @2x)
+
+Cordova name (with info from the finder directory):
+```
+icon-small.png (99%)    - dimensions: 29 x 29.  Resolution 72 x 72.
+icon-small@2x.png (99%) - dimensions: 58 x 58.  Resolution 72 x 72.
+icon-small@3x.png (99%) - dimensions: 87 x 87.  Resolution 72 x 72.
+icon.png (99%)          - dimensions: 57 x 57.  Resolution 72 x 72.
+icon@2x.png             - dimensions: 114 x 114.  Resolution 72 x 72.
+```
+
+Xcode icon names:
+```
+AppIcon-20x20@1x.png  - dimensions: 20 x 20.
+AppIcon-20x20@2x-1.png - dimensions: 40 x 40.
+AppIcon-20x20@2x.png - dimensions: 40 x 40.
+AppIcon-20x20@3x.png - dimensions: 60 x 60.
+```
+
+We could assemble a name conversion list, but without the same exact sizes, we are out of luck.  There a no exact matches.  So we can use another tool, such as the online one we used at work before.  I believe only the 1024 image would have to be done manulally in that case.  All we have to do is locate the online tool used over a year ago now.
+
+Using [the Make App Icon](https://makeappicon.com/) site, these icons were created:
+```
+ItunesArtwork@2x.png
+Icon-App-20x20@1x.png
+Icon-App-20x20@2x.png
+Icon-App-20x20@3x.png
+Icon-App-29x29@1x.png
+Icon-App-29x29@2x.png
+Icon-App-29x29@3x.png
+Icon-App-40x40@1x.png
+Icon-App-40x40@2x.png
+Icon-App-40x40@3x.png
+Icon-App-60x60@2x.png
+Icon-App-60x60@3x.png
+Icon-App-76x76@1x.png
+Icon-App-76x76@2x.png
+Icon-App-83.5x83.5@2x.png
+```
+
+Maybe the file names are not important.  There is a Contents.json file in the created directory that also exists in the Capacitor stock icons which could provide the mapping for them.
+
+The problem with that site then is that it doesn’t create splash screens or Android assets.
+
+The splash screens created by the resources command are:
+```
+Default-568h@2x~iphone.png
+Default-667h.png
+Default-736h.png
+Default-Landscape-736h.png
+Default-Landscape@~ipadpro.png
+Default-Landscape@2x~ipad.png
+Default-Landscape~ipad.png
+Default-Portrait@~ipadpro.png
+Default-Portrait@2x~ipad.png
+Default-Portrait~ipad.png
+Default@2x~iphone.png
+Default@2x~universal~anyany.png
+Default~iphone.png
+```
+
+These are the only ones in the Xcode project creted by Capacitor:
+```
+splash-2732x2732.png
+splash-2732x2732-2.png
+splash-2732x2732-1.png
+Contents.json
+```
+
+All the same?  Where is the contents.json file:
+```
+{
+  "images" : [
+    {
+      "idiom" : "universal",
+      "filename" : "splash-2732x2732-2.png",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "splash-2732x2732-1.png",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "filename" : "splash-2732x2732.png",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  }
+}
+```
+
+So, different scales, but the files all look the same.  Here is what the [official docs](https://developer.apple.com/design/human-interface-guidelines/ios/icons-and-images/launch-screen/) say about "Static Launch Screen Images"
+*It’s best to use an Xcode storyboard for your launch screen, but you can provide a set of static images if necessary. Create static images in different sizes for different devices, and be sure to include the status bar region.*
+```
+Device	Portrait size	Landscape size
+12.9" iPad Pro	2048px × 2732px	2732px × 2048px
+11" iPad Pro	1668px × 2388px	2388px × 1668px
+10.5" iPad Pro	1668px × 2224px	2224px × 1668px
+9.7" iPad	1536px × 2048px	2048px × 1536px
+7.9" iPad mini 4	1536px × 2048px	2048px × 1536px
+iPhone XS Max	1242px × 2688px	2688px × 1242px
+iPhone XS	1125px × 2436px	2436px × 1125px
+iPhone XR	828px × 1792px	1792px × 828px
+iPhone X	1125px × 2436px	2436px × 1125px
+iPhone 8 Plus	1242px × 2208px	2208px × 1242px
+iPhone 8	750px × 1334px	1334px × 750px
+iPhone 7 Plus	1242px × 2208px	2208px × 1242px
+iPhone 7	750px × 1334px	1334px × 750px
+iPhone 6s Plus	1242px × 2208px	2208px × 1242px
+iPhone 6s	750px × 1334px	1334px × 750px
+iPhone SE	640px × 1136px	1136px × 640px
+```
+
+Going to try the next option on the Morony list, [Image Gorilla](https://apetools.webprofusion.com/app/#/tools/imagegorilla).  We should have used that first.  As long as it works of course.  Once choice is specifically for Ionic.  I creates a lot more splash screens with names like this:
+```
+Default-Landscape-2436h.png
+Default-2436h.png
+Default@3x~iphone~comany.png
+Default@3x~iphone~anycom.png
+...
+```
+
+There is no Contents.json file.  Will Xcode generate this if we just dump the images in the proper directory?  The other iOS option creates a few less splash screens: iOS: 14 icon sizes, 22 splashscreen sizes.  Compared with iOS (Ionic): 25 icon sizes, 23 splashscreen sizes.
+
+Maybe the Ionic version is for pre-Ionic 4 without Capacitor (probably!).  Using the pure iOS option gives us files like this:
+```
+LaunchImage-2436@3x~iphoneX-landscape_2436x1125.png
+LaunchImage-1125@3x~iphoneX-portrait_1125x2436.png
+LaunchImage-1242@3x~iphone6s-landscape_2208x1242.png
+LaunchImage-1242@3x~iphone6s-portrait_1242x2208.png
+```
+
+So, still not sure what to do with those.  Still no Contents.json file.  I'm thinking just dump them in the directory and then try a build/deploy and see what happens.  It's only 2:37 am on a Saturday night/Sunday morning.  Not like I should be going to bed or anything.  The Air B'n'B'ers downstairs had a loud party until 1:30 and then a prolonged love making session which sounded like it was in the same room.  Moving on, ... reading [an old schoolers approach](https://medium.com/@mattholt/its-2019-and-i-still-make-websites-with-my-bare-hands-73d4eec6b7) to web design: lol, "so I’m googling two-way data binding in React"!
+
+Now should I be deleting the Contents.json file along with the old splash screens?
+
+Now there is an alert on the Splash screen, and more alert on the Xcode page that mouseover "The image set 'Splash' has 22 unassigned children".
+
+There is one of those on the ApiIcon folder page in Xcode also.
+
 
 
 ## AWS Amplify

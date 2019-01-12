@@ -12,16 +12,18 @@
 				(click)="gotoOptions()" ></ion-icon>
 		</div>
 		<div *ngIf="view === 'detail'">
-			<button ion-button 
-				icon-only 
-				tappable
-				slot="left"
-				(click)="backToList()"
-				class="back_button">
-				  <ion-icon name="arrow-back"
-					class="back_arrow"></ion-icon>
-			  </button>
-			  <ion-title slot="center" class="detail_title">{{officialTitle}}</ion-title>
+			  <ion-title slot="center">
+                  <span>
+                        <button ion-button 
+                        icon-only 
+                        tappable
+                        slot="left"
+                        (click)="backToList()"
+                        class="back_button">
+                          <ion-icon name="arrow-back"
+                            class="back_arrow"></ion-icon>
+                      </button>
+                  </span>{{officialTitle}}</ion-title>
 		</div>
 		<div *ngIf="view === 'options'">
 				<button ion-button 
