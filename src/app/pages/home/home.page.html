@@ -12,34 +12,38 @@
 				(click)="gotoOptions()" ></ion-icon>
 		</div>
 		<div *ngIf="view === 'detail'">
-			  <ion-title slot="center">
-                  <span>
-                        <button ion-button 
+			<ion-title slot="start">
+                <span>
+                    <button ion-button 
                         icon-only 
                         tappable
                         slot="left"
                         (click)="backToList()"
                         class="back_button">
-                          <ion-icon name="arrow-back"
+                        <ion-icon name="arrow-back"
                             class="back_arrow"></ion-icon>
-                      </button>
-                  </span>{{officialTitle}}</ion-title>
+                    </button>
+                </span>{{officialTitle}}
+            </ion-title>
 		</div>
 		<div *ngIf="view === 'options'">
-				<button ion-button 
-				icon-only 
-				tappable
-				slot="left"
-				(click)="goBack()"
-				class="back_button">
-				  <ion-icon name="arrow-back"
-					class="back_arrow"></ion-icon>
-			  </button>
-			  <ion-title slot="start"
-			  	class="detail_title">
-					  Options
-			  </ion-title>
-			  <span class="version_text">version: {{version}}</span>
+			<ion-title slot="start"
+                  class="detail_title">
+                <span>
+                    <button ion-button 
+                      icon-only 
+                        tappable
+                        slot="start"
+                        (click)="goBack()"
+                        class="back_button">
+                        <ion-icon name="arrow-back"
+                            class="back_arrow"></ion-icon>
+                    </button>
+                
+              Options
+              <span slot="end" class="version_text">version: {{version}}</span>
+            </span>
+			</ion-title>
 		</div>
   </ion-toolbar>
 </ion-header>

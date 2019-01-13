@@ -1003,15 +1003,15 @@ The change the language function was working for a minute, now it's not after im
 The only other thing then is to remove the preambles again.  We have a function for that so it's a matter of finding out why it's not working now.  Who knows, maybe something on Wikipedia has changed.  We really need to do a better job of working with WikiPedia and WikiDate.  Actually WikiData is OK as it has a query language.  WikiMedia seems less organized.
 
 First, lets try a deployment to a test device to see how it's looking.  After this (a week later), here are the iOS issues:
-```
-Splash screen and icon are stock
-List title too close to the time (it is correctly centered however)
-Detail page title not centered (it is at the right height however)
-Back from detail button hard to press
-No available languages in the select
-Version number too far to the right
-(remove the static offline detail demo code)
-```
+
+1. Splash screen and icon are stock
+2. List title too close to the time and should be left
+3. Detail page title not centered (it is at the right height however)
+4. Back from detail button hard to press
+5. No available languages in the select
+6. Version number too far to the right
+7. Remove the static offline detail demo code
+8. App seems to hang on first install
 
 Also, link to license in the options page.  We have been using the GNU GENERAL PUBLIC LICENSE so far, but we should change to be in line with the Creative Commons license used by Wikipedia.  Or just put a link to it in the options page: https://creativecommons.org/licenses/by/4.0/
 
@@ -1319,13 +1319,19 @@ LaunchImage-1242@3x~iphone6s-landscape_2208x1242.png
 LaunchImage-1242@3x~iphone6s-portrait_1242x2208.png
 ```
 
-So, still not sure what to do with those.  Still no Contents.json file.  I'm thinking just dump them in the directory and then try a build/deploy and see what happens.  It's only 2:37 am on a Saturday night/Sunday morning.  Not like I should be going to bed or anything.  The Air B'n'B'ers downstairs had a loud party until 1:30 and then a prolonged love making session which sounded like it was in the same room.  Moving on, ... reading [an old schoolers approach](https://medium.com/@mattholt/its-2019-and-i-still-make-websites-with-my-bare-hands-73d4eec6b7) to web design: lol, "so I’m googling two-way data binding in React"!
+So, still not sure what to do with those.  Still no Contents.json file.  I'm thinking just dump them in the directory and then try a build/deploy and see what happens.  It's only 2:37 am on a Saturday night/Sunday morning.  Not like I should be going to bed or anything.  The Air B'n'B'ers downstairs had a loud party until 1:30 and then a prolonged love making session which sounded like it was in the same room.  Moving on, ... reading [an old schoolers approach](https://medium.com/@mattholt/its-2019-and-i-still-make-websites-with-my-bare-hands-73d4eec6b7) to web design: lol, "so I’m googling two-way data binding in React"!  It's funny because React was created as a react(ion) against AngularJS's two-way data binding.
 
 Now should I be deleting the Contents.json file along with the old splash screens?
 
 Now there is an alert on the Splash screen, and more alert on the Xcode page that mouseover "The image set 'Splash' has 22 unassigned children".
 
-There is one of those on the ApiIcon folder page in Xcode also.
+There is one of those on the ApiIcon folder page in Xcode also.  In the end we just dragged the 2732 splash image to all three icons shown in the Xcode loader image page and that works for now.  Will have to test on some tables to see if it looks strange or something there.
+
+Other items on the list:
+2. List title too close to the time and should be left
+8. App seems to hang on first install
+
+For the first one, we might have to check the platform and then adjust the header by pushing it down.  It looks great on Android and terrible on iOS.  It that really what the stock blank starter app looks like on iOS?  Have to test on some more devices.  Also, the first install list problem needs more testing to debug that.  But we are so close!  TestFlight here we come.
 
 
 
