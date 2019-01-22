@@ -77,7 +77,152 @@ Planned features include:
 1. Compare lists when refreshed and alert user of deletions/additions.
 1. Free version bundled with a static list and detail content (what are the legal issues?).
 1. Breadcrumbs for navigation history.
+1. Item state should not change if the detail view fails.
 
+
+
+
+## Refactoring
+
+One thing I miss about the Eclipse IDE is the brief of functions on the right hand side of the Java classes.  Previously VSCode didn't have this feature, except via plugin, so I made this API list to help plan the refactor of the code.  Now I find VSCode comes with it out of the box.  It's and *outline* view under the file explorer.  That will help going forward.
+
+The list of functions in the list page grew out of control as it took on the responsibility of both the detail and the options page.  Since we will be moving to stencil for the layout components, we need to separate business login from framework logic (routing, etc) from layout functions.  Which ones belong to the container, whatever it may be, and which ones belong to the parsing of Wikipedia.  Instead of MVP we have BFL (Business logic, framework, layout).
+
+```
+
+    // option page functions ====================
+    /**  Get options from the native storage or create them if they don't exist. */
+    ngOnInit() 
+    changeLang(event: any)
+    gotoOptions()
+    goBack()
+    
+
+    // detail page functions ====================
+    backToList() 
+    detailNgAfterViewChecked()
+            // (learn how and when ...)
+            let images = ('ambox');
+    getDetails() 
+            // Preamble toggle work in progress       
+            // the exclamation mark icon description, and sub icons and descriptions
+            // this article includes a list of references but...
+            // this article may have to be rewritten entirely to comply ...
+            // the exclamation mark icon description, and sub icons and descriptions 
+            // Please help to improve this article ...
+            // this is an array of the specific preambles including icons and descriptions
+            // EXAMPLES
+            // This article includes a list of references ...
+            // this article may have to be rewritten entirely to comply ...
+    removeStyleTags()
+    detailNgOnInit()
+    createElementFromHTML2(htmlString)
+
+    // list page functions ================================
+    ionViewWillEnter()
+    /** Go to the detail view.  If an item has a backup title, add that to the route.
+     * @param item Set state as viewed, get language setting, create list name, and/or title
+     * And pass on to the detail page.
+     * @param i item index */
+
+    navigateAction(item: string, i: number)
+    /**  This will be used among other things to find the list of available languages 
+     * for a detail page.
+     * @param item @returns the q-code which is the last item in a URI http://www.wikidata.org/entity/Q4533272*/
+    findQCode(item)
+
+    getList()
+
+    refreshList()
+    /** First try the local native storage to set the list.
+     * If that fails, try http. */
+    getListFromStorage()
+
+    /** If a page only has a Q-code, it does not have data for that item in the language requested.
+     * Example:
+     * "cognitive_biasLabel" : {
+     *     "type" : "literal",
+     *     "value" : "Q177603"
+     * }
+     * @param item WikiData item to check if a language page exists*/
+    languagePageDoesNotExist(item, index)
+
+    /** If the options have changed, then reload and parse the list.*/
+    checkForUpdateOptions()
+
+    /** Get the list either from storage or API if it's not there.
+     * Set the sort name to the label, then on to getting the WikiMedia
+     * category lists which will eventually merge those lists with
+     * the WikiData list. */
+    getListFromStorageOrServer() 
+
+    /** Get the list from local storage. */
+    getFromLocalStorage()
+
+    /** Use a promise chain to get the WikiMedia section lists.
+     * Sort the list after all calls have completed.
+     * Save the sorted list in the local data storage.
+     */
+    getWikiMediaLists()
+
+    /** The Ege Özcan solution from [the answer to this question](https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value-in-javascript) 
+     * back in 2011.
+     * @param property to sort by */
+    dynamicSort(property)
+
+    setStateViewed(i) 
+
+    /** Take a complete section of names and descriptions and either add the content
+     * to a pre-existing item or create a new item if it is not already on the list.
+     * @param section WIkiMedia section */
+    addItems(section: any)
+
+    removeFootnotes(description: string)
+
+    /** Create a new item from a WikiMedia list item.
+     * @param itemName Name of the item
+     * @param key key has desc, and category properties */
+    createItemObject(itemName: string, key: any, backupTitle: string)
+
+    /** Usually the name of item can be gotten from the inner text of an <a> tag inside the table cell.
+     * A few however, like 'frequency illusion' are not links, so are just the contents of the <td> tag.
+     * Some, such as 'regression bias' have a <span> inside the tag.
+     * @param data result of a WikiMedia section API call
+     * @returns Array of name/desc objects */
+    parseList(data: any)
+
+    /** Parse the anchor tag for the title of the item used in the tag,
+     * which can be different from the name of the item.
+     * @param tableDiv the DOM element
+     * @param itemName the item name */
+    getAnchorTitleForBackupTitle(tableDiv: any, itemName: string) {
+
+    /** Convert the result content to an html node for easy access to the content.
+     * Change this to div.childNodes to support multiple top-level nodes
+     * @param htmlString  */
+    createElementFromHTML(htmlString) 
+
+    /** Remove the [edit] portion of the title.
+     * @param HTMLDivElement */
+    parseTitle(html: HTMLDivElement)
+```
+
+We can label and sort the functions and group the functions and then move them into their logical parts.  The entry points for functions called by the UI, or public methods should be separated from the utility functions which should be private.
+
+The public functions are:
+```
+gotoOptions()
+backToList()
+goBack()
+setStateViewed(i)   
+navigateAction(item.sortName, i)
+viewShortDescription(item)
+descriptionOnClick()
+refreshList()
+changeLang($event)
+```
+
+Everything else should be private.
 
 ## The free version of the app
 
@@ -1330,10 +1475,64 @@ There is one of those on the ApiIcon folder page in Xcode also.  In the end we j
 Other items on the list:
 2. List title too close to the time and should be left
 8. App seems to hang on first install
+10. The short descriptions show a third cut off line and no padding on the left
 
 For the first one, we might have to check the platform and then adjust the header by pushing it down.  It looks great on Android and terrible on iOS.  It that really what the stock blank starter app looks like on iOS?  Have to test on some more devices.  Also, the first install list problem needs more testing to debug that.  But we are so close!  TestFlight here we come.
 
+The last one we could back to the ellipsis, or try out a new method.
 
+HTMLDivElement.offsetWidth is one way to go.
+
+A new method I used recently was a little hacky, but worth a try.  Uing the canvas measureText function we should be able to get the length of the text in the canvas:
+```
+element = document.createElement('canvas');
+let context = element.getContext("2d");
+context.font = 'font-size: 14px';
+return context.measureText(text).width;
+```
+
+However, all the strings come back with the same value: 113.369…
+So that’s not very helpful.
+
+How about a usual break point approach.  Tried something like this:
+```
+import { Pipe, PipeTransform } from '@angular/core';
+import { Platform } from 'ionic-angular';
+@Pipe({ name: 'wordWrap' })
+export class WordWrapPipe implements PipeTransform {
+    windowWidth;
+    
+    constructor(platform: Platform) {
+        platform.ready().then((readySource) => {
+            this.windowWidth = platform.width();
+            console.log('Width: ' + platform.width());
+        });
+    }
+    
+    transform(text: string, params: any) {
+        let newText = text;
+        if (typeof params !== 'undefined' && this.windowWidth < 400) {
+            let width = params.offsetWidth;
+            console.log('w: '+width);
+            if (width < 130 && text.length > 30) {
+                newText = text.substring(0,30) +'...'; 
+            }
+        } else {
+            console.log('no change '+this.windowWidth)
+        }
+        return newText;
+    }
+
+    getTextWidth(element, text) {
+        element = document.createElement('canvas');
+        let context = element.getContext('2d');
+        context.font = 'font-size: 14px';
+        return context.measureText(text).width;
+    }
+}
+```
+
+The main point here is the getTextWidth function which creates an element and a font and then measures the text in the element to get the width of it.
 
 ## AWS Amplify
 

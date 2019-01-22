@@ -70,11 +70,6 @@
         });
     }
 
-    gotoOptions() {
-        this.previousView = this.view;
-        this.view = 'options';
-    }
-
     // option page functions ====================
     /**
      * Get options from the native storage or create them if they don't exist.
@@ -101,6 +96,11 @@
         this.getList();
         this.view = 'list';
         //this.content.refresh;
+    }
+
+    gotoOptions() {
+        this.previousView = this.view;
+        this.view = 'options';
     }
 
     goBack() {
