@@ -7,6 +7,7 @@ Hakea loranthifolia is of the genus Hakea native to an area in the Wheatbelt reg
 A note about this readme, the oldest items are at the end and most recent at the beginning after the table of contents if you want to go from the beginning of the project to the current work.
 
 
+
 ## Work flow
 
 To run the app in development, use ```ionic serve```.
@@ -81,22 +82,31 @@ Planned features include:
 
 
 
+## The word wrap pipe
+
+The only thing remaining before the first deployment to TestFligh is the short description text.
+We wanted to try a different approach as a solution to the multi-line ellipsis problem which we have struggled with before.
+```
+$ ng generate pipe word-wrap
+Could not find module "@ionic/schematics-angular" from "/Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia".
+Error: Could not find module "@ionic/schematics-angular" from "/Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia".
+...    
+```
+
+
 
 ## Refactoring
 
 One thing I miss about the Eclipse IDE is the brief of functions on the right hand side of the Java classes.  Previously VSCode didn't have this feature, except via plugin, so I made this API list to help plan the refactor of the code.  Now I find VSCode comes with it out of the box.  It's and *outline* view under the file explorer.  That will help going forward.
 
-The list of functions in the list page grew out of control as it took on the responsibility of both the detail and the options page.  Since we will be moving to stencil for the layout components, we need to separate business login from framework logic (routing, etc) from layout functions.  Which ones belong to the container, whatever it may be, and which ones belong to the parsing of Wikipedia.  Instead of MVP we have BFL (Business logic, framework, layout).
-
+The list of functions in the list page grew out of control as it took on the responsibility of both the detail and the options page.  Since we will be moving to stencil for the layout components, we need to separate business logic from framework logic (routing, etc) from layout functions.  Which ones belong to the container, whatever it may be, and which ones belong to the parsing of Wikipedia.  Instead of MVP we have BFL (Business logic, framework, layout).  Is that a thing?
 ```
-
     // option page functions ====================
     /**  Get options from the native storage or create them if they don't exist. */
     ngOnInit() 
     changeLang(event: any)
     gotoOptions()
-    goBack()
-    
+    goBack()    
 
     // detail page functions ====================
     backToList() 
@@ -224,7 +234,9 @@ changeLang($event)
 
 Everything else should be private.
 
-## The free version of the app
+
+
+## A free version of the app
 
 Because the server is involved in getting content from Wikipedia, using it in a free app has financial consequences.  Saving all the detail pages and bundling them with the distribution has legal consequences, because there are multiple authors of the content, and the material is protected by licenses.
 
