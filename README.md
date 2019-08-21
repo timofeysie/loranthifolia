@@ -1,11 +1,31 @@
 # A WikiData List app with Ionic 4
 
-Using the latest alpha for Ionic 4, this project is to create a simple demo app to compare with a React Native app.  The app will parse WikiData and Wikipedia for a list of content and provide a master detail view of the results.
+An Ionic app with a list of Wikidata items and Wikipedia details.
 
-Hakea loranthifolia is of the genus Hakea native to an area in the Wheatbelt region of Western Australia.  It typically grows to a height of 2 to 3 metres (7 to 10 ft). It blooms from August to September and produces white flowers.
+Currently using Ionic 5 & Angular 7.
+```
+@angular: ~7.1.4
+@ionic/angular: ^5.0.0-beta.22,
+```
+
+It's time for
+```
+Angular 8
+@ionic/angular	4.7.4
+```
+
+We could also start a project for these two:
+```
+Vue	@ionic/vue	version	README.md
+React	@ionic/react	version
+```
+
+
+This project began to create a simple demo app to compare with a React Native app.  The app parses WikiData and Wikipedia for a list of content and provide a master detail view of the results.
+
+*Hakea loranthifolia is of the genus Hakea native to an area in the Wheatbelt region of Western Australia.  It typically grows to a height of 2 to 3 metres (7 to 10 ft). It blooms from August to September and produces white flowers.*
 
 A note about this readme, the oldest items are at the end and most recent at the beginning after the table of contents if you want to go from the beginning of the project to the current work.
-
 
 
 ## Work flow
@@ -40,7 +60,7 @@ npx cap update
 1. [Fixing the citations](#fixing-the-citations)
 1. [Alpha release](#alpha-release)
 1. [The backup title for Loranthifolia](#the-backup-title-for-Loranthifolia)
-1. [Manipulating the preamble DOM](#manipulating-the-preamble-DOM) 
+1. [Manipulating the preamble DOM](#manipulating-the-preamble-DOM)
 1. [Adding links](#a-dding-links)
 1. [The options page & i18n](#the-options-page-&-i18n)
 1. [Short descriptions & incomplete API references](#Short-descriptions-&-incomplete-API-references)
@@ -49,7 +69,7 @@ npx cap update
 1. [Scroll Position Restoration](#Scroll-Position-Restoration)
 1. [Merging the WikiMedia lists](#Merging-the-WikiMedia-lists)
 1. [Ionic 4 Beta and using the Conchifolia server](#ionic-4-beta-and-using-the-conchifolia-server)
-1. [Using Capacitor](#using-Capacitor) 
+1. [Using Capacitor](#using-Capacitor)
 1. [Blocked Requests](#Blocked-Requests)
 1. [Testing on Android](#Testing-on-Android)
 1. [Fixing the tests](#fixing-the-tests)
@@ -57,6 +77,38 @@ npx cap update
 1. [Starting the app and parsing Wikipedia](#Starting-the-app-and-parsing-Wikipedia)
 
 #
+
+
+# Upgrade to Ionic 4.7
+
+Had to install ionic again.  Then this:
+```
+ERROR in node_modules/@ionic-native/splash-screen/ngx/index.d.ts(1,35): error TS2307: Cannot find module '@ionic-native/core'.
+```
+Tried this:
+```
+npm i @ionic-native/core
+npm i @ionic-native/native-storage
+npm i @ionic-native/splash-screen
+npm i @ionic-native/status-bar
+```
+
+Got this:
+```
+$ npm i @ionic-native/core
+npm WARN @ionic-native/native-storage@5.12.0 requires a peer of rxjs@^5.5.0 || ^6.5.0 but none is installed. You must install peer dependencies yourself.
+npm WARN @ionic-native/splash-screen@5.0.0-beta.21 requires a peer of @ionic-native/core@5.0.0-beta.21 but none is installed. You must install peer dependencies yourself.
+npm WARN @ionic-native/status-bar@5.0.0-beta.21 requires a peer of @ionic-native/core@5.0.0-beta.21 but none is installed. You must install peer dependencies yourself.
+npm WARN @ionic/pro@2.0.4 requires a peer of cordova-plugin-ionic@^5.0.0 but none is installed. You must install peer dependencies yourself.
+npm WARN @ionic-native/core@5.12.0 requires a peer of rxjs@^5.5.0 || ^6.5.0 but none is installed. You must install peer dependencies yourself.
+```
+
+```
+npm i rxjs --save
+...
+```
+
+
 
 
 ## Planned features
@@ -103,22 +155,22 @@ The list of functions in the list page grew out of control as it took on the res
 ```
     // option page functions ====================
     /**  Get options from the native storage or create them if they don't exist. */
-    ngOnInit() 
+    ngOnInit()
     changeLang(event: any)
     gotoOptions()
     goBack()    
 
     // detail page functions ====================
-    backToList() 
+    backToList()
     detailNgAfterViewChecked()
             // (learn how and when ...)
             let images = ('ambox');
-    getDetails() 
+    getDetails()
             // Preamble toggle work in progress       
             // the exclamation mark icon description, and sub icons and descriptions
             // this article includes a list of references but...
             // this article may have to be rewritten entirely to comply ...
-            // the exclamation mark icon description, and sub icons and descriptions 
+            // the exclamation mark icon description, and sub icons and descriptions
             // Please help to improve this article ...
             // this is an array of the specific preambles including icons and descriptions
             // EXAMPLES
@@ -136,7 +188,7 @@ The list of functions in the list page grew out of control as it took on the res
      * @param i item index */
 
     navigateAction(item: string, i: number)
-    /**  This will be used among other things to find the list of available languages 
+    /**  This will be used among other things to find the list of available languages
      * for a detail page.
      * @param item @returns the q-code which is the last item in a URI http://www.wikidata.org/entity/Q4533272*/
     findQCode(item)
@@ -164,7 +216,7 @@ The list of functions in the list page grew out of control as it took on the res
      * Set the sort name to the label, then on to getting the WikiMedia
      * category lists which will eventually merge those lists with
      * the WikiData list. */
-    getListFromStorageOrServer() 
+    getListFromStorageOrServer()
 
     /** Get the list from local storage. */
     getFromLocalStorage()
@@ -175,12 +227,12 @@ The list of functions in the list page grew out of control as it took on the res
      */
     getWikiMediaLists()
 
-    /** The Ege Özcan solution from [the answer to this question](https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value-in-javascript) 
+    /** The Ege Özcan solution from [the answer to this question](https://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value-in-javascript)
      * back in 2011.
      * @param property to sort by */
     dynamicSort(property)
 
-    setStateViewed(i) 
+    setStateViewed(i)
 
     /** Take a complete section of names and descriptions and either add the content
      * to a pre-existing item or create a new item if it is not already on the list.
@@ -210,7 +262,7 @@ The list of functions in the list page grew out of control as it took on the res
     /** Convert the result content to an html node for easy access to the content.
      * Change this to div.childNodes to support multiple top-level nodes
      * @param htmlString  */
-    createElementFromHTML(htmlString) 
+    createElementFromHTML(htmlString)
 
     /** Remove the [edit] portion of the title.
      * @param HTMLDivElement */
@@ -297,8 +349,8 @@ QuinquenniumF:loranthifolia tim$ sudo gem install cocoapods
 Password:
 Fetching: concurrent-ruby-1.1.4.gem (100%)
 ...
-✖ Updating iOS native dependencies: 
-✖ update ios: 
+✖ Updating iOS native dependencies:
+✖ update ios:
 [error] Analyzing dependencies
 Fetching podspec for `Capacitor` from `../../node_modules/@capacitor/ios`
 Fetching podspec for `CapacitorCordova` from `../../node_modules/@capacitor/ios`
@@ -319,7 +371,7 @@ You can try adding it manually in `~/.cocoapods/repos` or via `pod repo add`.
 
 Despite the error, was able to run ```npx cap add ios & npx cap open ios```.
 
-The system is lagging badly now.  Lots os spinning rainbows of death, taking hours to empty the trash, Xcode busy installing dependcenies... seems like we might need a new system.  Bummer.  Xcode had been indexing for the past 40 minutes.  Everything sees OK in the system monitor.  This 
+The system is lagging badly now.  Lots os spinning rainbows of death, taking hours to empty the trash, Xcode busy installing dependcenies... seems like we might need a new system.  Bummer.  Xcode had been indexing for the past 40 minutes.  Everything sees OK in the system monitor.  This
 
 More errors with Xcode:
 ```
@@ -342,7 +394,7 @@ To this:
 ```
 diff "${SRCROOT}/Podfile.lock" "${SRCROOT}/Pods/Manifest.lock" > /dev/null
 ```
-in the build phases/[CP]Embed Pods Frameworks 
+in the build phases/[CP]Embed Pods Frameworks
 
 The solution apparently however is to just update pods:
 ```
@@ -401,16 +453,16 @@ error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or up
 
 Trying out a comment from the above answer.  Change to the ios/App directory again and run:
 ```
-1) pod repo remove master 
-2) pod setup 
-3) pod install 
+1) pod repo remove master
+2) pod setup
+3) pod install
 ```
 
 The second command took about 20 minutes to complete.  Still waiting now.
 
 Then, much later, running:
 ```
-$ pod install 
+$ pod install
 Analyzing dependencies
 Fetching podspec for `Capacitor` from `../../node_modules/@capacitor/ios`
 Fetching podspec for `CapacitorCordova` from `../../node_modules/@capacitor/ios`
@@ -436,8 +488,8 @@ During the add command, saw this:
     CordovaPluginIonicKeyboard (2.1.2)
     CordovaPluginNativestorage (2.3.2)
     CordovaSqliteStorage (2.4.0)
-✖ Updating iOS native dependencies: 
-✖ update ios: 
+✖ Updating iOS native dependencies:
+✖ update ios:
 [error] Analyzing dependencies
 Fetching podspec for `Capacitor` from `../../node_modules/@capacitor/ios`
 Fetching podspec for `CapacitorCordova` from `../../node_modules/@capacitor/ios`
@@ -491,7 +543,7 @@ Unable to load PlatformApi from platform. Error [ERR_UNHANDLED_ERROR]: Unhandled
 (node:16169) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
 ```
 
-[This question](https://stackoverflow.com/questions/44042641/cordova-error-your-ios-platform-does-not-have-api-js) had an accepted answer where the the person just upgraded their node.  So did ```nvm install 10``` and ```nvm use 10``` and then adding the platform worked. 
+[This question](https://stackoverflow.com/questions/44042641/cordova-error-your-ios-platform-does-not-have-api-js) had an accepted answer where the the person just upgraded their node.  So did ```nvm install 10``` and ```nvm use 10``` and then adding the platform worked.
 
 But then this:
 ```
@@ -588,9 +640,9 @@ npm install @ionic-native/core@beta --save
 $ npm install @ionic/storage
 loranthifolia@0.0.1 /Users/tim/ionic4/loranthifolia
 ├── UNMET PEER DEPENDENCY @ionic-native/core@5.0.0-beta.21
-├─┬ @ionic/storage@2.2.0 
-│ ├── localforage@1.7.1 
-│ └── localforage-cordovasqlitedriver@1.7.0 
+├─┬ @ionic/storage@2.2.0
+│ ├── localforage@1.7.1
+│ └── localforage-cordovasqlitedriver@1.7.0
 ├── UNMET PEER DEPENDENCY cordova-plugin-ionic@^5.0.0
 └── UNMET PEER DEPENDENCY rxjs@6.3.3
 
@@ -612,7 +664,7 @@ npm ERR! code 1
 $ npm install @ionic-native/native-storage@beta --save
 loranthifolia@0.0.1 /Users/tim/ionic4/loranthifolia
 ├── UNMET PEER DEPENDENCY @ionic-native/core@5.0.0-beta.22
-├── @ionic-native/native-storage@5.0.0-beta.22 
+├── @ionic-native/native-storage@5.0.0-beta.22
 └── UNMET PEER DEPENDENCY cordova-plugin-ionic@^5.0.0
 
 npm WARN @ionic-native/splash-screen@5.0.0-beta.21 requires a peer of @ionic-native/core@5.0.0-beta.21 but none was installed.
@@ -821,7 +873,7 @@ So as the message says, running ```npm rebuild node-sass``` will fix that.
 
 Then, we still get a failed build:
 ```
-[ng] ERROR in src/app/pages/home/home.page.ts(6,10): error TS2305: Module '"/Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/node_modules/@ionic/angular/dist/index"' has no exported member 'ItemSliding'. 
+[ng] ERROR in src/app/pages/home/home.page.ts(6,10): error TS2305: Module '"/Users/tim/repos/loranthifolia-teretifolia-curator/loranthifolia/node_modules/@ionic/angular/dist/index"' has no exported member 'ItemSliding'.
 ```
 
 
@@ -947,21 +999,21 @@ ng g module app-routing
 Using three variations to the routes:
 ```
 const routes: Routes = [
-  { path: 'home', component: HomePage}, 
+  { path: 'home', component: HomePage},
   { path: 'dashboard', component: DashboardComponent },
 ];
 ```
 ```
 const routes: Routes = [
-  { path: '', component: HomePage }, 
-  { path: 'home', component: HomePage }, 
+  { path: '', component: HomePage },
+  { path: 'home', component: HomePage },
   { path: 'dashboard', component: DashboardComponent },
 ];
 ```
 ```
 const routes: Routes = [
-  { path: '', component: HomePage, pathMatch: 'full' }, 
-  { path: 'home', component: HomePage, pathMatch: 'full' }, 
+  { path: '', component: HomePage, pathMatch: 'full' },
+  { path: 'home', component: HomePage, pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent, pathMatch: 'full' },
 ];
 ```
@@ -969,8 +1021,8 @@ const routes: Routes = [
 Also trying the lazy loading modules approach:
 ```
 const routes: Routes = [
-  { path: '', loadChildren: '../home/home.page', pathMatch: 'full' }, 
-  { path: 'home', loadChildren: '../home/home.page', pathMatch: 'full' }, 
+  { path: '', loadChildren: '../home/home.page', pathMatch: 'full' },
+  { path: 'home', loadChildren: '../home/home.page', pathMatch: 'full' },
   { path: 'dashboard', loadChildren: '../dashboard/dashboard.component', pathMatch: 'full' },
 ];
 ```
@@ -979,7 +1031,7 @@ All these give this error:
 ```
 core.js:14597 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'dashboard'
 Error: Cannot match any routes. URL Segment: 'dashboard'
-    at 
+    at
 ```
 
 How do you turn on enableTracing on the route?  In the app-routing.module, after defining the routes, add this:
@@ -1011,7 +1063,7 @@ So no slash in the class config, and a slash in the template router link.  Still
 ```
 core.js:14597 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'home/dashboard'
 Error: Cannot match any routes. URL Segment: 'home/dashboard'
-    at 
+    at
 ```
 
 The second error is like this:
@@ -1034,7 +1086,7 @@ And in the template:
 ```
 ERROR Error: Uncaught (in promise): Error: Cannot match any routes. URL Segment: 'home/dashboard'
 Error: Cannot match any routes. URL Segment: 'home/dashboard'
-    at 
+    at
 ```
 
 Tried the reverse config:
@@ -1513,21 +1565,21 @@ import { Platform } from 'ionic-angular';
 @Pipe({ name: 'wordWrap' })
 export class WordWrapPipe implements PipeTransform {
     windowWidth;
-    
+
     constructor(platform: Platform) {
         platform.ready().then((readySource) => {
             this.windowWidth = platform.width();
             console.log('Width: ' + platform.width());
         });
     }
-    
+
     transform(text: string, params: any) {
         let newText = text;
         if (typeof params !== 'undefined' && this.windowWidth < 400) {
             let width = params.offsetWidth;
             console.log('w: '+width);
             if (width < 130 && text.length > 30) {
-                newText = text.substring(0,30) +'...'; 
+                newText = text.substring(0,30) +'...';
             }
         } else {
             console.log('no change '+this.windowWidth)
@@ -1604,7 +1656,7 @@ One of those improvements is new styles for the item state.  This needs to be cr
 
 core.js:1521 ERROR Error: Uncaught (in promise): Error: Template parse errors:
 Parser Error: Unexpected token 'Lexer Error: Unterminated quote at column 27 in expression [viewShortDescription(item)']' at column 28 in [viewShortDescription(item)'] in ng:///HomePageModule/HomePage.html@41:5 ("
-				</ion-item> 
+				</ion-item>
 				<ion-item-options padding-start
 					[ERROR ->](ionSwipe)="viewShortDescription(item)'"
 
@@ -1681,7 +1733,7 @@ The next answer says you can remove requirments from
 <uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove" />
 ```
 
-Also add attribute 
+Also add attribute
 ```
 xmlns:tools="http://schemas.android.com/tools"
 ```
@@ -1706,7 +1758,7 @@ Looking at the [second answer for this question](https://stackoverflow.com/quest
 I removed the Android platform which I had added by mistake out of habit fogetting one day that this project uses Capacitor, not Cordova.  Upgraded Ionic after seeing this message:
 ```
 Update available 4.3.1 → 4.5.0
-Run npm i -g ionic to update 
+Run npm i -g ionic to update
 ```
 
 That didn't help.  Someone here pointed out that we will be needing a privacy policy sooner or later (when we collect emails for login and store preferences and item state for example).  So now we are following [this gist](https://gist.github.com/alphamu/c42f6c3fce530ca5e804e672fed70d78) and creating a document for the project to use as a link for th app stores.
@@ -1801,7 +1853,7 @@ We will move the item component into our fledgling [component library](https://g
 
 
 ## Fixing the citations
-[Issue number 6](https://github.com/timofeysie/loranthifolia/issues/6) on the GitHub logs a problem with the footnotes.  After the second citation, there is extra junk that is not marked up correctly. 
+[Issue number 6](https://github.com/timofeysie/loranthifolia/issues/6) on the GitHub logs a problem with the footnotes.  After the second citation, there is extra junk that is not marked up correctly.
 
 You can see in the markup below after the number 447779 the portion starting with ```.mw-parser-output cite.citation{``` is shown in raw text on the page:
 ```
@@ -1979,7 +2031,7 @@ When the list is set to null, the UI does refresh, as this is what triggers the 
 There are at least three things to try based on [this Ionic Forum thread](https://forum.ionicframework.com/t/ionic-refresh-current-page/47167/24):
 ```
 location.reload();
-// or 
+// or
 window.location.reload()
 
 // 2nd option
@@ -2000,7 +2052,7 @@ Some solutions to this would be to show the spinner in the header.  Possibly dis
 
 Anyhow, time to deploy to the device and see if it works there.
 
-The good news is, it does!  Actually better than the experience in the browser.  As I mentioned before, the spinner disappears after the first list loads, but the user is hanging until the rest are loaded, merged, sorted and the page refreshes. 
+The good news is, it does!  Actually better than the experience in the browser.  As I mentioned before, the spinner disappears after the first list loads, but the user is hanging until the rest are loaded, merged, sorted and the page refreshes.
 
 This does pose a bit of a problem for development, when we want to look at the log created by refreshing the list.  It will disappear on reload.  Bummer.
 
@@ -2052,7 +2104,7 @@ push../node_modules/rxjs/_esm5/internal/Subscriber.js.SafeSubscriber.error @ Sub
 detail.page.ts:50 5. error msg Redirect to data uri value
 detail.page.ts:53 6. Redirect to data uri value
 backend-api.service.ts:22 label /api/data/query/Experimenter's bias/en
-detail.page.ts:99 
+detail.page.ts:99
 ```
 
 You can see in the backend-api.service.ts line 22 has *Experimenter's bias* there.  The bindings array returned from this call is an array of one item with two objects, item and item label.
@@ -2119,7 +2171,7 @@ We used to use the item name, so that should be the default.  We need to get cle
 Currently, actor observer bias works.  That's using method 3.  What was the one that started this whole mess?
 'experimenter's'  which should be 'experimenter's bias' that then should redirect to 'observer-expectancy effect' by using the qCode.
 
-That link is still not working. 
+That link is still not working.
 ```
 message: "Http failure response for https://radiant-springs-38893.herokuapp.com/api/detail/experimenter's/en/false: 300 Multiple Choices"
 ```
@@ -2131,12 +2183,12 @@ Oh, someone forgot to refresh the list!
 Now, in the parseList() function, for Experimenter's, we see this table div:
 ```
 <td>
-    <a href="/wiki/Experimenter%27s_bias" 
-        class="mw-redirect" 
+    <a href="/wiki/Experimenter%27s_bias"
+        class="mw-redirect"
         title="Experimenter's bias">Experimenter's</a>
-     or 
-     <a href="/wiki/Expectation_bias" 
-        class="mw-redirect" 
+     or
+     <a href="/wiki/Expectation_bias"
+        class="mw-redirect"
         title="Expectation bias">expectation bias</a>
 </td>
 ```
@@ -2144,11 +2196,11 @@ Now, in the parseList() function, for Experimenter's, we see this table div:
 It looks like we want the second one there.  But how will we decide if there are multiple ones?  A quick look down the list shows that this one also has two options:
 ```
 <td>
-    <a href="/wiki/Forer_effect" 
-        class="mw-redirect" 
-        title="Forer effect">Forer effect</a> 
-    or 
-    <a href="/wiki/Barnum_effect" 
+    <a href="/wiki/Forer_effect"
+        class="mw-redirect"
+        title="Forer effect">Forer effect</a>
+    or
+    <a href="/wiki/Barnum_effect"
         title="Barnum effect">Barnum effect</a>
 </td>
 ```
@@ -2209,7 +2261,7 @@ Request URL: https://radiant-springs-38893.herokuapp.com/api/detail/%ED%98%B8%EC
 Another item in the list failes:
 ```
 zone.js:2969 GET https://radiant-springs-38893.herokuapp.com/api/detail/%ED%98%84%EC%83%81%EC%9C%A0%EC%A7%80%ED%8E%B8%ED%96%A5/ko/false 500 (Internal Server Error)
-detail.page.ts:123 error from detail 
+detail.page.ts:123 error from detail
 HttpErrorResponse {headers: HttpHeaders, status: 500, statusText: "Internal Server Error", url: "https://radiant-springs-38893.herokuapp.com/api/de…3%81%EC%9C%A0%EC%A7%80%ED%8E%B8%ED%96%A5/ko/false", ok: false, …}
 error: "Error code:missingtitle"
 headers: HttpHeaders {normalizedNames: Map(0), lazyUpdate: null, lazyInit: ƒ}
@@ -2227,7 +2279,7 @@ What does the server say?
 2018-11-03T05:31:14.072726+00:00 app[web.1]: events.js:183
 2018-11-03T05:31:14.072730+00:00 app[web.1]: throw er; // Unhandled 'error' event
 2018-11-03T05:31:14.072732+00:00 app[web.1]: ^
-2018-11-03T05:31:14.072733+00:00 app[web.1]: 
+2018-11-03T05:31:14.072733+00:00 app[web.1]:
 2018-11-03T05:31:14.072738+00:00 app[web.1]: Error: getaddrinfo ENOTFOUND undefined.wikipedia.org undefined.wikipedia.org:443
 2018-11-03T05:31:14.072739+00:00 app[web.1]: at errnoException (dns.js:50:10)
 2018-11-03T05:31:14.072741+00:00 app[web.1]: at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:92:26)
@@ -2246,17 +2298,17 @@ A brief view of the html shows a table with two styles that will indicate the tw
     <tr>
         <td class="mbox-image">
             <div style="width:52px">
-                <img alt="" 
-                    src="//upload.wikimedia.org/...Ambox_important.svg.png" 
-                    width="40" height="40" srcset="//upload.wikimedia.org/...Ambox_important.svg.png 1.5x, //upload.wikimedia.org/...Ambox_important.svg.png 2x" 
-                    data-file-width="40" 
+                <img alt=""
+                    src="//upload.wikimedia.org/...Ambox_important.svg.png"
+                    width="40" height="40" srcset="//upload.wikimedia.org/...Ambox_important.svg.png 1.5x, //upload.wikimedia.org/...Ambox_important.svg.png 2x"
+                    data-file-width="40"
                     data-file-height="40" />
             </div>
         </td>
         <td class="mbox-text">
             <div class="mbox-text-span">
-                <div class="mw-collapsible" 
-                    style="width:95%; 
+                <div class="mw-collapsible"
+                    style="width:95%;
                     margin: 0.2em 0;">
                     <b>This article has multiple issues.</b> Please help
 ```
@@ -2341,7 +2393,7 @@ embedded views like this:
 ```
 @ViewChild('tpl', {read: TemplateRef}) tpl: TemplateRef<null>;
 ```
-  
+
 The method we tried first was this:
 ```
 @ViewChild('descriptionhook') descriptionhook: ElementRef;
@@ -2363,7 +2415,7 @@ Can we cut up the description markup and put the parts of it we want to interact
 
 So after the description content returns from the service, we pass it into a sub component.  Inside that component, we can further disect the content and do the same thing recursively for the different types of messages in the entire exclamation DOM structure.
 
-This all hinges on breaking up the description markup before it is passed into any child component.  This thing with that is, if we are doing all the work to cut the DOM up, we can just add the parts to separate elements and use ngIf to turn them on or off. 
+This all hinges on breaking up the description markup before it is passed into any child component.  This thing with that is, if we are doing all the work to cut the DOM up, we can just add the parts to separate elements and use ngIf to turn them on or off.
 
 For now, we will just remove the preambles completely.  This expand/collapse preambles feature will take more work and are not part of our MVP release.  What we want is the description for now, and we have that by removing the inner HTML content manually.
 
@@ -2730,7 +2782,7 @@ this.router.events.forEach((event) => {
 
 After re-organizing the way the list is loaded, we get a list that will flow from the language settings.  But, the Korean version is a list of WikiMedia info page ids like this: Q18570.  What did we do in the web app version?  A good thing about having these notes is that the answer to this question and how to solve it is listed in the readme on the Conchifolia project.  The first problem is that the Korean encoding is ko not kr, which is the locale name.
 
-Next, there is no Korean list of cognitive bias.  What we see is a list of pages that are all in multiple languages.  The WikiMedia page is there so after parsing that, an entry that starts with a Q and has 5 digits following can be excluded because there is no Korean page for that bias. 
+Next, there is no Korean list of cognitive bias.  What we see is a list of pages that are all in multiple languages.  The WikiMedia page is there so after parsing that, an entry that starts with a Q and has 5 digits following can be excluded because there is no Korean page for that bias.
 
 The function to remove Q-codes looks like this:
 ```
@@ -2759,11 +2811,11 @@ The function to remove Q-codes looks like this:
 
 This will be the second time that we need this code but in two different projects.  We will also need to do this for the React app.  Since there will be more business logic shared across projects, it's not a bad idea to have another library that can contain this kind of function.
 
-We can use the rule of three: if you have to cut and paste functions, on third it should be refactored out into shared code.  So when faced with implementing all this again the next time, we can look at what will work as a tool function.  Remember earlier on in this project, adding DOM parsing functionality in the curator lib ruined both Ionic and React Native app builds and took up loads of time until it was realized that some JavaScript from NodeJS land will not work in the browser.  So basically we need a backend lib, and a front end lib.  We already have one; 
+We can use the rule of three: if you have to cut and paste functions, on third it should be refactored out into shared code.  So when faced with implementing all this again the next time, we can look at what will work as a tool function.  Remember earlier on in this project, adding DOM parsing functionality in the curator lib ruined both Ionic and React Native app builds and took up loads of time until it was realized that some JavaScript from NodeJS land will not work in the browser.  So basically we need a backend lib, and a front end lib.  We already have one;
 [Socius](https://github.com/timofeysie/socius): A shared component library which can be used in Angular 2 projects.
 
 We can also include our constants and data models there.
- 
+
 OK.  All that about adding a new project to the five projects already at play with this (look mom, it's a microservice!), is taking us away from getting this feature finished.
 
 Removing the Q-code items is not so simple.  They need to be removed from the list, and right now it's not working as it does in Conchifolia.
@@ -2820,7 +2872,7 @@ wikiRes.headers { date: 'Mon, 10 Sep 2018 23:41:51 GMT',
   'x-cache': 'cp1075 pass, cp2013 pass, cp5009 pass, cp5011 pass',
   'x-cache-status': 'pass',
   'strict-transport-security': 'max-age=106384710; includeSubDomains; preload',
-  'set-cookie': 
+  'set-cookie':
    [ 'WMF-Last-Access=10-Sep-2018;Path=/;HttpOnly;secure;Expires=Fri, 12 Oct 2018 12:00:00 GMT',
      'WMF-Last-Access-Global=10-Sep-2018;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Fri, 12 Oct 2018 12:00:00 GMT',
      'GeoIP=AU:NSW:Lane_Cove:-33.82:151.17:v4; Path=/; secure; Domain=.wikipedia.org' ],
@@ -2873,10 +2925,10 @@ In the app it's a 500 (Internal Server Error).
 
 fails:
 ```
-https://radiant-springs-38893.herokuapp.com/api/detail/%25ED%2598%25B8%25EC%2586%2590_%25ED%259A%25A8%25EA%25B3%25BC/en/false 
+https://radiant-springs-38893.herokuapp.com/api/detail/%25ED%2598%25B8%25EC%2586%2590_%25ED%259A%25A8%25EA%25B3%25BC/en/false
 
 this one also fails.
-http://localhost:5000/api/detail/%25ED%2598%25B8%25EC%2586%2590_%25ED%259A%25A8%25EA%25B3%25BC/en/false 
+http://localhost:5000/api/detail/%25ED%2598%25B8%25EC%2586%2590_%25ED%259A%25A8%25EA%25B3%25BC/en/false
 
 The server uses:
 Url: https://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page=%25ED%2598%25B8%25EC%2586%2590_%25ED%259A%25A8%25EA%25B3%25BC
@@ -2908,7 +2960,7 @@ This works with the web app.  What's the difference there and here?  Maybe look 
  ```
  return this.httpClient.get(encodeURI(backendDetailUrl))
  ```
- 
+
  In Conchifolia, we do this:
  ```
 return this.httpClient.get<DetailModel>(encodeURI(this.backendDetailUrl+'/'+detailId+'/'+lang+'/'+leaveCaseAlone)).pipe(data => data);
@@ -2917,7 +2969,7 @@ return this.httpClient.get<DetailModel>(encodeURI(this.backendDetailUrl+'/'+deta
 Then, suddenly the detail content for the first item shows up.  But after that it appears to be a zone.js:2969 Cross-Origin Read Blocking (CORB) blocked cross-origin response issue.
 
 Testing some more links, using this url:
-https://radiant-springs-38893.herokuapp.com/api/detail/%EA%B3%A8%EB%A0%98_%ED%9A%A8%EA%B3%BC/ko/false 
+https://radiant-springs-38893.herokuapp.com/api/detail/%EA%B3%A8%EB%A0%98_%ED%9A%A8%EA%B3%BC/ko/false
 
 We get an official Heroku application error page:
 ```
@@ -2973,7 +3025,7 @@ The attributes listed in the docs for button show:
 The API page shows this in the properties section:
 ```
 Shape
-Attribute:  shape 
+Attribute:  shape
 Type: string
 The button shape. Possible values are: "round".
 ```
@@ -3011,7 +3063,7 @@ const popover = await this.popoverController.create({...})
 
 But since there is no controller for our list...  Going to ask on Slack.
 
-Hi everyone.  How does one use the events, methods and selectors listed in the Ionic 4 beta docs without examples?  The [sliding item docs](https://beta.ionicframework.com/docs/api/item-sliding) show a ```ionDrag``` event and the ```closeOpened()``` method.  But there is no list controller to inject and call functions on.  Is there another place in the docs where the API event, method and selector features have example code? 
+Hi everyone.  How does one use the events, methods and selectors listed in the Ionic 4 beta docs without examples?  The [sliding item docs](https://beta.ionicframework.com/docs/api/item-sliding) show a ```ionDrag``` event and the ```closeOpened()``` method.  But there is no list controller to inject and call functions on.  Is there another place in the docs where the API event, method and selector features have example code?
 
 Looking at the rate of questions answered in the technical-questions chat, it's not going to get answered.
 
@@ -3076,7 +3128,7 @@ In the template we have:
 <ion-item-sliding #itemSliding *ngFor="let item of list; let i = index">
 ```
 
-But the result is still undefined.  Also tried this based on [a similar issue](https://github.com/ionic-team/ionic/issues/15176): 
+But the result is still undefined.  Also tried this based on [a similar issue](https://github.com/ionic-team/ionic/issues/15176):
 ```
 @ViewChild('itemSliding', { read: ItemSliding }) private itemSliding: ItemSliding;
 ```
@@ -3413,7 +3465,7 @@ app.get('/get-artwork/:id', function (req, res) {
 
 But taking the CORS out of the use section and putting it in the API response header causes the longer error again:
 ```
-Failed to load http://radiant-springs-38893.herokuapp.com/api/detail/Social%20perception: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'http://localhost:8100' is therefore not allowed 
+Failed to load http://radiant-springs-38893.herokuapp.com/api/detail/Social%20perception: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'http://localhost:8100' is therefore not allowed
 ```
 
 We can always turn on the CORS plugin in Chrome to avoid this, so it's time to see if this still happens on the device.
@@ -3454,10 +3506,10 @@ ionic build
 Next, running ```npx cap open```, we are given these options:
 ```
 ? Please choose a platform to open: (Use arrow keys)
-❯ android 
-  electron 
-  ios 
-  web 
+❯ android
+  electron
+  ios
+  web
 ```
 
 Choosing android and all we get is this:
@@ -3588,7 +3640,7 @@ magical%20thinking:1 Failed to load http://en.wikipedia.org/w/api.php?action=par
 
 The url is correct if you paste that in a browser address.  Tried using content-type values of ```application/x-www-form-urlencoded```, ```multipart/form-data``` and ```text/plain``` to no avail.
 
-The error indicates that the ssl preflight is getting a redirect response. 
+The error indicates that the ssl preflight is getting a redirect response.
 
 Also at this point I discovered that I should have used ```npx cap copy``` as part of the build workforlow.  I had added a version number to the title bar to confirm changes.  With so many steps in the build and deploy process during development, it's a good idea to have a visible change each time so that when you try something and move on, you can say you have tried that with (more) confidence.  For some reason running cap copy opened the vanilla project that was used to test Capacitor out when run from the loranthifolia directory, so you can have to keep your eyes open all the time here.
 
@@ -3606,7 +3658,7 @@ npm install really-cool-plugin
 npx cap update
 ```
 
-Now that we have that down again, the error is still the same.  On the home page which shows the list, we get some info about the way Capacitor is working, then choosing an item we get the error: 
+Now that we have that down again, the error is still the same.  On the home page which shows the list, we get some info about the way Capacitor is working, then choosing an item we get the error:
 ```
 capacitor-runtime.js:340 native App.addListener (#517533)
 capacitor-runtime.js:70 Angular is running in the development mode. Call enableProdMode() to enable the production mode.
@@ -3687,7 +3739,7 @@ Saving android@~6.2.3 into config.xml file ...
 ✔ Collecting resource configuration and source images - done!
 ✔ Filtering out image resources that do not need regeneration - done!
 ✔ Uploading source images to prepare for transformations: 2 / 2 complete - done!
-⠏ Generating platform resources: 14 / 18 complete 
+⠏ Generating platform resources: 14 / 18 complete
 ```
 
 That hasn't changed for five minutes.  This may not work with the current alpha version.  Considering updating to the latest alpha.  The project was started with apla 7, but as of four days ago we could use 8...
@@ -3811,7 +3863,7 @@ So, that didn't help.  We still got the white screen.  Since we never tested an 
 ```
 npm install -g ionic@rc
 ...
-ionic@4.0.0-rc.11 
+ionic@4.0.0-rc.11
 ```
 
 At release candidate 11 now.  We must be close to a beta release!
@@ -3868,8 +3920,8 @@ App@0.0.1 test /Users/tim/ionic4/myApp
 ...
 Chrome 67.0.3396 (Mac OS X 10.10.5): Executed 2 of 5 SUCCESS (0 secs / 0.28 secs)
 Chrome 67.0.3396 (Mac OS X 10.10.5) DetailPage should create FAILED
-	Error: StaticInjectorError(DynamicTestModule)[DetailPage -> ActivatedRoute]: 
-	  StaticInjectorError(Platform: core)[DetailPage -> ActivatedRoute]: 
+	Error: StaticInjectorError(DynamicTestModule)[DetailPage -> ActivatedRoute]:
+	  StaticInjectorError(Platform: core)[DetailPage -> ActivatedRoute]:
 	    NullInjectorError: No provider for ActivatedRoute!
 	    at NullInjector.get (webpack:///./node_modules/@angular/core/fesm5/core.js?:1208:19)
 	    ...
@@ -3887,8 +3939,8 @@ StaticInjectorError has a lot of action on Google.  Hints for putting this in th
 We are also getting an error for http:
 ```
 Chrome 67.0.3396 (Mac OS X 10.10.5) HomePage should create FAILED
-	Error: StaticInjectorError(DynamicTestModule)[Http]: 
-	  StaticInjectorError(Platform: core)[Http]: 
+	Error: StaticInjectorError(DynamicTestModule)[Http]:
+	  StaticInjectorError(Platform: core)[Http]:
 	    NullInjectorError: No provider for Http!
 ```
 
@@ -3937,7 +3989,7 @@ We just have to add the /:id part to the detail path in order to send thru the i
 
 Next, we can change the item to a link with the following code:
 ```
-routerLink="/detail/{{ item.cognitive_biasLabel.value }}" 
+routerLink="/detail/{{ item.cognitive_biasLabel.value }}"
 ```
 
 Now the items will link to an about page.  To get the id from the url, we do something like this:
@@ -3974,8 +4026,8 @@ npm install wikidata-sdk --save
 
 Created a url for a SPARQL query.  Here is the current query to get a list of cognitive bias.
 ```
-SELECT ?item ?itemLabel 
-WHERE 
+SELECT ?item ?itemLabel
+WHERE
 {
   ?item wdt:P31 wd:Q18570.
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
@@ -4094,7 +4146,7 @@ Section 4: Common theoretical causes of some cognitive biases
 
 How do we know programmatically the fact that the list is from section 1-3, and does not include section 4 (that category is not part of the list any more)?  There must be a way to query the page to get the sections for the list itself.  We will have to go with the hard coded category for now until more is understood about WikiData and Wikipedia APIs.
 
-Now, there is only one wikitable class per section.  So we only need to create a DOM node out of that <table class=\"wikitable\"> tag, and then get the text of all it's children.  Each row contains a name and a description it two <td> tags.  We can then create objects that collect the category and merge all three lists. 
+Now, there is only one wikitable class per section.  So we only need to create a DOM node out of that <table class=\"wikitable\"> tag, and then get the text of all it's children.  Each row contains a name and a description it two <td> tags.  We can then create objects that collect the category and merge all three lists.
 
 While trying to do this the html result was actually recommending format=json for application use.  That will return the html content segment as the * content like this:
 ```
@@ -4117,4 +4169,3 @@ const rows = html.getElementsByClassName("wikitable")[0].getElementsByTagName('t
 ```
 
 Next we will have to merge all three lists, merge that with the WikiData list, and create some navigation to go to a detail page to show everything about each item.  We can also create the slide actions to implement the spaced repetition learning features.  But one thing at a time.  It might also be time to create the React Native version of the app and think about extracting out the parsing utilities so they can be used in both projects.
-
