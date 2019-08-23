@@ -2,24 +2,14 @@
 
 An Ionic app with a list of Wikidata items and Wikipedia details.
 
-Currently using Ionic 5 & Angular 7.
-```
-@angular: ~7.1.4
-@ionic/angular: ^5.0.0-beta.22,
-```
-
-It's time for
-```
-Angular 8
-@ionic/angular	4.7.4
-```
+Currently using Ionic 4.0.0-rc.0 & Angular 7.  It's time for Angular 8
+ & Ionic	4.7.4.
 
 We could also start a project for these two:
 ```
 Vue	@ionic/vue	version	README.md
 React	@ionic/react	version
 ```
-
 
 This project began to create a simple demo app to compare with a React Native app.  The app parses WikiData and Wikipedia for a list of content and provide a master detail view of the results.
 
@@ -30,7 +20,10 @@ A note about this readme, the oldest items are at the end and most recent at the
 
 ## Work flow
 
-To run the app in development, use ```ionic serve```.
+To run the app in development, use:
+```
+ionic serve
+```
 
 To test on a device, with [Capacitor](https://capacitor.ionicframework.com/), the workflow is:
 ```
@@ -107,6 +100,43 @@ npm WARN @ionic-native/core@5.12.0 requires a peer of rxjs@^5.5.0 || ^6.5.0 but 
 npm i rxjs --save
 ...
 ```
+
+Watched Adventure Time S07E10, then created a fresh project.
+
+A current Ionic CLI generated app has the following config:
+```
+"@angular/*": "~8.1.2",
+"@ionic-native/*": "^5.0.0",
+"@ionic/angular": "^4.7.1",
+"core-js": "^2.5.4",
+"rxjs": "~6.5.1",
+```
+
+The ionic start command however ends with this:
+```
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@2.0.7 (node_modules/fsevents):
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@2.0.7 install: `node-gyp rebuild`
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: Exit status 1
+npm ERR! Darwin 18.7.0
+npm ERR! argv "/Users/tim/.nvm/versions/node/v6.9.2/bin/node" "/Users/tim/.nvm/versions/node/v6.9.2/bin/npm" "i"
+npm ERR! node v6.9.2
+npm ERR! npm  v3.10.9
+npm ERR! code ELIFECYCLE
+npm ERR! @angular/cli@8.1.3 postinstall: `node ./bin/postinstall/script.js`
+npm ERR! Exit status 1
+npm ERR! Failed at the @angular/cli@8.1.3 postinstall script 'node ./bin/postinstall/script.js'.
+npm ERR! Make sure you have the latest version of node.js and npm installed.
+npm ERR! If you do, this is most likely a problem with the @angular/cli package,
+npm ERR! not with npm itself.
+...
+npm ERR!     /Users/tim/repos/loranthifolia-teretifolia-curator/temp/friday/npm-debug.log
+[ERROR] An error occurred while running subprocess npm.
+        npm i exited with exit code 1.
+        Re-running this command with the --verbose flag may provide more information.
+QuinquenniumF:temp tim$
+```
+
+Not sure what version of node I was using, but did nvm use 12 and ionic serve and the world is once again our oyster, with the standard header.
 
 
 
