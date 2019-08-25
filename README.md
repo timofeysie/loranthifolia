@@ -112,6 +112,17 @@ A current Ionic CLI generated app has the following config:
 "rxjs": "~6.5.1",
 ```
 
+This year old project currently has:
+```
+"@angular/*": "~7.1.4",
+"@ionic-native/*": "^5.12.0",
+"@ionic/angular": "4.0.0-rc.0",
+"core-js": "^2.5.4",
+"ionic": "^5.2.5",
+"rxjs": "^6.5.2",
+```
+
+
 The ionic start command however ends with this:
 ```
 npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@2.0.7 (node_modules/fsevents):
@@ -138,6 +149,116 @@ QuinquenniumF:temp tim$
 
 Not sure what version of node I was using, but did nvm use 12 and ionic serve and the world is once again our oyster, with the standard header.
 
+So, the idea is, move this old stuff into an old branch, replace that with the new project, and then copy over the code one bit at a time.  Wish whoever luck.
+
+Then, I changed my mid and just made the version changes shown above and re-ran npm i.  Everything works and now we can use Angular 8.
+
+But, the backend service is no longer working. See the Conchifolia project issue #1 for the result on the servers side.  Here, and in the Conchifolia vanilla Angular demo app, the requests time out.  The Acapana serverless project still runs and does the first part of the puzzle, which is to get a list of items from WikiData.  It also has an implemented yet unused in the front end API to get any category of list.
+
+So the plan is to compare a ngRocket based Ionic project with a nrwl based Ionic project to compare the two approaches to a solid enterprise level starter base for a commercial project.
+
+## Comparing enterprise boilerplates for Ionic with NgxRocket & Nrwl
+
+### NgxRocket
+
+First, the competition.  Using the basic [ngX-Rocket](https://github.com/ngx-rocket/generator-ngx-rocket/) version 7.0.2
+```
+$ ngx new
+          __   __
+ _ _  __ _\ \./ / ____ ____ ____ _  _ ____ ___
+| ' \/ _` |>   <  |--< [__] |___ |-:_ |===  |
+|_||_\__, /_/°\_\ ENTERPRISE APP STARTER -~*=>
+     |___/ v7.0.2
+? What is the name of your app? saturday
+? What kind of app do you want to create? (Press <space> to select, <a> to toggle all, <i> to invert selection)Web app
+? Do you want a progressive web app? (with manifest and service worker) Yes
+? Which UI framework do you want? Ionic (more mobile-oriented)
+? Which kind of layout do you want? Side menu with split panels (more app-oriented)
+? Do you want authentication? Yes
+? Do you want lazy loading? Yes
+? Do you want analytics support (with Angulartics2)? No
+? Do you want additional tools? (Press <space> to select, <a> to toggle all, <i> to invert selection)Prettier (automatic code formatting), Hads (markdown-based doc system)
+? Do you want additional libraries? (Press <space> to select, <a> to toggle all, <i> to invert selection)
+```
+
+
+### Tasks:
+```
+ npm start // start dev server with live reload on http://localhost:4200
+ npm run build // build web app for production
+ npm test // run unit tests in watch mode for TDD
+ npm run test:ci // lint code and run units tests with coverage
+ npm run e2e // launch e2e tests
+ npm run docs // show docs and coding guides
+ npm run prettier // format your code automatically
+```
+
+### Features
+Along with Angular (with the usual unit & e2e testing) and Ionic, we get the following up and running:
+
+* [ngx-translate](https://github.com/ngx-translate/core)
+* Cross-browser CSS with [autoprefixer](https://github.com/postcss/autoprefixer) and
+  [browserslist](https://github.com/ai/browserslist)
+* Asset revisioning for [better cache management](https://webpack.github.io/docs/long-term-caching.html)
+* Unit tests using [Jasmine](http://jasmine.github.io) and [Karma](https://karma-runner.github.io)
+* End-to-end tests using [Protractor](https://github.com/angular/protractor)
+* Static code analysis: [TSLint](https://github.com/palantir/tslint), [Codelyzer](https://github.com/mgechev/codelyzer),
+  [Stylelint](http://stylelint.io) and [HTMLHint](http://htmlhint.com/)
+* Local knowledgebase server using [Hads](https://github.com/sinedied/hads)
+* Automatic code formatting with [Prettier](https://prettier.io)
+
+
+### building
+
+
+```
+$ ionic build
+> ng run app:build
+An unhandled exception occurred: Project 'app' could not be found in workspace.
+See "/private/var/folders/jn/xzs5tlvd2wb3dccpknvkxczh0000gn/T/ng-fzq2Ll/angular-errors.log" for further details.
+[ERROR] An error occurred while running subprocess ng.
+        ng run app:build exited with exit code 127.
+        Re-running this command with the --verbose flag may provide more information.
+```
+
+Searching for answers on Google ironically shows nrwl answers for this error.
+
+Why is it looking for 'app'?  The name of the project is Saturday.  App appreas nowhere but the readme.
+
+But does the project use the Ionic CLI or just the Ionic components>  If I recall, it said Cordova in the project setup.
+
+*Use cordova directly through npm script.*
+
+
+### NrWl Ionic app
+
+There is an [issue from last year](https://github.com/nrwl/nx/issues/619).  It uses [xplat](https://nstudio.io/xplat).  Anyone know what that is?
+
+*xplat is an added value pack for Nx which provides additional app generators and optional supporting architecture for different platform/framework combinations.  Currently supported platforms are Electron, Ionic and NativeScript.*  
+
+At the end of the issue someone links to this [this setup guide](https://medium.com/mean-fire/nx-nrwl-ionic-1baf3a43db74).
+```
+ionic init --type=angular
+ng g app sunday --style=scss --unit-test-runner=jest --e2e-test-runner=cypress --routing --prefix=app
+yarn add @ionic-native/core @ionic-native/http @ionic-native/splash-screen @ionic-native/status-bar @ionic/angular
+yarn add @ionic/angular-toolkit -D
+```
+
+*This will install required dependencies and create an angular app that we will replace with ionic implementation.*  Sounds like fun.  First a commit.
+
+Next steps:
+1. replaces default app generated by angular with one produced with ionic start
+2. modifies angular.json to reflect one from ionic start
+3. modifies tslint.json to allow components with “Page” suffix
+
+1. is easy and 2. is already done.  But 2. seems impossible.  There needs to be more details.  I'm sure they don't mean all the paths should be erased.  Anyhow I was not able to get it to work even with the [commit](https://github.com/Bielik20/nx-mean-starter/commit/aacbfa66dbd6465a0e0087fe6dcccd1b805619c3) provided by the article as a reference.
+
+There is a huge article with a MERN stack:
+https://github.com/Bielik20/nx-mean-starter/tree/93850e2733c4eeeb40eb85b3921eb08e76fccf69
+
+But we don't need a backend.  And since we are just talking about a front end app, we don't really need all the extra sharable lib cli stuff.  The cli does make it easy to work with NgRx, but it's a pretty heavy handed boilerplace and takes what is normally difficult for average devs and make it for difficult.
+
+So in the end, neither of these approaches seems to work for what we want.
 
 
 
